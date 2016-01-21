@@ -1,0 +1,26 @@
+db:
+  image: postgres:9.5
+  env_file: .env
+  ports:
+      - "5434:5432"
+web:
+  build: .
+  env_file: .env
+  environment:
+    - PYTHONUNBUFFERED=1
+  command: bash -c "while true; do sleep 3; python manage.py runserver 0.0.0.0:8080; done" 
+  working_dir: /app
+  volumes:
+    - .:/app
+  ports:
+    - "8080:8080"
+  links:
+    - db
+nginx:
+  build: docker/nginx
+  volumes_from:
+     - web
+  ports:
+    - "80:80"
+  links:
+    - web:web
