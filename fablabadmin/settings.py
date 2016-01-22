@@ -44,6 +44,8 @@ APPS = (
     'django.contrib.staticfiles',
     'corsheaders',
     'rest_framework',
+    'guardian',
+    'import_export',
     'debug_toolbar'
 )
 
@@ -95,6 +97,15 @@ TEMPLATES = [
         },
     },
 ]
+
+ADMIN_TOOLS_THEMING_CSS = 'css/theming.css'
+
+AUTHENTICATION_BACKENDS = (
+    'django.contrib.auth.backends.ModelBackend', # default
+    'guardian.backends.ObjectPermissionBackend',
+)
+
+ANONYMOUS_USER_ID = -1
 
 WSGI_APPLICATION = 'fablabadmin.wsgi.application'
 

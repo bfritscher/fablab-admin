@@ -2,7 +2,10 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.contrib.auth.models import User
 from django.forms import forms, ModelForm
+from guardian.admin import GuardedModelAdmin
 from django.utils.translation import ugettext_lazy as _
+from import_export.admin import ImportExportMixin
+
 
 from .models import *
 
@@ -23,6 +26,11 @@ class UserAdmin(BaseUserAdmin):
     inlines = (ContactInline,)
 
 
+class FunctionInline(admin.TabularInline):
+    model = Function
+    extra = 1
+
+
 class FunctionAdminForm(ModelForm):
     def clean(self):
         year_from = self.cleaned_data.get("year_from")
@@ -33,13 +41,20 @@ class FunctionAdminForm(ModelForm):
 
 
 @admin.register(Function)
-class FunctionAdmin(admin.ModelAdmin):
+class FunctionAdmin(GuardedModelAdmin):
     form = FunctionAdminForm
 
 
-@admin.register(Contact)
-class ContactAdmin(admin.ModelAdmin):
+@admin.register(ContactStatus)
+class ContactStatusAdmin(GuardedModelAdmin):
     pass
+
+
+@admin.register(Contact)
+class ContactAdmin(ImportExportMixin, GuardedModelAdmin):
+    inlines = (FunctionInline,)
+    class Media:
+        css = { "all" : ("css/hide_admin_original.css",) }
 
 # Re-register UserAdmin
 admin.site.unregister(User)
