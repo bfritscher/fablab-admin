@@ -63,3 +63,57 @@ class Function(models.Model):
     def __str__(self):
         full_name = '%s %s - %s' % (self.name, self.year_from, self.year_to or '')
         return full_name.strip()
+
+
+# class Invoice:
+#     date
+#     contact
+#     paid
+#     payment_type
+#
+#
+# class LedgerEntry:
+#     date
+#     description
+#     amount
+#     user
+#     type D/C
+#
+#     invoice?
+#
+# class Membership(LedgerEntry):
+#     year
+#
+#
+# class ResourceUsage(LedgerEntry):
+#     resource
+#
+#
+# class ResourceType:
+#     name
+#
+# class Resource:
+#     name
+#     ResourceType
+#     usageprice?
+#
+# class Training:
+#     date
+#     member
+#     resourceType
+#
+# class Event:
+#     title
+#     date_start
+#     date_end
+#     description
+#     nb_participants
+#     has_many organizers
+#
+# class Registration(LedgerEntry):
+#     event
+#
+#
+# class Expense(LedgerEntry):
+#     event
+#     picture
