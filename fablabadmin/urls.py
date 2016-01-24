@@ -31,6 +31,7 @@ router = routers.DefaultRouter(trailing_slash=False)
 urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
     url(r'^admin_tools/', include('admin_tools.urls')),
+    url(r'^redactor/', include('redactor.urls')),
     url(r'^api/', include(router.urls)),
     url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     url(r'^i18n/', include('django.conf.urls.i18n')),

@@ -3,6 +3,7 @@ from django.contrib.auth.models import User
 from django.utils.translation import ugettext_lazy as _
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from redactor.fields import RedactorField
 
 
 class ContactStatus(models.Model):
@@ -16,22 +17,29 @@ class ContactStatus(models.Model):
         return self.name
 
 
+class ResourceType(models.Model):
+    name = models.CharField(max_length=60, verbose_name=_("name"), blank=False, null=False)
+
+
 class Contact(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, blank=True, null=True)
-    first_name = models.CharField(_('first name'), max_length=30, blank=True, null=True)
-    last_name = models.CharField(_('last name'), max_length=30, blank=True, null=True)
-    email = models.EmailField(_('email address'), blank=True, null=True)
+    first_name = models.CharField(_('first name'), max_length=30, blank=True, null=False)
+    last_name = models.CharField(_('last name'), max_length=30, blank=True, null=False)
+    email = models.EmailField(_('email address'), blank=True, null=False)
     status = models.ForeignKey(ContactStatus, verbose_name=_("status"), on_delete=models.PROTECT)
-    address = models.CharField(verbose_name=_("address"), max_length=200, blank=True, null=True)
-    postal_code = models.CharField(verbose_name=_("postal code"), max_length=10, blank=True, null=True)
-    city = models.CharField(verbose_name=_("city"), max_length=200, blank=True, null=True)
-    phone = models.CharField(verbose_name=_("phone"), max_length=30, blank=True, null=True)
+    address = models.CharField(verbose_name=_("address"), max_length=200, blank=True, null=False)
+    postal_code = models.CharField(verbose_name=_("postal code"), max_length=10, blank=True, null=False)
+    city = models.CharField(verbose_name=_("city"), max_length=200, blank=True, null=False)
+    country = models.CharField(verbose_name=_("country"), max_length=200, blank=True, null=False)
+    phone = models.CharField(verbose_name=_("phone"), max_length=30, blank=True, null=False)
     birth_year = models.PositiveIntegerField(verbose_name=_("year of birth"), blank=True, null=True)
-    comment = models.TextField(verbose_name=_("comment"), blank=True, null=True)
-    education = models.CharField(verbose_name=_("education"), max_length=200, blank=True, null=True)
-    profession = models.CharField(verbose_name=_("profession"), max_length=200, blank=True, null=True)
-    employer = models.CharField(verbose_name=_("employer"), max_length=200, blank=True, null=True)
-    interests = models.TextField(verbose_name=_("interests"), blank=True, null=True)
+    comment = models.TextField(verbose_name=_("comment"), blank=True, null=False)
+    education = models.CharField(verbose_name=_("education"), max_length=200, blank=True, null=False)
+    profession = models.CharField(verbose_name=_("profession"), max_length=200, blank=True, null=False)
+    employer = models.CharField(verbose_name=_("employer"), max_length=200, blank=True, null=False)
+    interests = models.TextField(verbose_name=_("interests"), blank=True, null=False)
+    payment_info = models.TextField(verbose_name=_("payment information"), blank=True, null=False)
+    trainings = models.ManyToManyField(ResourceType, through="Training")
 
     def __str__(self):
         full_name = '%s %s' % (self.first_name, self.last_name)
@@ -65,42 +73,49 @@ class Function(models.Model):
         return full_name.strip()
 
 
+class Resource(models.Model):
+    name = models.CharField(max_length=60, verbose_name=_("name"), blank=False, null=False)
+    type = models.ForeignKey(ResourceType, related_name="resources", verbose_name=_("type"), on_delete=models.PROTECT)
+    description = RedactorField(verbose_name=_("description"), blank=True, null=False)
+
+
+class Training(models.Model):
+    member = models.ForeignKey(Contact, verbose_name=_("member"), on_delete=models.CASCADE)
+    resource = models.ForeignKey(ResourceType, verbose_name=_("resource"), on_delete=models.CASCADE)
+    date = models.DateField(verbose_name=_("date"))
+
+
 # class Invoice:
 #     date
-#     contact
-#     paid
-#     payment_type
+#     buyer:contact
+#     seller:contact
+#     paid = date
+#     payment_type cash post
+#     invoice or payment
+#     document
 #
 #
 # class LedgerEntry:
 #     date
+#     title
 #     description
-#     amount
+#     quantity
+#     unit_price
 #     user
 #     type D/C
-#
 #     invoice?
+#     //virtual total
 #
-# class Membership(LedgerEntry):
-#     year
+# class MembershipInvoice(LedgerEntry):
+#    year
+#    #auto create invoice
+#
 #
 #
 # class ResourceUsage(LedgerEntry):
 #     resource
 #
 #
-# class ResourceType:
-#     name
-#
-# class Resource:
-#     name
-#     ResourceType
-#     usageprice?
-#
-# class Training:
-#     date
-#     member
-#     resourceType
 #
 # class Event:
 #     title
@@ -110,8 +125,9 @@ class Function(models.Model):
 #     nb_participants
 #     has_many organizers
 #
-# class Registration(LedgerEntry):
+# class EventRegistration(LedgerEntry):
 #     event
+#    #create invoice
 #
 #
 # class Expense(LedgerEntry):

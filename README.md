@@ -5,6 +5,7 @@ create .env file
 ```
 DEBUG=True
 STATIC_ROOT=/.../static/
+MEDIA_ROOT=
 POSTGRES_USER=user
 POSTGRES_PASSWORD=password
 DATABASE_URL=postgres://user:password@db/fablabadmin

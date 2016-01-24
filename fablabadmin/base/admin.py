@@ -50,6 +50,21 @@ class ContactStatusAdmin(GuardedModelAdmin):
     pass
 
 
+@admin.register(ResourceType)
+class ResourceTypeAdmin(GuardedModelAdmin):
+   pass
+
+
+@admin.register(Resource)
+class ResourceAdmin(GuardedModelAdmin):
+    pass
+
+
+@admin.register(Training)
+class TrainingAdmin(GuardedModelAdmin):
+    raw_id_fields = ('member', 'resource')
+
+
 @admin.register(Contact)
 class ContactAdmin(ImportExportMixin, GuardedModelAdmin):
     inlines = (FunctionInline,)

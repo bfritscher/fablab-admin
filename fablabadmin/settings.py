@@ -44,6 +44,7 @@ APPS = (
     'django.contrib.staticfiles',
     'corsheaders',
     'rest_framework',
+    'redactor',
     'guardian',
     'import_export',
     'debug_toolbar'
@@ -144,6 +145,7 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 STATIC_ROOT = env('STATIC_ROOT', default='')
+MEDIA_ROOT = env('MEDIA_ROOT', default='')
 
 REST_FRAMEWORK = {
     # Use Django's standard `django.contrib.auth` permissions,
@@ -159,3 +161,9 @@ CORS_ORIGIN_WHITELIST = (
     'localhost:9000',
 )
 CORS_URLS_REGEX = r'^/api/.*$'
+
+
+# REDACTOR Options
+REDACTOR_OPTIONS = {'lang': 'en'}
+REDACTOR_UPLOAD = 'media/uploads/'
+REDACTOR_UPLOAD_HANDLER = 'redactor.handlers.UUIDUploader'

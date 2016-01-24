@@ -53,4 +53,5 @@ node_modules/
 .sass-cache
 
 .env
-fablabadmin/static/
+/static/
+/media/
