@@ -42,5 +42,5 @@ urlpatterns = [
     url(r'^api/', include(router.urls)),
     url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     url(r'^i18n/', include('django.conf.urls.i18n')),
-    url(r'^lang', include(urls))
+    url(r'^', include(urls))
 ]

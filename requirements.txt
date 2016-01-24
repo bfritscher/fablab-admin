@@ -9,7 +9,7 @@ django-import-export==0.4.2
 django-autocomplete-light==2.3.1
 django-wysiwyg-redactor==0.4.9
 reportlab==3.2.0
-xhtml2pdf==0.1a1
+xhtml2pdf==0.0.6
 
 #dev
 django-debug-toolbar==1.4

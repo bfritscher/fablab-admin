@@ -1,0 +1,357 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>HTML to API - Invoice</title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <meta http-equiv="content-type" content="text-html; charset=utf-8">
+    <style type="text/css">
+body {
+    font-family: Helvetica, Arial, Verdana, Geneva, sans-serif, sans;
+    font-size: 10pt;
+    line-height: 12pt;
+}
+
+p {
+    margin: 0;
+    padding: 0;
+
+}
+
+.address a, h1{
+ color: #006EB8;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    border-spacing: 0;
+}
+
+table.content{
+    margin-bottom: 2em;
+}
+
+table.header{
+    margin-bottom: 2em;
+}
+
+.content .th {
+    padding: 5px 10px 5px 8px;
+    border-right: 4px solid #FFFFFF;
+    text-align: right;
+    color: #74AF26;
+    font-weight: 600;
+    border-bottom: 5px solid #FFFFFF;
+    background-color: #E8F3DB;
+}
+
+.qty, .unit, .total {
+    width: 15%;
+}
+
+.content .desc {
+    text-align: left;
+    width: 55%;
+}
+
+.qty {
+    text-align: center;
+}
+
+
+.content .th:last-child {
+    border-right: none;
+}
+
+.content td {
+    color: #777777;
+    text-align: right;
+    border-bottom: 10pt solid #FFFFFF;
+    border-right: 4px solid #E8F3DB;
+    padding: 8px 10px 8px 15px;
+}
+
+.content td:last-child {
+    border-right: none;
+}
+
+.content h3 {
+    margin: 0 0 0 0;
+    padding: 0;
+    font-size: 106%;
+    color: #74AF26;
+    font-weight: 600;
+}
+
+.grand-total td{
+    font-weight: 600;
+    color: #74AF26;
+    font-size: 1.18181818181818em;
+    background-color: #E8F3DB;
+    border: none;
+    padding: 10px 10px 5px 0;
+}
+
+.notice p{
+    margin: 1em 0;
+}
+
+.thanks {
+    text-align: center;
+    font-weight: 600;
+    color: #74AF26;
+    font-size: 14pt;
+    padding: 14pt 0;
+}
+
+.address{
+    font-size: 10pt;
+    line-height: 12pt;
+}
+
+.header-repeat td{
+    vertical-align: top;
+}
+
+.header td{
+    vertical-align: top;
+    width: 50%;
+}
+
+.header h1{
+    font-size: 25pt;
+    line-height: 25pt;
+    margin-top: 0;
+    padding-top: 0;
+}
+
+.footer td{
+    width: 33%;
+}
+
+/* a4 size in pt 595x842 */
+@page {
+    size: a4 portrait;
+    @frame header_frame {           /* Static Frame */
+        -pdf-frame-content: header_content;
+        left: 30pt;
+        width: 535pt;
+        top: 30pt;
+        height: 80pt;
+    }
+    @frame content_frame {          /* Content Frame */
+        left: 30pt;
+        width: 535pt;
+        top: 130pt;
+        height: 662pt;
+       /*  -pdf-frame-border: 1;    for debugging the layout */
+    }
+    @frame footer_frame {           /* Another static Frame */
+        -pdf-frame-content: footer_content;
+        left: 30pt;
+        width: 535pt;
+        top: 800pt;
+        height: 20pt;
+    }
+}
+    </style>
+</head>
+
+<body>
+    <div id="header_content">
+        <table class="header-repeat">
+            <tr>
+                <td>
+                    <img src="{% static 'images/Logo_FabLab_horizontal.png' %}" alt="" height="70pt">
+                </td>
+                <td style="width: 200px">
+                    <p class="address">FabLab la Côte<br/>
+                       Chemin du Nipy 8<br/>
+                       1262 Eysins<br/>
+                    <a href="mailto:info@fablab-lacote.ch">info@fablab-lacote.ch</a></p>
+                </td>
+            </tr>
+        </table>
+    </div>
+
+    <div>
+        <table class="header">
+            <tr>
+                <td>
+                    <p style="line-height:10pt;padding-bottom: 6pt">INVOICE TO:</p>
+                    <p class="address">John Doe<br/>
+                        796 Silver Harbour,<br/>
+                        TX 79273,<br/>
+                        US<br/>
+                        <a href="mailto:john@example.com">john@example.com</a>
+                    </p>
+                </td>
+                <td style="text-align:right">
+                    <h1>Invoice 105 {{ test }}</h1>
+                    <p>Date of Invoice: 01/06/2014</p>
+                </td>
+            </tr>
+        </table>
+
+        <table class="content" border="0" cellspacing="0" cellpadding="0" repeat="1">
+            <thead>
+                <tr>
+                    <th class="desc th">DESCRIPTION</th>
+                    <th class="qty th">QUANTITY</th>
+                    <th class="unit th">UNIT PRICE</th>
+                    <th class="total th">TOTAL</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="desc">
+                        <h3></h3>
+                        <p>Creating a recognizable design solution based on the company's existing visual identity</p></td>
+                    <td class="qty">30</td>
+                    <td class="unit">40.00</td>
+                    <td class="total">1,200.00</td>
+                </tr>
+                <tr>
+                    <td class="desc">
+                        <h3></h3>
+                        <p>Developing a Content Management System-based Website</p></td>
+                    <td class="qty">80</td>
+                    <td class="unit">40.00</td>
+                    <td class="total">3,200.00</td>
+                </tr>
+                <tr>
+                    <td class="desc">
+                        <h3></h3>
+                        <p>Optimize the site for search engines (SEO)</p></td>
+                    <td class="qty">20</td>
+                    <td class="unit">40.00</td>
+                    <td class="total">800.00</td>
+                </tr>
+                <tr>
+                    <td class="desc">
+                        <h3>Website Design</h3>
+                        <p>Creating a recognizable design solution based on the company's existing visual identity</p></td>
+                    <td class="qty">30</td>
+                    <td class="unit">40.00</td>
+                    <td class="total">1,200.00</td>
+                </tr>
+                <tr>
+                    <td class="desc">
+                        <h3></h3>
+                        <p>Developing a Content Management System-based Website</p></td>
+                    <td class="qty">80</td>
+                    <td class="unit">40.00</td>
+                    <td class="total">3,200.00</td>
+                </tr>
+                <tr>
+                    <td class="desc">
+                        <h3>Search Engines Optimization</h3>
+                        <p>Optimize the site for search engines (SEO)</p></td>
+                    <td class="qty">20</td>
+                    <td class="unit">40.00</td>
+                    <td class="total">800.00</td>
+                </tr>                <tr>
+                    <td class="desc">
+                        <h3>Website Design</h3>
+                        <p>Creating a recognizable design solution based on the company's existing visual identity</p></td>
+                    <td class="qty">30</td>
+                    <td class="unit">40.00</td>
+                    <td class="total">1,200.00</td>
+                </tr>
+                <tr>
+                    <td class="desc">
+                        <h3>Website Development</h3>
+                        <p>Developing a Content Management System-based Website</p></td>
+                    <td class="qty">80</td>
+                    <td class="unit">40.00</td>
+                    <td class="total">3,200.00</td>
+                </tr>
+                <tr>
+                    <td class="desc">
+                        <h3>Search Engines Optimization</h3>
+                        <p>Optimize the site for search engines (SEO)</p></td>
+                    <td class="qty">20</td>
+                    <td class="unit">40.00</td>
+                    <td class="total">800.00</td>
+                </tr>                <tr>
+                    <td class="desc">
+                        <h3>Website Design</h3>
+                        <p>Creating a recognizable design solution based on the company's existing visual identity</p></td>
+                    <td class="qty">30</td>
+                    <td class="unit">40.00</td>
+                    <td class="total">1,200.00</td>
+                </tr>
+                <tr>
+                    <td class="desc">
+                        <h3>Website Development</h3>
+                        <p>Developing a Content Management System-based Website</p></td>
+                    <td class="qty">80</td>
+                    <td class="unit">40.00</td>
+                    <td class="total">3,200.00</td>
+                </tr>
+                <tr>
+                    <td class="desc">
+                        <h3>Search Engines Optimization</h3>
+                        <p>Optimize the site for search engines (SEO)</p></td>
+                    <td class="qty">20</td>
+                    <td class="unit">40.00</td>
+                    <td class="total">800.00</td>
+                </tr>                <tr>
+                    <td class="desc">
+                        <h3>Website Design</h3>
+                        <p>Creating a recognizable design solution based on the company's existing visual identity</p></td>
+                    <td class="qty">30</td>
+                    <td class="unit">40.00</td>
+                    <td class="total">1,200.00</td>
+                </tr>
+                <tr>
+                    <td class="desc">
+                        <h3>Website Development</h3>
+                        <p>Developing a Content Management System-based Website</p></td>
+                    <td class="qty">80</td>
+                    <td class="unit">40.00</td>
+                    <td class="total">3,200.00</td>
+                </tr>
+                <tr>
+                    <td class="desc">
+                        <h3>Search Engines Optimization</h3>
+                        <p>Optimize the site for search engines (SEO)</p></td>
+                    <td class="qty">20</td>
+                    <td class="unit">40.00</td>
+                    <td class="total">800.00</td>
+                </tr>
+                <tr class="grand-total">
+                    <td colspan="4">GRAND TOTAL: CHF 6,500.00</td>
+                </tr>
+            </tbody>
+        </table>
+        <div class="notice">
+            <p>Veuillez régler la facture par virement en mentionnant dans le champ communication le numéro de facture.</p>
+            <p>Coordonnées bancaires:<br/><br/>
+                <strong>FABLAB LA COTE</strong><br/>
+                Compte: 14-43-9111-6<br/>
+                IBAN: CH07 0900 0000 1443 9111 6<br/>
+                BIC: POFICHBEXXX
+                </p>
+            <p>Pour toutes questions concernant cette facture, veuillez contacter: comite@fablab-lacote.ch.</p>
+            <p class="thanks">NOUS VOUS REMERCIONS DE VOTRE CONFIANCE</p>
+        </div>
+    </div>
+
+    <div id="footer_content"><!-- pdf:tags need new line immediatly after -->
+        <table class="footer">
+            <tr>
+                <td>FabLab la Côte - Invoice 123</td>
+                <td style="text-align:center">
+                    <pdf:pagenumber>
+                    / <pdf:pagecount>
+                </td>
+                <td style="text-align:right">23.12.2016</td>
+            </tr>
+        </table>
+    </div>
+
+</body>
+
+</html>

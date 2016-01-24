@@ -1,5 +1,6 @@
 from django.conf.urls import url
 from . import views
 urlpatterns = [
-    url(r'$', views.change_lang)
+    url(r'lang', views.change_lang),
+    url(r'invoice', views.invoice)
 ]
