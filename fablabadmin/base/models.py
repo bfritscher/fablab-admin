@@ -20,6 +20,9 @@ class ContactStatus(models.Model):
 class ResourceType(models.Model):
     name = models.CharField(max_length=60, verbose_name=_("name"), blank=False, null=False)
 
+    def __str__(self):
+        return self.name
+
 
 class Contact(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, blank=True, null=True)
@@ -42,8 +45,7 @@ class Contact(models.Model):
     trainings = models.ManyToManyField(ResourceType, through="Training")
 
     def __str__(self):
-        full_name = '%s %s' % (self.first_name, self.last_name)
-        return full_name.strip()
+        return '%s %s' % (self.first_name, self.last_name)
 
 
 # sync contact to user
@@ -78,11 +80,17 @@ class Resource(models.Model):
     type = models.ForeignKey(ResourceType, related_name="resources", verbose_name=_("type"), on_delete=models.PROTECT)
     description = RedactorField(verbose_name=_("description"), blank=True, null=False)
 
+    def __str__(self):
+        return '%s | %s' % (self.type, self.name);
+
 
 class Training(models.Model):
     member = models.ForeignKey(Contact, verbose_name=_("member"), on_delete=models.CASCADE)
     resource = models.ForeignKey(ResourceType, verbose_name=_("resource"), on_delete=models.CASCADE)
     date = models.DateField(verbose_name=_("date"))
+
+    def __str__(self):
+        return '%s - %s' % (self.resource, self.member);
 
 
 # class Invoice:

@@ -145,7 +145,9 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 STATIC_ROOT = env('STATIC_ROOT', default='')
+STATIC_URL = env('STATIC_URL', default='/static/')
 MEDIA_ROOT = env('MEDIA_ROOT', default='')
+MEDIA_URL = env('MEDIA_URL', default='/media/')
 
 REST_FRAMEWORK = {
     # Use Django's standard `django.contrib.auth` permissions,
@@ -165,5 +167,5 @@ CORS_URLS_REGEX = r'^/api/.*$'
 
 # REDACTOR Options
 REDACTOR_OPTIONS = {'lang': 'en'}
-REDACTOR_UPLOAD = 'media/uploads/'
-REDACTOR_UPLOAD_HANDLER = 'redactor.handlers.UUIDUploader'
+REDACTOR_UPLOAD = 'uploads/'
+#REDACTOR_UPLOAD_HANDLER = 'redactor.handlers.UUIDUploader'
