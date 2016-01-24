@@ -20,6 +20,12 @@ from rest_framework import routers
 
 from fablabadmin.base import urls
 
+
+import autocomplete_light.shortcuts as al
+from fablabadmin.base.autocomplete_light_registry import *
+al.autodiscover()
+admin.autodiscover()
+
 router = routers.DefaultRouter(trailing_slash=False)
 
 
@@ -31,6 +37,7 @@ router = routers.DefaultRouter(trailing_slash=False)
 urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
     url(r'^admin_tools/', include('admin_tools.urls')),
+    url(r'^autocomplete/', include('autocomplete_light.urls')),
     url(r'^redactor/', include('redactor.urls')),
     url(r'^api/', include(router.urls)),
     url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),

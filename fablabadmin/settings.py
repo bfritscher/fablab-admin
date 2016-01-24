@@ -31,11 +31,13 @@ LANGUAGES = [
 
 # Application definition
 
-APPS = (
+INSTALLED_APPS = (
+    'fablabadmin.base',
     'admin_tools',
     'admin_tools.theming',
     'admin_tools.menu',
     'admin_tools.dashboard',
+    'autocomplete_light',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -49,12 +51,6 @@ APPS = (
     'import_export',
     'debug_toolbar'
 )
-
-LOCAL_APPS = (
-    'fablabadmin.base',
-)
-
-INSTALLED_APPS = APPS + LOCAL_APPS
 
 
 MIDDLEWARE_CLASSES = (
@@ -79,20 +75,20 @@ TEMPLATES = [
         #'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
-                'django.template.context_processors.debug',
-                'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
+                'django.template.context_processors.debug',
                 'django.template.context_processors.i18n',
                 'django.template.context_processors.media',
                 'django.template.context_processors.static',
                 'django.template.context_processors.tz',
+                'django.template.context_processors.request',
                 'django.contrib.messages.context_processors.messages',
             ],
             'loaders': [
-                ('django.template.loaders.cached.Loader', [
+                #('django.template.loaders.cached.Loader', [
                     'django.template.loaders.filesystem.Loader',
                     'django.template.loaders.app_directories.Loader',
-                ]),
+                #]),
                 'admin_tools.template_loaders.Loader',
             ]
         },

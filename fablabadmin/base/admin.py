@@ -5,7 +5,7 @@ from django.forms import forms, ModelForm
 from guardian.admin import GuardedModelAdmin
 from django.utils.translation import ugettext_lazy as _
 from import_export.admin import ImportExportMixin
-
+import autocomplete_light
 
 from .models import *
 
@@ -62,7 +62,7 @@ class ResourceAdmin(GuardedModelAdmin):
 
 @admin.register(Training)
 class TrainingAdmin(GuardedModelAdmin):
-    raw_id_fields = ('member', 'resource')
+    form = autocomplete_light.modelform_factory(Training, fields='__all__')
 
 
 @admin.register(Contact)
