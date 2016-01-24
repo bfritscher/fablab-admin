@@ -4,7 +4,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from redactor.fields import RedactorField
-
+import datetime
 
 class ContactStatus(models.Model):
     name = models.CharField(_('name'), max_length=30, blank=False, null=False)
@@ -81,7 +81,7 @@ class Resource(models.Model):
     description = RedactorField(verbose_name=_("description"), blank=True, null=False)
 
     def __str__(self):
-        return '%s | %s' % (self.type, self.name);
+        return '%s | %s' % (self.type, self.name)
 
 
 class Training(models.Model):
@@ -90,54 +90,102 @@ class Training(models.Model):
     date = models.DateField(verbose_name=_("date"))
 
     def __str__(self):
-        return '%s - %s' % (self.resource, self.member);
+        return '%s - %s' % (self.resource, self.member)
 
 
-# class Invoice:
-#     date
-#     buyer:contact
-#     seller:contact
-#     paid = date
-#     payment_type cash post
-#     invoice or payment
-#     document
-#
-#
-# class LedgerEntry:
-#     date
-#     title
-#     description
-#     quantity
-#     unit_price
-#     user
-#     type D/C
-#     invoice?
-#     //virtual total
-#
-# class MembershipInvoice(LedgerEntry):
-#    year
-#    #auto create invoice
-#
-#
-#
-# class ResourceUsage(LedgerEntry):
-#     resource
-#
-#
-#
-# class Event:
-#     title
-#     date_start
-#     date_end
-#     description
-#     nb_participants
-#     has_many organizers
-#
-# class EventRegistration(LedgerEntry):
-#     event
-#    #create invoice
-#
-#
-# class Expense(LedgerEntry):
-#     event
-#     picture
+class Invoice(models.Model):
+    INVOICE_TYPE = (
+        ("E", _("expense")),
+        ("I", _("income"))
+    )
+    PAYMENT_TYPE = (
+        ("C", _("cash")),
+        ("B", _("bank"))
+    )
+    date = models.DateField(verbose_name=_("date"))
+    buyer = models.ForeignKey(Contact, verbose_name=_("buyer"), related_name="invoices", on_delete=models.PROTECT)
+    seller = models.ForeignKey(Contact, verbose_name=_("seller"), related_name="expenses", on_delete=models.PROTECT)
+    paid = models.DateField(verbose_name=_("date paid"), blank=True, null=True)
+    payment_type = models.CharField(max_length=1, choices=PAYMENT_TYPE, default="B")
+    type = models.CharField(max_length=1, choices=INVOICE_TYPE, default="I")
+    document = models.FileField(verbose_name=_("document"), blank=True, null=True)
+
+    def __str__(self):
+        return '%s %s' % (_(dict(self.INVOICE_TYPE)[self.type]).capitalize(), self.id)
+
+
+class LedgerEntry(models.Model):
+
+    LEDGER_TYPE = (
+        ("D", _("debit")),
+        ("C", _("credit"))
+    )
+
+    date = models.DateField(verbose_name=_("date"))
+    title = models.CharField(max_length=100, verbose_name=_("title"), blank=True, null=True)
+    description = models.TextField(verbose_name=_("description"), blank=False, null=False)
+    quantity = models.FloatField(verbose_name=_("quantity"), blank=False, default=1)
+    unit_price = models.FloatField(verbose_name=_("unit price"), blank=False, default=0)
+    user = models.ForeignKey(Contact, verbose_name=_("member"), related_name="ledger_entries", blank=True, null=True, on_delete=models.PROTECT)
+    invoice = models.ForeignKey(Invoice, verbose_name=_("invoice"), related_name="entries", blank=True, null=True)
+
+    @property
+    def total(self):
+        return self.quantity * self.unit_price
+
+    def __str__(self):
+        return _("Transaction on %(date)s for %(total)s by %(user)s") % {'user': self.user, 'total':self.total, 'date': self.date}
+
+    class Meta:
+        verbose_name_plural = _("ledger entries")
+
+
+def current_year():
+    now = datetime.datetime.now()
+    return now.year
+
+
+class MembershipInvoice(LedgerEntry):
+    year = models.PositiveIntegerField(verbose_name=_("year"), default=current_year)
+    # TODO: auto create invoice
+
+    def __str__(self):
+        return _("Membership %(year)s for %(user)s") % {'user': self.user, 'year': self.year}
+
+
+class ResourceUsage(LedgerEntry):
+    resource = models.ForeignKey(Resource, verbose_name=_("resource"), related_name="usages", on_delete=models.PROTECT)
+
+    def __str__(self):
+        return _("Usage of %(resource)s by %(user)s") % {'user': self.user, 'resource': self.resource}
+
+
+class Event(models.Model):
+    title = models.CharField(max_length=200, verbose_name=_("title"))
+    start_date = models.DateField(verbose_name=_("start date"))
+    end_date = models.DateField(verbose_name=_("end date"), blank=True, null=True)
+    description = RedactorField(verbose_name=_("description"), blank=True, null=False)
+    max_participants = models.PositiveIntegerField(verbose_name=_("maximum number of participants"), default=0)
+    organizers = models.ManyToManyField(Contact)
+
+    def __str__(self):
+        txt = "%s (%s" % (self.title, self.start_date)
+        if self.end_date:
+            txt += " - %s" % (self.end_date,)
+        return txt + ")"
+
+
+class EventRegistration(LedgerEntry):
+    event = models.ForeignKey(Event, verbose_name=_("event"), related_name="registrations", on_delete=models.PROTECT)
+
+    def __str__(self):
+        return _("Registration to %(event)s by %(user)s") % {'user': self.user, 'event': self.event}
+
+
+class Expense(LedgerEntry):
+    event = models.ForeignKey(Event, verbose_name=_("event"), related_name="expenses", blank=True, null=True, on_delete=models.PROTECT)
+    contact = models.ForeignKey(Contact, verbose_name=_("provider"), blank=True, null=True, on_delete=models.PROTECT)
+    document = models.FileField(verbose_name=_("document"), blank=True, null=True)
+
+    def __str__(self):
+        return _("Expense for %(expense)s by %(user)s") % {'user': self.user, 'expense': self.title}

@@ -10,6 +10,16 @@ import autocomplete_light
 from .models import *
 
 
+@admin.register(ContactStatus)
+class ContactStatusAdmin(GuardedModelAdmin):
+    pass
+
+
+@admin.register(ResourceType)
+class ResourceTypeAdmin(GuardedModelAdmin):
+   pass
+
+
 class ContactInline(admin.StackedInline):
     model = Contact
     can_delete = False
@@ -31,6 +41,17 @@ class FunctionInline(admin.TabularInline):
     extra = 1
 
 
+@admin.register(Contact)
+class ContactAdmin(ImportExportMixin, GuardedModelAdmin):
+    inlines = (FunctionInline,)
+    class Media:
+        css = { "all" : ("css/hide_admin_original.css",) }
+
+# Re-register UserAdmin
+admin.site.unregister(User)
+admin.site.register(User, UserAdmin)
+
+
 class FunctionAdminForm(ModelForm):
     def clean(self):
         year_from = self.cleaned_data.get("year_from")
@@ -45,16 +66,6 @@ class FunctionAdmin(GuardedModelAdmin):
     form = FunctionAdminForm
 
 
-@admin.register(ContactStatus)
-class ContactStatusAdmin(GuardedModelAdmin):
-    pass
-
-
-@admin.register(ResourceType)
-class ResourceTypeAdmin(GuardedModelAdmin):
-   pass
-
-
 @admin.register(Resource)
 class ResourceAdmin(GuardedModelAdmin):
     pass
@@ -65,12 +76,38 @@ class TrainingAdmin(GuardedModelAdmin):
     form = autocomplete_light.modelform_factory(Training, fields='__all__')
 
 
-@admin.register(Contact)
-class ContactAdmin(ImportExportMixin, GuardedModelAdmin):
-    inlines = (FunctionInline,)
-    class Media:
-        css = { "all" : ("css/hide_admin_original.css",) }
+@admin.register(Invoice)
+class InvoiceAdmin(GuardedModelAdmin):
+    pass
 
-# Re-register UserAdmin
-admin.site.unregister(User)
-admin.site.register(User, UserAdmin)
+
+@admin.register(LedgerEntry)
+class LedgerEntryAdmin(GuardedModelAdmin):
+    pass
+
+
+@admin.register(MembershipInvoice)
+class MembershipInvoiceAdmin(GuardedModelAdmin):
+    pass
+
+
+@admin.register(ResourceUsage)
+class ResourceUsageAdmin(GuardedModelAdmin):
+    pass
+
+
+@admin.register(Event)
+class EventAdmin(GuardedModelAdmin):
+    pass
+
+
+@admin.register(EventRegistration)
+class EventRegistrationAdmin(GuardedModelAdmin):
+    pass
+
+
+@admin.register(Expense)
+class ExpenseAdmin(GuardedModelAdmin):
+    pass
+
+

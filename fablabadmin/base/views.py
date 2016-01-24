@@ -21,7 +21,6 @@ def link_callback(uri, rel):
     mUrl = settings.MEDIA_URL       # Typically /static/media/
     mRoot = settings.MEDIA_ROOT     # Typically /home/userX/project_static/media/
 
-    print uri, rel
     # convert URIs to absolute system paths
     if uri.startswith(mUrl):
         path = os.path.join(mRoot, uri.replace(mUrl, ""))
@@ -30,13 +29,13 @@ def link_callback(uri, rel):
     else:
         return uri  # handle absolute uri (ie: http://some.tld/foo.png)
 
-    print path
     # make sure that file exists
     if not os.path.isfile(path):
             raise Exception(
                 'media URI must start with %s or %s' % (sUrl, mUrl)
             )
     return path
+
 
 def render_to_pdf(template_src, context_dict):
     template = get_template(template_src)
