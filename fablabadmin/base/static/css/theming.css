@@ -9,7 +9,8 @@
 }
 
 #header {
-    background: #205067;
+    background-color: #fff;
+    color: #006EB8;
 
     /* Reset the indents of django-flat-theme
       (need to restore 40px on branding+user-tools instead) */
@@ -17,13 +18,17 @@
     padding-right: 0;
 }
 
-#header #branding h1 {
+#header ul#navigation-menu li.first a {
     margin: 0;
-    padding: 5px 10px;
+    background: none;
+}
+
+#header #branding h1 {
+    padding: 0;
+    margin: 5px 10px;
     text-indent: -9999px;
-    background: transparent url(../images/django.png) 10px 5px no-repeat;
-    height: 31px;
-    width: 93px;
+    background: transparent url(../images/Logo_FabLab_horizontal.png) 0px 0px no-repeat;
+    background-size: contain;
 }
 
 #header #user-tools {
@@ -31,23 +36,56 @@
     padding-right: 1.2em;
 }
 
-#bookmark-form {
-    clear: both;
+#user-tools a:focus, #user-tools a:hover{
+    border-bottom-color: #79aec8;
+    color: #79aec8;
+}
+
+#header a:link, #header a:visited {
+    color: #79aec8;
 }
 
 div.breadcrumbs {
     display: block;
     padding: 10px 15px;
     border: 0;
-    background-position: 0 -8px;
     border-bottom: 1px solid #ededed;
+    background: #00416D;
+    background-position: 0 -8px;
+    color: #fff;
+    font-weight: bold;
 }
-
 div.breadcrumbs a {
+    font-weight: normal;
     display: inline;
 }
 
-.dashboard-module {
+#header #navigation-menu,
+#header ul#navigation-menu li:hover, #header ul#navigation-menu li.over, #header ul#navigation-menu li.selected,
+#header ul#navigation-menu li:hover>ul li, #header ul#navigation-menu li.over>ul li, #header ul#navigation-menu li ul li:hover>ul li, #header ul#navigation-menu li ul li.over>ul li,
+#header ul#navigation-menu li ul li:hover, #header ul#navigation-menu li ul li.over, #header ul#navigation-menu li ul li ul li:hover, #header ul#navigation-menu li ul li ul li.over
+{
+    background-color: #006EB8;
+}
+
+#header ul#navigation-menu li a{
+    color: #fff;
+}
+
+#bookmark-form {
+    clear: both;
+}
+
+.dashboard-module,
+#dashboard-panel h3 a,
+.object-tools a,
+.submit-row,
+.submit-row a.deletelink,
+#changelist .actions select,
+#changelist .actions .button,
+input[type=text], input[type=password], input[type=email], input[type=url], input[type=number], textarea, select, .vTextField,
+.button, input[type=submit], input[type=button], .submit-row input, a.button{
     -moz-border-radius: 0;
     -webkit-border-radius: 0;
+    border-radius: 0;
 }
