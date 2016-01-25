@@ -60,3 +60,24 @@ def invoice(request):
                 'test':'hello'
             }
         )
+
+
+
+# MAILCHIMP Test
+# from mailchimp3 import MailChimp
+# def mailchimp():
+#     client = MailChimp(MAILCHIMP_USERNAME, MAILCHIMP_KEY)
+#     member = {
+#         "email_address": "email",
+#         "status": "subscribed",
+#         "merge_fields": {
+#             "FNAME": "test",
+#             "LNAME": "test"
+#         }
+#     }
+#     client.member.create(MAILCHIMP_LIST_ID, member)
+#
+#
+#     import hashlib
+#     hash = hashlib.md5('email'.lower()).hexdigest()
+#     client.member.delete(MAILCHIMP_LIST_ID, hash)

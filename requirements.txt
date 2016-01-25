@@ -10,6 +10,7 @@ django-autocomplete-light==2.3.1
 django-wysiwyg-redactor==0.4.9
 reportlab==3.2.0
 xhtml2pdf==0.0.6
+git+https://github.com/charlesthk/python-mailchimp.git
 
 #dev
 django-debug-toolbar==1.4
