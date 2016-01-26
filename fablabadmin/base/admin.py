@@ -11,6 +11,7 @@ from django.contrib.admin import AdminSite
 from tabbed_admin import TabbedModelAdmin
 from django.utils.html import format_html
 from django.db.models import Q
+from polymorphic.admin import PolymorphicParentModelAdmin, PolymorphicChildModelAdmin
 
 from .models import *
 
@@ -92,6 +93,14 @@ class MembershipPaidListFilter(admin.SimpleListFilter):
             return queryset.filter(ledger_entries__id__in=ids)
 
 
+
+class MembershipsInline(admin.StackedInline):
+    model = MembershipInvoice
+    readonly_fields = ('ledgerentry_ptr', 'is_membership_paid',)
+    extra = 0
+    fields = ('year', 'invoice', 'is_membership_paid')
+
+
 @admin.register(Contact)
 class ContactAdmin(TabbedModelAdmin, GuardedModelAdmin, ImportExportMixin):
     model = Contact
@@ -168,7 +177,8 @@ class ContactAdmin(TabbedModelAdmin, GuardedModelAdmin, ImportExportMixin):
         (_('Overview'), tab_overview),
         (_('Trainings'), tab_trainings),
         (_('Functions'), tab_functions),
-        (_('Detail'), tab_about)
+        (_('Detail'), tab_about),
+        (_('Memberships'), (MembershipsInline,))
     ]
     class Media:
         css = { "all" : ("css/hide_admin_original.css",) }
@@ -207,19 +217,46 @@ class InvoiceAdmin(GuardedModelAdmin):
     pass
 
 
+class LedgerEntryChildAdmin(PolymorphicChildModelAdmin, GuardedModelAdmin):
+    base_model = LedgerEntry
+    # By using these `base_...` attributes instead of the regular ModelAdmin `form` and `fieldsets`,
+    # the additional fields of the child models are automatically added to the admin form.
+    #base_form = ...
+    #base_fieldsets = (
+    #    ...
+    #)
+
+
+#@admin.register(MembershipInvoice)
+class MembershipInvoiceAdmin(LedgerEntryChildAdmin):
+    base_model = MembershipInvoice
+
+
+#@admin.register(ResourceUsage)
+class ResourceUsageAdmin(LedgerEntryChildAdmin):
+    base_model = ResourceUsage
+
+
+#@admin.register(EventRegistration)
+class EventRegistrationAdmin(LedgerEntryChildAdmin):
+    base_model = EventRegistration
+
+
+#@admin.register(Expense)
+class ExpenseAdmin(LedgerEntryChildAdmin):
+    base_model = Expense
+
+
 @admin.register(LedgerEntry)
-class LedgerEntryAdmin(GuardedModelAdmin):
-    pass
-
-
-@admin.register(MembershipInvoice)
-class MembershipInvoiceAdmin(GuardedModelAdmin):
-    pass
-
-
-@admin.register(ResourceUsage)
-class ResourceUsageAdmin(GuardedModelAdmin):
-    pass
+class LedgerEntryAdmin(PolymorphicParentModelAdmin, GuardedModelAdmin):
+    """ The parent model admin """
+    base_model = LedgerEntry
+    child_models = (
+        (MembershipInvoice, MembershipInvoiceAdmin),
+        (ResourceUsage, ResourceUsageAdmin),
+        (EventRegistration, EventRegistrationAdmin),
+        (Expense, ExpenseAdmin),
+    )
 
 
 class EventDocumentInline(admin.StackedInline):
@@ -264,15 +301,3 @@ class EventAdmin(TabbedModelAdmin, GuardedModelAdmin):
         (_('Documents'), tab_documents),
         (_('Registrations'), tab_registrations),
     ]
-
-
-@admin.register(EventRegistration)
-class EventRegistrationAdmin(GuardedModelAdmin):
-    pass
-
-
-@admin.register(Expense)
-class ExpenseAdmin(GuardedModelAdmin):
-    pass
-
-

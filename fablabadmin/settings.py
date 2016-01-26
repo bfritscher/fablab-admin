@@ -41,6 +41,7 @@ INSTALLED_APPS = (
     'django.contrib.admin',
     'tabbed_admin',
     'django.contrib.auth',
+    'polymorphic',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',

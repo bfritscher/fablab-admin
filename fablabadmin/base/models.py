@@ -6,6 +6,7 @@ from django.dispatch import receiver
 from redactor.fields import RedactorField
 from filer.fields.file import FilerFileField
 import datetime
+from polymorphic.models import PolymorphicModel
 
 
 class ContactStatus(models.Model):
@@ -133,7 +134,7 @@ class Invoice(models.Model):
         return '%s %s' % (_(dict(self.INVOICE_TYPE)[self.type]).capitalize(), self.id)
 
 
-class LedgerEntry(models.Model):
+class LedgerEntry(PolymorphicModel):
 
     LEDGER_TYPE = (
         ("D", _("debit")),
@@ -167,6 +168,12 @@ def current_year():
 class MembershipInvoice(LedgerEntry):
     year = models.PositiveIntegerField(verbose_name=_("year"), default=current_year)
     # TODO: auto create invoice
+
+    def is_membership_paid(self):
+        if self.invoice:
+            return self.invoice.paid
+        return False
+    is_membership_paid.short_description = _('is membership paid')
 
     def __str__(self):
         return _("Membership %(year)s for %(user)s") % {'user': self.user, 'year': self.year}
