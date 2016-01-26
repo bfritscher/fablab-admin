@@ -44,8 +44,12 @@ class Contact(models.Model):
     payment_info = models.TextField(verbose_name=_("payment information"), blank=True, null=False)
     trainings = models.ManyToManyField(ResourceType, through="Training")
 
-    def __str__(self):
+    def full_name(self):
         return '%s %s' % (self.first_name, self.last_name)
+    full_name.short_description = _('full name')
+
+    def __str__(self):
+        return self.full_name()
 
 
 # sync contact to user

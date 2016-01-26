@@ -50,7 +50,7 @@ INSTALLED_APPS = (
     'redactor',
     'guardian',
     'import_export',
-    'debug_toolbar'
+    'debug_toolbar',
 )
 
 

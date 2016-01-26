@@ -76,6 +76,7 @@ div.breadcrumbs a {
     clear: both;
 }
 
+#changelist #toolbar form input,
 .yourlabs-autocomplete,
 .dashboard-module,
 #dashboard-panel h3 a,

@@ -8,6 +8,7 @@ from import_export.admin import ImportExportMixin
 import autocomplete_light
 from django.contrib.admin import AdminSite
 from tabbed_admin import TabbedModelAdmin
+
 from .models import *
 
 AdminSite.site_title = 'FabLab - admin'
@@ -51,9 +52,12 @@ class TrainingInline(admin.TabularInline):
 @admin.register(Contact)
 class ContactAdmin(ImportExportMixin, TabbedModelAdmin):
     model = Contact
+    search_fields = ('first_name' , 'last_name', 'email', 'user__username')
+    list_display = ('full_name', 'status')
+    list_filter = ('status',)
     #inlines = (FunctionInline,)
     tab_overview = (
-        ('Contact', {
+        (_('Contact'), {
             'fields': ('first_name',
                        'last_name',
                        'email',
@@ -61,14 +65,14 @@ class ContactAdmin(ImportExportMixin, TabbedModelAdmin):
                        'status',
                        )
         }),
-        ('Address', {
+        (_('Address'), {
             'fields': ('address',
                        'postal_code',
                        'city',
                        'country'
                        )
         }),
-        ('Payment', {
+        (_('Payment'), {
             'fields': ('payment_info',),
         })
     )
@@ -85,10 +89,10 @@ class ContactAdmin(ImportExportMixin, TabbedModelAdmin):
             }),
     )
     tabs = [
-        ('Overview', tab_overview),
-        ('Trainings', tab_trainings),
-        ('Functions', tab_functions),
-        ('Detail', tab_about)
+        (_('Overview'), tab_overview),
+        (_('Trainings'), tab_trainings),
+        (_('Functions'), tab_functions),
+        (_('Detail'), tab_about)
     ]
     class Media:
         css = { "all" : ("css/hide_admin_original.css",) }

@@ -11,6 +11,7 @@ django-wysiwyg-redactor==0.4.9
 reportlab==3.2.0
 xhtml2pdf==0.0.6
 git+https://github.com/charlesthk/python-mailchimp.git
+django-tabbed-admin==0.0.5
 
 #dev
 django-debug-toolbar==1.4
