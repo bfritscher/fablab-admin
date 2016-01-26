@@ -90,3 +90,32 @@ input[type=text], input[type=password], input[type=email], input[type=url], inpu
     -webkit-border-radius: 0;
     border-radius: 0;
 }
+
+
+.ui-corner-all, .ui-corner-top, .ui-corner-right, .ui-corner-tr {
+    border-radius: 0;
+}
+
+.ui-tabs .ui-tabs-panel {
+    padding: 0;
+}
+
+.ui-widget-header, .ui-widget-content{
+    background: none;
+}
+
+.ui-tabs .ui-tabs-nav{
+    padding:0;
+    border: 0;
+    border-bottom: 1px solid #eee;
+}
+
+.ui-widget-content {
+    border: 0;
+    margin: 0;
+    padding: 0;
+}
+
+.ui-state-active, .ui-widget-content .ui-state-active, .ui-widget-header .ui-state-active{
+    background: #006EB8;
+}

@@ -39,6 +39,7 @@ INSTALLED_APPS = (
     'admin_tools.dashboard',
     'autocomplete_light',
     'django.contrib.admin',
+    'tabbed_admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
@@ -80,7 +81,7 @@ TEMPLATES = [
                 'django.template.context_processors.i18n',
                 'django.template.context_processors.media',
                 'django.template.context_processors.static',
-                'django.template.context_processors.tz',
+                'django.template.context_processors.csrf',
                 'django.template.context_processors.request',
                 'django.contrib.messages.context_processors.messages',
             ],
@@ -165,3 +166,6 @@ CORS_URLS_REGEX = r'^/api/.*$'
 REDACTOR_OPTIONS = {'lang': 'en'}
 REDACTOR_UPLOAD = 'uploads/'
 #REDACTOR_UPLOAD_HANDLER = 'redactor.handlers.UUIDUploader'
+
+# django tabbed-admin
+TABBED_ADMIN_USE_JQUERY_UI = True

@@ -6,8 +6,12 @@ from guardian.admin import GuardedModelAdmin
 from django.utils.translation import ugettext_lazy as _
 from import_export.admin import ImportExportMixin
 import autocomplete_light
-
+from django.contrib.admin import AdminSite
+from tabbed_admin import TabbedModelAdmin
 from .models import *
+
+AdminSite.site_title = 'FabLab - admin'
+AdminSite.index_title = 'Dashboard'
 
 
 @admin.register(ContactStatus)
@@ -40,10 +44,52 @@ class FunctionInline(admin.TabularInline):
     model = Function
     extra = 1
 
+class TrainingInline(admin.TabularInline):
+    model = Training
+    extra = 1
 
 @admin.register(Contact)
-class ContactAdmin(ImportExportMixin, GuardedModelAdmin):
-    inlines = (FunctionInline,)
+class ContactAdmin(ImportExportMixin, TabbedModelAdmin):
+    model = Contact
+    #inlines = (FunctionInline,)
+    tab_overview = (
+        ('Contact', {
+            'fields': ('first_name',
+                       'last_name',
+                       'email',
+                       'phone',
+                       'status',
+                       )
+        }),
+        ('Address', {
+            'fields': ('address',
+                       'postal_code',
+                       'city',
+                       'country'
+                       )
+        }),
+        ('Payment', {
+            'fields': ('payment_info',),
+        })
+    )
+    tab_trainings = (TrainingInline,)
+    tab_functions = (FunctionInline,)
+    tab_about = (
+            (None, {
+                'fields': ('user',
+                           'birth_year',
+                         'education',
+                         'profession',
+                         'employer',
+                         'interests')
+            }),
+    )
+    tabs = [
+        ('Overview', tab_overview),
+        ('Trainings', tab_trainings),
+        ('Functions', tab_functions),
+        ('Detail', tab_about)
+    ]
     class Media:
         css = { "all" : ("css/hide_admin_original.css",) }
 
