@@ -50,6 +50,9 @@ INSTALLED_APPS = (
     'redactor',
     'guardian',
     'import_export',
+    'easy_thumbnails',
+    'filer',
+    'mptt',
     'debug_toolbar',
 )
 
@@ -169,3 +172,21 @@ REDACTOR_UPLOAD = 'uploads/'
 
 # django tabbed-admin
 TABBED_ADMIN_USE_JQUERY_UI = True
+
+
+#filer
+THUMBNAIL_HIGH_RESOLUTION = True
+THUMBNAIL_PROCESSORS = (
+    'easy_thumbnails.processors.colorspace',
+    'easy_thumbnails.processors.autocrop',
+    #'easy_thumbnails.processors.scale_and_crop',
+    'filer.thumbnail_processors.scale_and_crop_with_subject_location',
+    'easy_thumbnails.processors.filters',
+)
+
+#
+def show_toolbar(request):
+    return True
+DEBUG_TOOLBAR_CONFIG = {
+    "SHOW_TOOLBAR_CALLBACK" : show_toolbar,
+}

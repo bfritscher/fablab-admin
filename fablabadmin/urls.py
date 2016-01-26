@@ -13,6 +13,7 @@ Including another URLconf
     1. Add an import:  from blog import urls as blog_urls
     2. Add a URL to urlpatterns:  url(r'^blog/', include(blog_urls))
 """
+import settings
 from django.conf.urls import include, url
 from django.contrib import admin
 
@@ -42,5 +43,6 @@ urlpatterns = [
     url(r'^api/', include(router.urls)),
     url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     url(r'^i18n/', include('django.conf.urls.i18n')),
+    url(r'^filer/', include('filer.urls')),
     url(r'^', include(urls))
 ]

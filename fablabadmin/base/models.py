@@ -4,10 +4,13 @@ from django.utils.translation import ugettext_lazy as _
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from redactor.fields import RedactorField
+from filer.fields.file import FilerFileField
 import datetime
 
+
 class ContactStatus(models.Model):
-    name = models.CharField(_('name'), max_length=30, blank=False, null=False)
+    name = models.CharField(verbose_name=_('name'), max_length=30, blank=False, null=False)
+    is_member = models.BooleanField(verbose_name=_("is member"), default=False)
 
     class Meta:
         verbose_name = _("contact status")
@@ -43,6 +46,16 @@ class Contact(models.Model):
     interests = models.TextField(verbose_name=_("interests"), blank=True, null=False)
     payment_info = models.TextField(verbose_name=_("payment information"), blank=True, null=False)
     trainings = models.ManyToManyField(ResourceType, through="Training")
+
+    def is_membership_paid(self):
+        m = MembershipInvoice.objects.filter(user=self, year=datetime.date.today().year).first()
+        if m:
+            if m.invoice:
+                return m.invoice.paid
+            else:
+                return None
+        return False
+    is_membership_paid.short_description = _('is %(year)s membership paid') % {'year': datetime.date.today().year}
 
     def full_name(self):
         return '%s %s' % (self.first_name, self.last_name)
@@ -112,6 +125,8 @@ class Invoice(models.Model):
     paid = models.DateField(verbose_name=_("date paid"), blank=True, null=True)
     payment_type = models.CharField(max_length=1, choices=PAYMENT_TYPE, default="B")
     type = models.CharField(max_length=1, choices=INVOICE_TYPE, default="I")
+    draft = models.BooleanField(verbose_name=_("draft"), default=True)
+    total = models.IntegerField(verbose_name=_("total"), default=0)
     document = models.FileField(verbose_name=_("document"), blank=True, null=True)
 
     def __str__(self):
@@ -168,7 +183,9 @@ class Event(models.Model):
     title = models.CharField(max_length=200, verbose_name=_("title"))
     start_date = models.DateField(verbose_name=_("start date"))
     end_date = models.DateField(verbose_name=_("end date"), blank=True, null=True)
-    description = RedactorField(verbose_name=_("description"), blank=True, null=False)
+    location = models.TextField(verbose_name=_("location"), blank=True)
+    description = RedactorField(verbose_name=_("description"), blank=True)
+    min_participants = models.PositiveIntegerField(verbose_name=_("minimum number of participants"), default=0)
     max_participants = models.PositiveIntegerField(verbose_name=_("maximum number of participants"), default=0)
     organizers = models.ManyToManyField(Contact)
 
@@ -178,6 +195,13 @@ class Event(models.Model):
             txt += " - %s" % (self.end_date,)
         return txt + ")"
 
+
+class EventDocument(models.Model):
+    file = FilerFileField(verbose_name=_("document"), related_name="event_document")
+    event = models.ForeignKey(Event, related_name="documents", verbose_name=_("event"))
+
+    def __str__(self):
+        return self.file.label.encode('utf-8')
 
 class EventRegistration(LedgerEntry):
     event = models.ForeignKey(Event, verbose_name=_("event"), related_name="registrations", on_delete=models.PROTECT)
