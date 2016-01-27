@@ -141,7 +141,7 @@ class LedgerEntry(PolymorphicModel):
         ("C", _("credit"))
     )
 
-    date = models.DateField(verbose_name=_("date"))
+    date = models.DateField(verbose_name=_("date"), default=datetime.date.today)
     title = models.CharField(max_length=100, verbose_name=_("title"), blank=True, null=True)
     description = models.TextField(verbose_name=_("description"), blank=False, null=False)
     quantity = models.FloatField(verbose_name=_("quantity"), blank=False, default=1)

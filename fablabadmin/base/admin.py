@@ -93,12 +93,16 @@ class MembershipPaidListFilter(admin.SimpleListFilter):
             return queryset.filter(ledger_entries__id__in=ids)
 
 
-
-class MembershipsInline(admin.StackedInline):
+class MembershipsInline(admin.TabularInline):
     model = MembershipInvoice
-    readonly_fields = ('ledgerentry_ptr', 'is_membership_paid',)
+    readonly_fields = ('ledgerentry_ptr', 'year', 'document', 'is_membership_paid',)
     extra = 0
-    fields = ('year', 'invoice', 'is_membership_paid')
+    max_num = 0
+    can_delete = False
+    fields = ('year', 'document', 'is_membership_paid')
+
+    def document(self, obj):
+        return obj.invoice.document
 
 
 @admin.register(Contact)
@@ -197,7 +201,7 @@ class FunctionAdminForm(ModelForm):
         return self.cleaned_data
 
 
-@admin.register(Function)
+#@admin.register(Function)
 class FunctionAdmin(GuardedModelAdmin):
     form = FunctionAdminForm
 
@@ -207,7 +211,7 @@ class ResourceAdmin(GuardedModelAdmin):
     pass
 
 
-@admin.register(Training)
+#@admin.register(Training)
 class TrainingAdmin(GuardedModelAdmin):
     form = autocomplete_light.modelform_factory(Training, fields='__all__')
 
@@ -230,7 +234,17 @@ class LedgerEntryChildAdmin(PolymorphicChildModelAdmin, GuardedModelAdmin):
 #@admin.register(MembershipInvoice)
 class MembershipInvoiceAdmin(LedgerEntryChildAdmin):
     base_model = MembershipInvoice
+    form = autocomplete_light.modelform_factory(Training, fields='__all__')
 
+    def get_form(self, request, obj=None, **kwargs):
+            # Proper kwargs are form, fields, exclude, formfield_callback
+            if obj: # obj is not None, so this is a change page
+                pass
+                #kwargs['exclude'] = ['foo', 'bar',]
+            else: # obj is None, so this is an add page
+                kwargs['fields'] = ('date', 'user', 'year')
+
+            return super(MembershipInvoiceAdmin, self).get_form(request, obj, **kwargs)
 
 #@admin.register(ResourceUsage)
 class ResourceUsageAdmin(LedgerEntryChildAdmin):
