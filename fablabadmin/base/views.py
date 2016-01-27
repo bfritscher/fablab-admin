@@ -9,6 +9,8 @@ from cgi import escape
 from fablabadmin import settings
 import os
 
+from fablabadmin.base.models import Invoice
+
 
 def link_callback(uri, rel):
     """
@@ -48,16 +50,17 @@ def render_to_pdf(template_src, context_dict):
     return HttpResponse('We had some errors<pre>%s</pre>' % escape(html))
 
 
-
 def change_lang(request):
     return render(request, 'base/change_lang.html')
 
-def invoice(request):
+
+def invoice(request, id):
+    invoice = Invoice.objects.prefetch_related('entries').get(id=id)
     #Retrieve data or whatever you need
     return render_to_pdf(
             'base/invoice.html',
             {
-                'test':'hello'
+                'invoice': invoice
             }
         )
 

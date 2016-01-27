@@ -2,7 +2,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>HTML to API - Invoice</title>
+    <title>{{ invoice }}</title>
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
     <meta http-equiv="content-type" content="text-html; charset=utf-8">
     <style type="text/css">
@@ -166,10 +166,11 @@ table.header{
                     <img src="{% static 'images/Logo_FabLab_horizontal.png' %}" alt="" height="70pt">
                 </td>
                 <td style="width: 200px">
-                    <p class="address">FabLab la Côte<br/>
-                       Chemin du Nipy 8<br/>
-                       1262 Eysins<br/>
-                    <a href="mailto:info@fablab-lacote.ch">info@fablab-lacote.ch</a></p>
+                    <p class="address">{{ invoice.seller.first_name }} {{ invoice.seller.last_name }}<br/>
+                       {{ invoice.seller.address }}<br/>
+                       {{ invoice.seller.postal_code }} {{ invoice.seller.city }}<br/>
+                       {{ invoice.seller.country }}
+                    <a href="mailto:{{ invoice.seller.email }}">{{ invoice.seller.email }}</a></p>
                 </td>
             </tr>
         </table>
@@ -180,16 +181,16 @@ table.header{
             <tr>
                 <td>
                     <p style="line-height:10pt;padding-bottom: 6pt">INVOICE TO:</p>
-                    <p class="address">John Doe<br/>
-                        796 Silver Harbour,<br/>
-                        TX 79273,<br/>
-                        US<br/>
-                        <a href="mailto:john@example.com">john@example.com</a>
+                    <p class="address">{{ invoice.buyer.first_name }} {{ invoice.buyer.last_name }}<br/>
+                       {{ invoice.buyer.address }}<br/>
+                       {{ invoice.buyer.postal_code }} {{ invoice.buyer.city }}<br/>
+                       {{ invoice.buyer.country }}
+                    <a href="mailto:{{ invoice.buyer.email }}">{{ invoice.buyer.email }}</a>
                     </p>
                 </td>
                 <td style="text-align:right">
-                    <h1>Invoice 105 {{ test }}</h1>
-                    <p>Date of Invoice: 01/06/2014</p>
+                    <h1>{{ invoice }}</h1>
+                    <p>Date of Invoice: {{ invoice.date }}</p>
                 </td>
             </tr>
         </table>
@@ -204,135 +205,25 @@ table.header{
                 </tr>
             </thead>
             <tbody>
+                {% for l in invoice.entries.all %}
                 <tr>
                     <td class="desc">
-                        <h3></h3>
-                        <p>Creating a recognizable design solution based on the company's existing visual identity</p></td>
-                    <td class="qty">30</td>
-                    <td class="unit">40.00</td>
-                    <td class="total">1,200.00</td>
+                        <h3>{{ l.title }}</h3>
+                        <p>{{ l.description | linebreaks }}</p></td>
+                    <td class="qty">{{ l.quantity }}</td>
+                    <td class="unit">{{ l.unit_price }}</td>
+                    <td class="total">{{ l.total }}</td>
                 </tr>
-                <tr>
-                    <td class="desc">
-                        <h3></h3>
-                        <p>Developing a Content Management System-based Website</p></td>
-                    <td class="qty">80</td>
-                    <td class="unit">40.00</td>
-                    <td class="total">3,200.00</td>
-                </tr>
-                <tr>
-                    <td class="desc">
-                        <h3></h3>
-                        <p>Optimize the site for search engines (SEO)</p></td>
-                    <td class="qty">20</td>
-                    <td class="unit">40.00</td>
-                    <td class="total">800.00</td>
-                </tr>
-                <tr>
-                    <td class="desc">
-                        <h3>Website Design</h3>
-                        <p>Creating a recognizable design solution based on the company's existing visual identity</p></td>
-                    <td class="qty">30</td>
-                    <td class="unit">40.00</td>
-                    <td class="total">1,200.00</td>
-                </tr>
-                <tr>
-                    <td class="desc">
-                        <h3></h3>
-                        <p>Developing a Content Management System-based Website</p></td>
-                    <td class="qty">80</td>
-                    <td class="unit">40.00</td>
-                    <td class="total">3,200.00</td>
-                </tr>
-                <tr>
-                    <td class="desc">
-                        <h3>Search Engines Optimization</h3>
-                        <p>Optimize the site for search engines (SEO)</p></td>
-                    <td class="qty">20</td>
-                    <td class="unit">40.00</td>
-                    <td class="total">800.00</td>
-                </tr>                <tr>
-                    <td class="desc">
-                        <h3>Website Design</h3>
-                        <p>Creating a recognizable design solution based on the company's existing visual identity</p></td>
-                    <td class="qty">30</td>
-                    <td class="unit">40.00</td>
-                    <td class="total">1,200.00</td>
-                </tr>
-                <tr>
-                    <td class="desc">
-                        <h3>Website Development</h3>
-                        <p>Developing a Content Management System-based Website</p></td>
-                    <td class="qty">80</td>
-                    <td class="unit">40.00</td>
-                    <td class="total">3,200.00</td>
-                </tr>
-                <tr>
-                    <td class="desc">
-                        <h3>Search Engines Optimization</h3>
-                        <p>Optimize the site for search engines (SEO)</p></td>
-                    <td class="qty">20</td>
-                    <td class="unit">40.00</td>
-                    <td class="total">800.00</td>
-                </tr>                <tr>
-                    <td class="desc">
-                        <h3>Website Design</h3>
-                        <p>Creating a recognizable design solution based on the company's existing visual identity</p></td>
-                    <td class="qty">30</td>
-                    <td class="unit">40.00</td>
-                    <td class="total">1,200.00</td>
-                </tr>
-                <tr>
-                    <td class="desc">
-                        <h3>Website Development</h3>
-                        <p>Developing a Content Management System-based Website</p></td>
-                    <td class="qty">80</td>
-                    <td class="unit">40.00</td>
-                    <td class="total">3,200.00</td>
-                </tr>
-                <tr>
-                    <td class="desc">
-                        <h3>Search Engines Optimization</h3>
-                        <p>Optimize the site for search engines (SEO)</p></td>
-                    <td class="qty">20</td>
-                    <td class="unit">40.00</td>
-                    <td class="total">800.00</td>
-                </tr>                <tr>
-                    <td class="desc">
-                        <h3>Website Design</h3>
-                        <p>Creating a recognizable design solution based on the company's existing visual identity</p></td>
-                    <td class="qty">30</td>
-                    <td class="unit">40.00</td>
-                    <td class="total">1,200.00</td>
-                </tr>
-                <tr>
-                    <td class="desc">
-                        <h3>Website Development</h3>
-                        <p>Developing a Content Management System-based Website</p></td>
-                    <td class="qty">80</td>
-                    <td class="unit">40.00</td>
-                    <td class="total">3,200.00</td>
-                </tr>
-                <tr>
-                    <td class="desc">
-                        <h3>Search Engines Optimization</h3>
-                        <p>Optimize the site for search engines (SEO)</p></td>
-                    <td class="qty">20</td>
-                    <td class="unit">40.00</td>
-                    <td class="total">800.00</td>
-                </tr>
+                {%  endfor %}
                 <tr class="grand-total">
-                    <td colspan="4">GRAND TOTAL: CHF 6,500.00</td>
+                    <td colspan="4">GRAND TOTAL: CHF {{ invoice.total }}</td>
                 </tr>
             </tbody>
         </table>
         <div class="notice">
             <p>Veuillez régler la facture par virement en mentionnant dans le champ communication le numéro de facture.</p>
-            <p>Coordonnées bancaires:<br/><br/>
-                <strong>FABLAB LA COTE</strong><br/>
-                Compte: 14-43-9111-6<br/>
-                IBAN: CH07 0900 0000 1443 9111 6<br/>
-                BIC: POFICHBEXXX
+            <p>Coordonnées bancaires:<br/>
+                {{ invoice.seller.payment_info|linebreaks }}
                 </p>
             <p>Pour toutes questions concernant cette facture, veuillez contacter: comite@fablab-lacote.ch.</p>
             <p class="thanks">NOUS VOUS REMERCIONS DE VOTRE CONFIANCE</p>
@@ -342,12 +233,12 @@ table.header{
     <div id="footer_content"><!-- pdf:tags need new line immediatly after -->
         <table class="footer">
             <tr>
-                <td>FabLab la Côte - Invoice 123</td>
+                <td>{{ invoice.seller.first_name }} {{ invoice.seller.last_name }}- {{ invoice }}</td>
                 <td style="text-align:center">
                     <pdf:pagenumber>
                     / <pdf:pagecount>
                 </td>
-                <td style="text-align:right">23.12.2016</td>
+                <td style="text-align:right">{{ invoice.date }}</td>
             </tr>
         </table>
     </div>

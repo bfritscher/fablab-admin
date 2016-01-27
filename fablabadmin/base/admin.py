@@ -238,11 +238,11 @@ class MembershipInvoiceAdmin(LedgerEntryChildAdmin):
 
     def get_form(self, request, obj=None, **kwargs):
             # Proper kwargs are form, fields, exclude, formfield_callback
-            if obj: # obj is not None, so this is a change page
+            if obj: # obj is not N  one, so this is a change page
                 pass
                 #kwargs['exclude'] = ['foo', 'bar',]
             else: # obj is None, so this is an add page
-                kwargs['fields'] = ('date', 'user', 'year')
+                kwargs['fields'] = ('date', 'user', 'year', 'unit_price')
 
             return super(MembershipInvoiceAdmin, self).get_form(request, obj, **kwargs)
 

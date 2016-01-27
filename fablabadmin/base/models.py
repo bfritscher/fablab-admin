@@ -7,8 +7,9 @@ from redactor.fields import RedactorField
 from filer.fields.file import FilerFileField
 import datetime
 from polymorphic.models import PolymorphicModel
+from django.utils.encoding import python_2_unicode_compatible
 
-
+@python_2_unicode_compatible
 class ContactStatus(models.Model):
     name = models.CharField(verbose_name=_('name'), max_length=30, blank=False, null=False)
     is_member = models.BooleanField(verbose_name=_("is member"), default=False)
@@ -20,14 +21,14 @@ class ContactStatus(models.Model):
     def __str__(self):
         return self.name
 
-
+@python_2_unicode_compatible
 class ResourceType(models.Model):
     name = models.CharField(max_length=60, verbose_name=_("name"), blank=False, null=False)
 
     def __str__(self):
         return self.name
 
-
+@python_2_unicode_compatible
 class Contact(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, blank=True, null=True)
     first_name = models.CharField(_('first name'), max_length=30, blank=True, null=False)
@@ -76,7 +77,7 @@ def update_user(sender, instance, **kwargs):
         contact.user.email = contact.email
         contact.user.save()
 
-
+@python_2_unicode_compatible
 class Function(models.Model):
     member = models.ForeignKey(Contact, related_name="functions", verbose_name=_("member"), on_delete=models.CASCADE) #limit_choices_to={'is_staff': True},
     name = models.CharField(max_length=60, verbose_name=_("name"), blank=False, null=False)
@@ -93,6 +94,7 @@ class Function(models.Model):
         return full_name.strip()
 
 
+@python_2_unicode_compatible
 class Resource(models.Model):
     name = models.CharField(max_length=60, verbose_name=_("name"), blank=False, null=False)
     type = models.ForeignKey(ResourceType, related_name="resources", verbose_name=_("type"), on_delete=models.PROTECT)
@@ -102,6 +104,7 @@ class Resource(models.Model):
         return '%s | %s' % (self.type, self.name)
 
 
+@python_2_unicode_compatible
 class Training(models.Model):
     member = models.ForeignKey(Contact, verbose_name=_("member"), on_delete=models.CASCADE)
     resource = models.ForeignKey(ResourceType, verbose_name=_("resource"), on_delete=models.CASCADE)
@@ -111,6 +114,7 @@ class Training(models.Model):
         return '%s - %s' % (self.resource, self.member)
 
 
+@python_2_unicode_compatible
 class Invoice(models.Model):
     INVOICE_TYPE = (
         ("E", _("expense")),
@@ -134,6 +138,7 @@ class Invoice(models.Model):
         return '%s %s' % (_(dict(self.INVOICE_TYPE)[self.type]).capitalize(), self.id)
 
 
+@python_2_unicode_compatible
 class LedgerEntry(PolymorphicModel):
 
     LEDGER_TYPE = (
@@ -165,6 +170,7 @@ def current_year():
     return now.year
 
 
+@python_2_unicode_compatible
 class MembershipInvoice(LedgerEntry):
     year = models.PositiveIntegerField(verbose_name=_("year"), default=current_year)
     # TODO: auto create invoice
@@ -175,10 +181,31 @@ class MembershipInvoice(LedgerEntry):
         return False
     is_membership_paid.short_description = _('is membership paid')
 
+    def save(self):
+        self.quantity = 1
+        if not self.title or self.title is None:
+            self.title = _('Membership')
+
+        if not self.description or self.description is None:
+            self.description = _('membership %(year)s') % {'year': self.year}
+
+        if self.invoice is None:
+            seller = Contact.objects.filter(status__name='fablab_invoice').first()
+            self.invoice = Invoice.objects.create(total=self.unit_price,
+                                                  date=self.date,
+                                                  buyer=self.user,
+                                                  seller=seller,
+                                                  draft=False
+                                                  )
+
+        super(MembershipInvoice, self).save()
+        #save invoice
+
     def __str__(self):
         return _("Membership %(year)s for %(user)s") % {'user': self.user, 'year': self.year}
 
 
+@python_2_unicode_compatible
 class ResourceUsage(LedgerEntry):
     resource = models.ForeignKey(Resource, verbose_name=_("resource"), related_name="usages", on_delete=models.PROTECT)
 
@@ -186,6 +213,7 @@ class ResourceUsage(LedgerEntry):
         return _("Usage of %(resource)s by %(user)s") % {'user': self.user, 'resource': self.resource}
 
 
+@python_2_unicode_compatible
 class Event(models.Model):
     title = models.CharField(max_length=200, verbose_name=_("title"))
     start_date = models.DateField(verbose_name=_("start date"))
@@ -203,6 +231,7 @@ class Event(models.Model):
         return txt + ")"
 
 
+@python_2_unicode_compatible
 class EventDocument(models.Model):
     file = FilerFileField(verbose_name=_("document"), related_name="event_document")
     event = models.ForeignKey(Event, related_name="documents", verbose_name=_("event"))
@@ -210,6 +239,8 @@ class EventDocument(models.Model):
     def __str__(self):
         return self.file.label.encode('utf-8')
 
+
+@python_2_unicode_compatible
 class EventRegistration(LedgerEntry):
     event = models.ForeignKey(Event, verbose_name=_("event"), related_name="registrations", on_delete=models.PROTECT)
 
@@ -217,6 +248,7 @@ class EventRegistration(LedgerEntry):
         return _("Registration to %(event)s by %(user)s") % {'user': self.user, 'event': self.event}
 
 
+@python_2_unicode_compatible
 class Expense(LedgerEntry):
     event = models.ForeignKey(Event, verbose_name=_("event"), related_name="expenses", blank=True, null=True, on_delete=models.PROTECT)
     contact = models.ForeignKey(Contact, verbose_name=_("provider"), blank=True, null=True, on_delete=models.PROTECT)
