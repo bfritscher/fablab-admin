@@ -101,12 +101,20 @@ class MembershipsInline(admin.TabularInline):
     can_delete = False
     fields = ('year', 'document', 'is_membership_paid')
 
+    def is_membership_paid(self, obj):
+        answer_class = 'no'
+        answer_text = _('no')
+        if obj.is_membership_paid():
+            answer_class = 'yes'
+            answer_text = _('yes')
+        return format_html('<span class="membership-{}">{}</span>', answer_class, answer_text)
+
     def document(self, obj):
         return obj.invoice.document
 
 
 @admin.register(Contact)
-class ContactAdmin(TabbedModelAdmin, GuardedModelAdmin, ImportExportMixin):
+class ContactAdmin(ImportExportMixin, TabbedModelAdmin):
     model = Contact
     search_fields = ('first_name', 'last_name', 'email', 'user__username')
     list_display = ('full_name', 'status', 'is_membership_paid_list')
@@ -130,6 +138,7 @@ class ContactAdmin(TabbedModelAdmin, GuardedModelAdmin, ImportExportMixin):
             return format_html('<span class="membership-{}">{}</span> {}', answer_class, answer_text, mark_safe(html))
         return _('-')
     is_membership_paid.short_description = _('is %(year)s membership paid') % {'year': datetime.date.today().year}
+
 
     def is_membership_paid_list(self, obj):
         if obj.status.is_member:
