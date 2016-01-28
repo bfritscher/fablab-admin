@@ -225,9 +225,34 @@ class TrainingAdmin(GuardedModelAdmin):
     form = autocomplete_light.modelform_factory(Training, fields='__all__')
 
 
+class LedgerEntryInline(admin.StackedInline):
+    form = autocomplete_light.modelform_factory(Training, fields='__all__')
+    model = LedgerEntry
+    extra = 1
+    readonly_fields = ('total',)
+    fields = (
+        'date',
+        'title',
+        'description',
+        'user',
+        ('quantity', 'unit_price', 'total')
+    )
+
 @admin.register(Invoice)
 class InvoiceAdmin(GuardedModelAdmin):
-    pass
+    form = autocomplete_light.modelform_factory(Training, fields='__all__')
+    search_fields = ('seller', 'buyer')
+    list_display = ('__str__', 'buyer', 'seller', 'total', 'paid',)
+    list_filter = ('paid', 'type', 'payment_type', 'draft')
+    #readonly_fields = ('is_membership_paid',)
+    date_hierarchy = "date"
+    inlines = (LedgerEntryInline, )
+    fields = (
+        ('date', 'draft'),
+         'buyer', 'seller',
+         ('payment_type', 'paid'),
+         'total', 'document', 'type'
+    )
 
 
 class LedgerEntryChildAdmin(PolymorphicChildModelAdmin, GuardedModelAdmin):

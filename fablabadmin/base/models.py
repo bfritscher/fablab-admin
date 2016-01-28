@@ -131,7 +131,7 @@ class Invoice(models.Model):
     payment_type = models.CharField(max_length=1, choices=PAYMENT_TYPE, default="B")
     type = models.CharField(max_length=1, choices=INVOICE_TYPE, default="I")
     draft = models.BooleanField(verbose_name=_("draft"), default=True)
-    total = models.IntegerField(verbose_name=_("total"), default=0)
+    total = models.FloatField(verbose_name=_("total"), default=0)
     document = models.FileField(verbose_name=_("document"), blank=True, null=True)
 
     def __str__(self):
