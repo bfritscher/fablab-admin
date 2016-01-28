@@ -1,4 +1,5 @@
 {% load staticfiles %}
+{% load humanize %}
 <!DOCTYPE html>
 <html>
 <head>
@@ -211,12 +212,12 @@ table.header{
                         <h3>{{ l.title }}</h3>
                         <p>{{ l.description | linebreaks }}</p></td>
                     <td class="qty">{{ l.quantity }}</td>
-                    <td class="unit">{{ l.unit_price }}</td>
-                    <td class="total">{{ l.total }}</td>
+                    <td class="unit">{{ l.unit_price |floatformat:2|intcomma }}</td>
+                    <td class="total">{{ l.total |floatformat:2|intcomma }}</td>
                 </tr>
                 {%  endfor %}
                 <tr class="grand-total">
-                    <td colspan="4">GRAND TOTAL: CHF {{ invoice.total }}</td>
+                    <td colspan="4">GRAND TOTAL: CHF {{ invoice.total |floatformat:2|intcomma  }}</td>
                 </tr>
             </tbody>
         </table>
