@@ -26,6 +26,10 @@ class ContactStatus(models.Model):
 class ResourceType(models.Model):
     name = models.CharField(max_length=60, verbose_name=_("name"), blank=False, null=False)
 
+    class Meta:
+        verbose_name = _("resource type")
+        verbose_name_plural = _("resource types")
+
     def __str__(self):
         return self.name
 
@@ -64,6 +68,10 @@ class Contact(models.Model):
         return '%s %s' % (self.first_name, self.last_name)
     full_name.short_description = _('full name')
 
+    class Meta:
+        verbose_name = _("contact")
+        verbose_name_plural = _("contacts")
+
     def __str__(self):
         return self.full_name()
 
@@ -77,6 +85,7 @@ def update_user(sender, instance, **kwargs):
         contact.user.last_name = contact.last_name
         contact.user.email = contact.email
         contact.user.save()
+
 
 @python_2_unicode_compatible
 class Function(models.Model):
@@ -101,6 +110,10 @@ class Resource(models.Model):
     type = models.ForeignKey(ResourceType, related_name="resources", verbose_name=_("type"), on_delete=models.PROTECT)
     description = RedactorField(verbose_name=_("description"), blank=True, null=False)
 
+    class Meta:
+        verbose_name = _("resource")
+        verbose_name_plural = _("resources")
+
     def __str__(self):
         return '%s | %s' % (self.type, self.name)
 
@@ -110,6 +123,10 @@ class Training(models.Model):
     member = models.ForeignKey(Contact, verbose_name=_("member"), on_delete=models.CASCADE)
     resource = models.ForeignKey(ResourceType, verbose_name=_("resource"), on_delete=models.CASCADE)
     date = models.DateField(verbose_name=_("date"))
+
+    class Meta:
+        verbose_name = _("training")
+        verbose_name_plural = _("trainings")
 
     def __str__(self):
         return '%s - %s' % (self.resource, self.member)
@@ -134,6 +151,10 @@ class Invoice(models.Model):
     draft = models.BooleanField(verbose_name=_("draft"), default=True)
     total = models.FloatField(verbose_name=_("total"), default=0)
     document = models.FileField(verbose_name=_("document"), blank=True, null=True)
+
+    class Meta:
+        verbose_name = _("invoice")
+        verbose_name_plural = _("invoices")
 
     def __str__(self):
         return '%s %s' % (_(dict(self.INVOICE_TYPE)[self.type]).capitalize(), self.id)
@@ -163,6 +184,7 @@ class LedgerEntry(PolymorphicModel):
         return _("Transaction on %(date)s for %(total)s by %(user)s") % {'user': self.user, 'total':self.total, 'date': self.date}
 
     class Meta:
+        verbose_name = _("ledger entry")
         verbose_name_plural = _("ledger entries")
 
 
@@ -202,6 +224,10 @@ class MembershipInvoice(LedgerEntry):
         super(MembershipInvoice, self).save()
         #save invoice document
 
+    class Meta:
+        verbose_name = _("membership invoice")
+        verbose_name_plural = _("membership invoices")
+
     def __str__(self):
         return _("Membership %(year)s for %(user)s") % {'user': self.user, 'year': self.year}
 
@@ -220,10 +246,13 @@ class MembershipInvoice(LedgerEntry):
         super(MembershipInvoice, self).clean()
 
 
-
 @python_2_unicode_compatible
 class ResourceUsage(LedgerEntry):
     resource = models.ForeignKey(Resource, verbose_name=_("resource"), related_name="usages", on_delete=models.PROTECT)
+
+    class Meta:
+        verbose_name = _("resource usage")
+        verbose_name_plural = _("resource usages")
 
     def __str__(self):
         return _("Usage of %(resource)s by %(user)s") % {'user': self.user, 'resource': self.resource}
@@ -240,6 +269,10 @@ class Event(models.Model):
     max_participants = models.PositiveIntegerField(verbose_name=_("maximum number of participants"), default=0)
     organizers = models.ManyToManyField(Contact)
 
+    class Meta:
+        verbose_name = _("event")
+        verbose_name_plural = _("events")
+
     def __str__(self):
         txt = "%s (%s" % (self.title, self.start_date)
         if self.end_date:
@@ -252,6 +285,10 @@ class EventDocument(models.Model):
     file = FilerFileField(verbose_name=_("document"), related_name="event_document")
     event = models.ForeignKey(Event, related_name="documents", verbose_name=_("event"))
 
+    class Meta:
+        verbose_name = _("event document")
+        verbose_name_plural = _("event documents")
+
     def __str__(self):
         return self.file.label.encode('utf-8')
 
@@ -259,6 +296,10 @@ class EventDocument(models.Model):
 @python_2_unicode_compatible
 class EventRegistration(LedgerEntry):
     event = models.ForeignKey(Event, verbose_name=_("event"), related_name="registrations", on_delete=models.PROTECT)
+
+    class Meta:
+        verbose_name = _("event registration")
+        verbose_name_plural = _("event registrations")
 
     def __str__(self):
         return _("Registration to %(event)s by %(user)s") % {'user': self.user, 'event': self.event}
@@ -269,6 +310,10 @@ class Expense(LedgerEntry):
     event = models.ForeignKey(Event, verbose_name=_("event"), related_name="expenses", blank=True, null=True, on_delete=models.PROTECT)
     contact = models.ForeignKey(Contact, verbose_name=_("provider"), blank=True, null=True, on_delete=models.PROTECT)
     document = models.FileField(verbose_name=_("document"), blank=True, null=True)
+
+    class Meta:
+        verbose_name = _("expense")
+        verbose_name_plural = _("expenses")
 
     def __str__(self):
         return _("Expense for %(expense)s by %(user)s") % {'user': self.user, 'expense': self.title}
