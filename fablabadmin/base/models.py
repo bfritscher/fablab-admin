@@ -1,4 +1,5 @@
-from django.db import models
+from django.core.exceptions import ValidationError
+from django.db import models, IntegrityError
 from django.contrib.auth.models import User
 from django.utils.translation import ugettext_lazy as _
 from django.db.models.signals import post_save
@@ -199,10 +200,25 @@ class MembershipInvoice(LedgerEntry):
                                                   )
 
         super(MembershipInvoice, self).save()
-        #save invoice
+        #save invoice document
 
     def __str__(self):
         return _("Membership %(year)s for %(user)s") % {'user': self.user, 'year': self.year}
+
+    @classmethod
+    def _validate_unique(cls, self):
+        try:
+            obj = cls._default_manager.get(year=self.year, user=self.user)
+            if not obj == self:
+                raise ValidationError(_('Membership %(year)s for %(user)s already exists!') % {'year': self.year,
+                                                                                               'user': self.user})
+        except cls.DoesNotExist:
+            pass
+
+    def clean(self):
+        self._validate_unique(self)
+        super(MembershipInvoice, self).clean()
+
 
 
 @python_2_unicode_compatible
