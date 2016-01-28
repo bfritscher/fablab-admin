@@ -95,11 +95,11 @@ class MembershipPaidListFilter(admin.SimpleListFilter):
 
 class MembershipsInline(admin.TabularInline):
     model = MembershipInvoice
-    readonly_fields = ('ledgerentry_ptr', 'year', 'document', 'is_membership_paid',)
+    readonly_fields = ('ledgerentry_ptr', 'year', 'document', 'total', 'is_membership_paid',)
     extra = 0
     max_num = 0
     can_delete = False
-    fields = ('year', 'document', 'is_membership_paid')
+    fields = ('year', 'document', 'total', 'is_membership_paid')
 
     def is_membership_paid(self, obj):
         answer_class = 'no'
@@ -138,7 +138,6 @@ class ContactAdmin(ImportExportMixin, TabbedModelAdmin):
             return format_html('<span class="membership-{}">{}</span> {}', answer_class, answer_text, mark_safe(html))
         return _('-')
     is_membership_paid.short_description = _('is %(year)s membership paid') % {'year': datetime.date.today().year}
-
 
     def is_membership_paid_list(self, obj):
         if obj.status.is_member:
