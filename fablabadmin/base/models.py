@@ -9,6 +9,9 @@ from filer.fields.file import FilerFileField
 import datetime
 from polymorphic.models import PolymorphicModel
 from django.utils.encoding import python_2_unicode_compatible
+from fablabadmin.base.views import make_pdf
+import filer.models as filer_models
+from django.core.files import ContentFile
 
 @python_2_unicode_compatible
 class ContactStatus(models.Model):
@@ -196,7 +199,6 @@ def current_year():
 @python_2_unicode_compatible
 class MembershipInvoice(LedgerEntry):
     year = models.PositiveIntegerField(verbose_name=_("year"), default=current_year)
-    # TODO: auto create invoice
 
     def is_membership_paid(self):
         if self.invoice:
@@ -223,6 +225,12 @@ class MembershipInvoice(LedgerEntry):
 
         super(MembershipInvoice, self).save()
         #save invoice document
+        pdf = make_pdf('base/invoice.html', {'invoice': self.invoice})
+        folder, created = filer_models.Folder.objects.get_or_create(name='Invoices')
+        invoice_file, created = filer_models.File.objects.get_or_create(file=ContentFile(pdf.read()),
+                                                                original_filename="%s.pdf" % self.invoice,
+                                                                foloder = folder)
+        invoice_file.save()
 
     class Meta:
         verbose_name = _("membership invoice")

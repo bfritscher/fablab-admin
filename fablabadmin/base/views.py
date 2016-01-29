@@ -39,6 +39,17 @@ def link_callback(uri, rel):
     return path
 
 
+def make_pdf(template_src, context_dict):
+    template = get_template(template_src)
+    html  = template.render(context_dict)
+    result = StringIO.StringIO()
+    pdf = pisa.pisaDocument(StringIO.StringIO(html.encode("utf-8")), result, link_callback=link_callback, encoding='UTF-8')
+    if not pdf.err:
+        return result
+    else:
+        raise Exception(pdf.err)
+
+
 def render_to_pdf(template_src, context_dict):
     template = get_template(template_src)
     html  = template.render(context_dict)
