@@ -131,7 +131,8 @@ DATABASES['default']['ATOMIC_REQUESTS'] = True
 # ------------------------------------------------------------------------------
 EMAIL_BACKEND = env('DJANGO_EMAIL_BACKEND', default='django.core.mail.backends.smtp.EmailBackend')
 if DEBUG:
-    EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+    EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
+    EMAIL_FILE_PATH = '/app/tmp/app-messages'
 else:
     EMAIL_HOST = env('EMAIL_HOST')
     EMAIL_PORT = env('EMAIL_PORT')
@@ -177,6 +178,9 @@ CORS_ORIGIN_WHITELIST = (
 )
 CORS_URLS_REGEX = r'^/api/.*$'
 
+ADMIN_TOOLS_INDEX_DASHBOARD = 'fablabadmin.dashboard.CustomIndexDashboard'
+ADMIN_TOOLS_APP_INDEX_DASHBOARD = 'fablabadmin.dashboard.CustomAppIndexDashboard'
+ADMIN_TOOLS_MENU = 'fablabadmin.menu.CustomMenu'
 
 # REDACTOR Options
 REDACTOR_OPTIONS = {'lang': 'en'}

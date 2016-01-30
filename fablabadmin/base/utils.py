@@ -6,6 +6,8 @@ from xhtml2pdf import pisa
 from fablabadmin import settings
 import os
 import environ
+from mail_templated import EmailMessage
+
 env = environ.Env()
 
 mailchimp_client = MailChimp(env('MAILCHIMP_USERNAME'), env('MAILCHIMP_KEY'))
@@ -72,3 +74,16 @@ def mailchimp_remove(contact):
         mailchimp_client.member.delete(env('MAILCHIMP_MEMBER_LIST_ID'), hash)
     except:
         pass
+
+
+def send_invoice(invoice):
+    # Create new empty message.
+    message = EmailMessage()
+
+    # Initialize message on creation.
+    message = EmailMessage('base/mail/invoice.html', {'invoice': invoice}, invoice.seller.email,
+                           to=[invoice.buyer.email])
+
+    message.attach_file(invoice.document.path)
+    # Send message when ready. It will be rendered automatically if needed.
+    message.send()

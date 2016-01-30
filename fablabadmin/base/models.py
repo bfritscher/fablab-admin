@@ -15,6 +15,7 @@ import filer.models as filer_models
 from django.core.files.base import ContentFile
 from fablabadmin.base.utils import *
 from django.forms.models import modelform_factory
+from fablabadmin.base.utils import send_invoice
 
 
 @python_2_unicode_compatible
@@ -150,7 +151,7 @@ class Training(models.Model):
 class Invoice(models.Model):
     INVOICE_TYPE = (
         ("E", _("expense")),
-        ("I", _("income"))
+        ("I", _("invoice"))
     )
     PAYMENT_TYPE = (
         ("C", _("cash")),
@@ -195,6 +196,7 @@ class Invoice(models.Model):
 
         self.draft = True
         self.save()
+        send_invoice(self)
 
     class Meta:
         verbose_name = _("invoice")

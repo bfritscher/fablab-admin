@@ -17,7 +17,6 @@ def change_lang(request):
 
 
 def invoice(request, id):
-    plop = plop
     invoice = Invoice.objects.prefetch_related('entries').get(id=id)
     #Retrieve data or whatever you need
     return render_to_pdf(
@@ -26,3 +25,21 @@ def invoice(request, id):
                 'invoice': invoice
             }
         )
+
+
+def invoice_html(request, id):
+    invoice = Invoice.objects.prefetch_related('entries').get(id=id)
+    #Retrieve data or whatever you need
+    return render(request,
+            'base/invoice.html',
+            {
+                'invoice': invoice
+            }
+        )
+
+
+def mail_template(request, id):
+    invoice = Invoice.objects.prefetch_related('entries').get(id=id)
+    return render(request, 'base/mail/invoice.html',{
+                'invoice': invoice
+            })
