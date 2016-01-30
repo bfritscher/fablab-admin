@@ -45,8 +45,18 @@ class UserAdmin(BaseUserAdmin):
     inlines = (ContactInline,)
 
 
+class FunctionAdminForm(ModelForm):
+    def clean(self):
+        year_from = self.cleaned_data.get("year_from")
+        year_to = self.cleaned_data.get("year_to")
+        if year_from and year_to and year_from > year_to:
+            raise forms.ValidationError(_("Start year cannot be greater than end year."))
+        return self.cleaned_data
+
+
 class FunctionInline(admin.TabularInline):
     model = Function
+    form = FunctionAdminForm
     extra = 1
 
 
@@ -151,7 +161,6 @@ class ContactAdmin(ImportExportMixin, TabbedModelAdmin):
         return _('-')
     is_membership_paid_list.short_description =  is_membership_paid.short_description
 
-    #inlines = (FunctionInline,)
     tab_overview = (
         (_('Contact'), {
             'fields': ('first_name',
@@ -200,32 +209,13 @@ admin.site.unregister(User)
 admin.site.register(User, UserAdmin)
 
 
-class FunctionAdminForm(ModelForm):
-    def clean(self):
-        year_from = self.cleaned_data.get("year_from")
-        year_to = self.cleaned_data.get("year_to")
-        if year_from and year_to and year_from > year_to:
-            raise forms.ValidationError(_("Start year cannot be greater than end year."))
-        return self.cleaned_data
-
-
-#@admin.register(Function)
-class FunctionAdmin(GuardedModelAdmin):
-    form = FunctionAdminForm
-
-
 @admin.register(Resource)
 class ResourceAdmin(GuardedModelAdmin):
     pass
 
 
-#@admin.register(Training)
-class TrainingAdmin(GuardedModelAdmin):
-    form = autocomplete_light.modelform_factory(Training, fields='__all__')
-
-
 class LedgerEntryInline(admin.StackedInline):
-    form = autocomplete_light.modelform_factory(Training, fields='__all__')
+    form = autocomplete_light.modelform_factory(LedgerEntry, fields='__all__')
     model = LedgerEntry
     extra = 1
     readonly_fields = ('total',)
@@ -237,9 +227,12 @@ class LedgerEntryInline(admin.StackedInline):
         ('quantity', 'unit_price', 'total')
     )
 
+
 @admin.register(Invoice)
 class InvoiceAdmin(GuardedModelAdmin):
-    form = autocomplete_light.modelform_factory(Training, fields='__all__')
+    form = autocomplete_light.modelform_factory(Invoice, fields='__all__',
+                                                autocomplete_names={'seller': 'Contact',
+                                                                    'buyer': 'Contact'})
     search_fields = ('seller', 'buyer')
     list_display = ('__str__', 'buyer', 'seller', 'total', 'paid',)
     list_filter = ('paid', 'type', 'payment_type', 'draft')
@@ -250,12 +243,14 @@ class InvoiceAdmin(GuardedModelAdmin):
         ('date', 'draft'),
          'buyer', 'seller',
          ('payment_type', 'paid'),
-         'total', 'document', 'type'
+         'manual_total', 'document', 'type'
     )
 
 
 class LedgerEntryChildAdmin(PolymorphicChildModelAdmin, GuardedModelAdmin):
     base_model = LedgerEntry
+    form = autocomplete_light.modelform_factory(MembershipInvoice, fields='__all__',
+                                                autocomplete_names={'user':'Contact'})
     # By using these `base_...` attributes instead of the regular ModelAdmin `form` and `fieldsets`,
     # the additional fields of the child models are automatically added to the admin form.
     #base_form = ...
@@ -264,10 +259,10 @@ class LedgerEntryChildAdmin(PolymorphicChildModelAdmin, GuardedModelAdmin):
     #)
 
 
-#@admin.register(MembershipInvoice)
 class MembershipInvoiceAdmin(LedgerEntryChildAdmin):
     base_model = MembershipInvoice
-    form = autocomplete_light.modelform_factory(Training, fields='__all__')
+    form = autocomplete_light.modelform_factory(MembershipInvoice, fields='__all__',
+                                                autocomplete_names={'user':'Member'})
 
     def get_form(self, request, obj=None, **kwargs):
             # Proper kwargs are form, fields, exclude, formfield_callback
@@ -279,17 +274,15 @@ class MembershipInvoiceAdmin(LedgerEntryChildAdmin):
 
             return super(MembershipInvoiceAdmin, self).get_form(request, obj, **kwargs)
 
-#@admin.register(ResourceUsage)
+
 class ResourceUsageAdmin(LedgerEntryChildAdmin):
     base_model = ResourceUsage
 
 
-#@admin.register(EventRegistration)
 class EventRegistrationAdmin(LedgerEntryChildAdmin):
     base_model = EventRegistration
 
 
-#@admin.register(Expense)
 class ExpenseAdmin(LedgerEntryChildAdmin):
     base_model = Expense
 
@@ -303,6 +296,7 @@ class LedgerEntryAdmin(PolymorphicParentModelAdmin, GuardedModelAdmin):
         (ResourceUsage, ResourceUsageAdmin),
         (EventRegistration, EventRegistrationAdmin),
         (Expense, ExpenseAdmin),
+        (LedgerEntry, LedgerEntryChildAdmin)
     )
 
 
@@ -328,6 +322,8 @@ class EventAdmin(TabbedModelAdmin, GuardedModelAdmin):
             'fields': ('title',
                        'start_date',
                        'end_date',
+                       'website',
+                       'trello',
                        'description',
                        )
         }),

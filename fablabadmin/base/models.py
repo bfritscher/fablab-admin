@@ -1,6 +1,8 @@
 from django.core.exceptions import ValidationError
+from django.core.files.uploadedfile import InMemoryUploadedFile
 from django.db import models, IntegrityError
 from django.contrib.auth.models import User
+from django.db.models import Sum, F, FloatField, ExpressionWrapper
 from django.utils.translation import ugettext_lazy as _
 from django.db.models.signals import post_save
 from django.dispatch import receiver
@@ -9,9 +11,11 @@ from filer.fields.file import FilerFileField
 import datetime
 from polymorphic.models import PolymorphicModel
 from django.utils.encoding import python_2_unicode_compatible
-from fablabadmin.base.views import make_pdf
 import filer.models as filer_models
-from django.core.files import ContentFile
+from django.core.files.base import ContentFile
+from fablabadmin.base.utils import *
+from django.forms.models import modelform_factory
+
 
 @python_2_unicode_compatible
 class ContactStatus(models.Model):
@@ -25,6 +29,7 @@ class ContactStatus(models.Model):
     def __str__(self):
         return self.name
 
+
 @python_2_unicode_compatible
 class ResourceType(models.Model):
     name = models.CharField(max_length=60, verbose_name=_("name"), blank=False, null=False)
@@ -35,6 +40,7 @@ class ResourceType(models.Model):
 
     def __str__(self):
         return self.name
+
 
 @python_2_unicode_compatible
 class Contact(models.Model):
@@ -88,6 +94,11 @@ def update_user(sender, instance, **kwargs):
         contact.user.last_name = contact.last_name
         contact.user.email = contact.email
         contact.user.save()
+
+    if contact.status.is_member:
+        mailchimp_add(contact)
+    else:
+        mailchimp_remove(contact)
 
 
 @python_2_unicode_compatible
@@ -152,8 +163,38 @@ class Invoice(models.Model):
     payment_type = models.CharField(max_length=1, choices=PAYMENT_TYPE, default="B")
     type = models.CharField(max_length=1, choices=INVOICE_TYPE, default="I")
     draft = models.BooleanField(verbose_name=_("draft"), default=True)
-    total = models.FloatField(verbose_name=_("total"), default=0)
-    document = models.FileField(verbose_name=_("document"), blank=True, null=True)
+    manual_total = models.FloatField(verbose_name=_("manual total"), blank=True, null=True)
+    document = FilerFileField(verbose_name=_("document"), related_name="invoice_document", blank=True, null=True)
+
+    @property
+    def total(self):
+        if self.manual_total:
+            return self.manual_total
+        else:
+            # TODO change to DB aggragate once polmorphic supports aggregation
+            # https://github.com/chrisglass/django_polymorphic/pull/194
+            return sum([e.total for e in self.entries.all()])
+
+    total.fget.short_description = _("total")
+
+    def publish(self):
+        if self.document is None:
+            pdf = make_pdf('base/invoice.html', {'invoice': self})
+            FileForm = modelform_factory(
+                        model=filer_models.File,
+                        fields=('original_filename', 'file')
+                    )
+            uploadform = FileForm({'original_filename': "%s.pdf" % self},
+                                  {'file':  InMemoryUploadedFile(pdf, None, "%s.pdf" % self, 'pdf', pdf.tell(), None)})
+            if uploadform.is_valid():
+                file_obj = uploadform.save(commit=False)
+                folder, created = filer_models.Folder.objects.get_or_create(name='invoices')
+                file_obj.folder = folder
+                file_obj.save()
+                self.document = file_obj
+
+        self.draft = True
+        self.save()
 
     class Meta:
         verbose_name = _("invoice")
@@ -225,12 +266,7 @@ class MembershipInvoice(LedgerEntry):
 
         super(MembershipInvoice, self).save()
         #save invoice document
-        pdf = make_pdf('base/invoice.html', {'invoice': self.invoice})
-        folder, created = filer_models.Folder.objects.get_or_create(name='Invoices')
-        invoice_file, created = filer_models.File.objects.get_or_create(file=ContentFile(pdf.read()),
-                                                                original_filename="%s.pdf" % self.invoice,
-                                                                foloder = folder)
-        invoice_file.save()
+        self.invoice.publish()
 
     class Meta:
         verbose_name = _("membership invoice")
@@ -255,24 +291,14 @@ class MembershipInvoice(LedgerEntry):
 
 
 @python_2_unicode_compatible
-class ResourceUsage(LedgerEntry):
-    resource = models.ForeignKey(Resource, verbose_name=_("resource"), related_name="usages", on_delete=models.PROTECT)
-
-    class Meta:
-        verbose_name = _("resource usage")
-        verbose_name_plural = _("resource usages")
-
-    def __str__(self):
-        return _("Usage of %(resource)s by %(user)s") % {'user': self.user, 'resource': self.resource}
-
-
-@python_2_unicode_compatible
 class Event(models.Model):
     title = models.CharField(max_length=200, verbose_name=_("title"))
     start_date = models.DateField(verbose_name=_("start date"))
     end_date = models.DateField(verbose_name=_("end date"), blank=True, null=True)
     location = models.TextField(verbose_name=_("location"), blank=True)
     description = RedactorField(verbose_name=_("description"), blank=True)
+    website = models.URLField(verbose_name=_("website"), blank=True)
+    trello = models.URLField(verbose_name=_("trello"), blank=True)
     min_participants = models.PositiveIntegerField(verbose_name=_("minimum number of participants"), default=0)
     max_participants = models.PositiveIntegerField(verbose_name=_("maximum number of participants"), default=0)
     organizers = models.ManyToManyField(Contact)
@@ -314,10 +340,23 @@ class EventRegistration(LedgerEntry):
 
 
 @python_2_unicode_compatible
+class ResourceUsage(LedgerEntry):
+    resource = models.ForeignKey(Resource, verbose_name=_("resource"), related_name="usages", on_delete=models.PROTECT)
+    event = models.ForeignKey(Event, verbose_name=_("event"), related_name="resource_usages", blank=True, null=True, on_delete=models.PROTECT)
+
+    class Meta:
+        verbose_name = _("resource usage")
+        verbose_name_plural = _("resource usages")
+
+    def __str__(self):
+        return _("Usage of %(resource)s by %(user)s") % {'user': self.user, 'resource': self.resource}
+
+
+@python_2_unicode_compatible
 class Expense(LedgerEntry):
     event = models.ForeignKey(Event, verbose_name=_("event"), related_name="expenses", blank=True, null=True, on_delete=models.PROTECT)
     contact = models.ForeignKey(Contact, verbose_name=_("provider"), blank=True, null=True, on_delete=models.PROTECT)
-    document = models.FileField(verbose_name=_("document"), blank=True, null=True)
+    document = FilerFileField(verbose_name=_("document"), blank=True, null=True)
 
     class Meta:
         verbose_name = _("expense")

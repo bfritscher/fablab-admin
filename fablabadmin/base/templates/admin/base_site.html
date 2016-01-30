@@ -8,3 +8,11 @@
     {% include 'autocomplete_light/static.html' %}
 <!-- include autocomplete end -->
 {% endblock %}
+{% block footer %}
+    {{ block.super }}
+    <!-- autocomplete bugs.... -->
+    <script src="{% static 'admin/js/vendor/jquery/jquery.js' %}" type="text/javascript"></script>
+<!-- include autocomplete start -->
+    {% include 'autocomplete_light/static.html' %}
+<!-- include autocomplete end -->
+{% endblock %}
