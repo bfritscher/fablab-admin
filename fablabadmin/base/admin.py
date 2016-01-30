@@ -11,6 +11,7 @@ from django.contrib.admin import AdminSite
 from tabbed_admin import TabbedModelAdmin
 from django.utils.html import format_html
 from django.db.models import Q
+from django.core.urlresolvers import reverse
 from polymorphic.admin import PolymorphicParentModelAdmin, PolymorphicChildModelAdmin
 
 from .models import *
@@ -105,11 +106,11 @@ class MembershipPaidListFilter(admin.SimpleListFilter):
 
 class MembershipsInline(admin.TabularInline):
     model = MembershipInvoice
-    readonly_fields = ('ledgerentry_ptr', 'year', 'document', 'total', 'is_membership_paid',)
+    readonly_fields = ('ledgerentry_ptr', 'year', 'invoice_link', 'total', 'is_membership_paid',)
     extra = 0
     max_num = 0
     can_delete = False
-    fields = ('year', 'document', 'total', 'is_membership_paid')
+    fields = ('year', 'invoice_link', 'total', 'is_membership_paid')
 
     def is_membership_paid(self, obj):
         answer_class = 'no'
@@ -119,8 +120,10 @@ class MembershipsInline(admin.TabularInline):
             answer_text = _('yes')
         return format_html('<span class="membership-{}">{}</span>', answer_class, answer_text)
 
-    def document(self, obj):
-        return obj.invoice.document
+    def invoice_link(self, obj):
+        url = reverse('admin:base_invoice_change', args=(obj.invoice.id,))
+        return format_html('<a href="{}">{}</a>', url, obj.invoice)
+    invoice_link.short_description = _('invoice')
 
 
 @admin.register(Contact)
