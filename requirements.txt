@@ -16,7 +16,8 @@ django-mptt==0.8.0
 django_polymorphic==0.8.1
 easy-thumbnails==2.3
 django-filer==1.1.0
-
+django-mail-templated==2.4.7
+raven==5.10.2
 
 #dev
 django-debug-toolbar==1.4

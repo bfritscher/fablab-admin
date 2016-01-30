@@ -17,6 +17,7 @@ def change_lang(request):
 
 
 def invoice(request, id):
+    plop = plop
     invoice = Invoice.objects.prefetch_related('entries').get(id=id)
     #Retrieve data or whatever you need
     return render_to_pdf(

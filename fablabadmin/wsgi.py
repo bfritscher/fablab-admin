@@ -8,12 +8,13 @@ https://docs.djangoproject.com/en/1.8/howto/deployment/wsgi/
 """
 
 import os
-
+from raven.contrib.django.raven_compat.middleware.wsgi import Sentry
 from django.core.wsgi import get_wsgi_application
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "fablabadmin.settings")
 
-application = get_wsgi_application()
+application = Sentry(get_wsgi_application())
+
 
 # Wrap werkzeug debugger if DEBUG is on
 from django.conf import settings
