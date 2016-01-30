@@ -9,9 +9,13 @@ To activate your index dashboard add the following to your settings.py::
 And to activate the app index dashboard::
     ADMIN_TOOLS_APP_INDEX_DASHBOARD = 'app.dashboard.CustomAppIndexDashboard'
 """
+import datetime
 
+from django.db.models import Q
+from django.utils.html import format_html
 from django.utils.translation import ugettext_lazy as _
 from django.core.urlresolvers import reverse
+from fablabadmin.base.models import Function
 
 from admin_tools.dashboard import modules, Dashboard, AppIndexDashboard
 from admin_tools.utils import get_admin_site_name
@@ -54,6 +58,18 @@ class CustomIndexDashboard(Dashboard):
                     'fablabadmin.base.models.ContactStatus',
                     'fablabadmin.base.models.ResourceType',
                     'filer*'),
+        ))
+
+        current_committee = Function.objects.filter(
+            Q(year_from__lte=datetime.date.today().year),
+            Q(committee=True),
+            Q(year_to__gte=datetime.date.today().year) | Q(year_to__isnull=True)).all()
+
+        html = "\n".join(["<tr><td>%s</td><td>%s</td></tr>" % (f.name, f.member) for f in current_committee])
+
+        self.children.append(modules.DashboardModule(
+            _('Committee'),
+            pre_content=format_html('<table class="comittee"><tr><th>%s</th><th>%s</th></tr>%s</table>' % (_('Function'), _('Member'), html))
         ))
 
         # append a recent actions module

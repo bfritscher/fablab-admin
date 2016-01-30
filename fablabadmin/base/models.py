@@ -26,6 +26,7 @@ class ContactStatus(models.Model):
     class Meta:
         verbose_name = _("contact status")
         verbose_name_plural = _("contact statuses")
+        ordering = ('name',)
 
     def __str__(self):
         return self.name
@@ -38,6 +39,7 @@ class ResourceType(models.Model):
     class Meta:
         verbose_name = _("resource type")
         verbose_name_plural = _("resource types")
+        ordering = ('name',)
 
     def __str__(self):
         return self.name
@@ -108,6 +110,7 @@ class Function(models.Model):
     name = models.CharField(max_length=60, verbose_name=_("name"), blank=False, null=False)
     year_from = models.PositiveIntegerField(verbose_name=_("year started"), blank=False, null=False)
     year_to = models.PositiveIntegerField(verbose_name=_("year ended"), blank=True, null=True)
+    committee = models.BooleanField(verbose_name=_("committee"), default=True)
 
     class Meta:
         verbose_name = _("function")
@@ -136,12 +139,13 @@ class Resource(models.Model):
 @python_2_unicode_compatible
 class Training(models.Model):
     member = models.ForeignKey(Contact, verbose_name=_("member"), on_delete=models.CASCADE)
-    resource = models.ForeignKey(ResourceType, verbose_name=_("resource"), on_delete=models.CASCADE)
+    resource_type = models.ForeignKey(ResourceType, verbose_name=_("resource type"), on_delete=models.CASCADE)
     date = models.DateField(verbose_name=_("date"))
 
     class Meta:
         verbose_name = _("training")
         verbose_name_plural = _("trainings")
+        ordering = ('member__first_name', 'resource_type__name',)
 
     def __str__(self):
         return '%s - %s' % (self.resource, self.member)
@@ -303,7 +307,7 @@ class Event(models.Model):
     trello = models.URLField(verbose_name=_("trello"), blank=True)
     min_participants = models.PositiveIntegerField(verbose_name=_("minimum number of participants"), default=0)
     max_participants = models.PositiveIntegerField(verbose_name=_("maximum number of participants"), default=0)
-    organizers = models.ManyToManyField(Contact)
+    organizers = models.ManyToManyField(Contact, blank=True, null=True)
 
     class Meta:
         verbose_name = _("event")

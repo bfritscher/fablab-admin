@@ -146,7 +146,7 @@ class ContactAdmin(ImportExportMixin, TabbedModelAdmin):
             elif m == False:
                 html = '<input type="button" value="Create membership invoice">'
             elif m is None:
-                html = '<input type="button" value="send reminder">'
+                html = '<input type="button" value="send reminder" onclick="alert(\'not implemented\')">'
 
             return format_html('<span class="membership-{}">{}</span> {}', answer_class, answer_text, mark_safe(html))
         return _('-')
@@ -162,7 +162,7 @@ class ContactAdmin(ImportExportMixin, TabbedModelAdmin):
                 answer_text = _('yes')
             return format_html('<span class="membership-{}">{}</span>', answer_class, answer_text)
         return _('-')
-    is_membership_paid_list.short_description =  is_membership_paid.short_description
+    is_membership_paid_list.short_description = is_membership_paid.short_description
 
     tab_overview = (
         (_('Contact'), {
@@ -214,7 +214,8 @@ admin.site.register(User, UserAdmin)
 
 @admin.register(Resource)
 class ResourceAdmin(GuardedModelAdmin):
-    pass
+    list_filter = ('type__name',)
+    ordering = ('type__name', 'name',)
 
 
 class LedgerEntryInline(admin.StackedInline):
@@ -236,8 +237,8 @@ class InvoiceAdmin(GuardedModelAdmin):
     form = autocomplete_light.modelform_factory(Invoice, fields='__all__',
                                                 autocomplete_names={'seller': 'Contact',
                                                                     'buyer': 'Contact'})
-    search_fields = ('seller', 'buyer')
-    list_display = ('__str__', 'buyer', 'seller', 'total', 'paid',)
+    search_fields = ('id', 'seller__first_name', 'seller__last_name', 'buyer__first_name', 'buyer__last_name')
+    list_display = ('id', '__str__', 'buyer', 'seller', 'total', 'paid',)
     list_filter = ('paid', 'type', 'payment_type', 'draft')
     #readonly_fields = ('is_membership_paid',)
     date_hierarchy = "date"
@@ -253,7 +254,7 @@ class InvoiceAdmin(GuardedModelAdmin):
 class LedgerEntryChildAdmin(PolymorphicChildModelAdmin, GuardedModelAdmin):
     base_model = LedgerEntry
     form = autocomplete_light.modelform_factory(MembershipInvoice, fields='__all__',
-                                                autocomplete_names={'user':'Contact'})
+                                                autocomplete_names={'user': 'Contact'})
     # By using these `base_...` attributes instead of the regular ModelAdmin `form` and `fieldsets`,
     # the additional fields of the child models are automatically added to the admin form.
     #base_form = ...
@@ -265,7 +266,7 @@ class LedgerEntryChildAdmin(PolymorphicChildModelAdmin, GuardedModelAdmin):
 class MembershipInvoiceAdmin(LedgerEntryChildAdmin):
     base_model = MembershipInvoice
     form = autocomplete_light.modelform_factory(MembershipInvoice, fields='__all__',
-                                                autocomplete_names={'user':'Member'})
+                                                autocomplete_names={'user': 'Member'})
 
     def get_form(self, request, obj=None, **kwargs):
             # Proper kwargs are form, fields, exclude, formfield_callback
@@ -301,6 +302,7 @@ class LedgerEntryAdmin(PolymorphicParentModelAdmin, GuardedModelAdmin):
         (Expense, ExpenseAdmin),
         (LedgerEntry, LedgerEntryChildAdmin)
     )
+    date_hierarchy = "date"
 
 
 class EventDocumentInline(admin.StackedInline):
@@ -311,6 +313,8 @@ class EventDocumentInline(admin.StackedInline):
 class EventRegistrationInline(admin.TabularInline):
     model = EventRegistration
     extra = 1
+    form = autocomplete_light.modelform_factory(MembershipInvoice, fields='__all__',
+                                                autocomplete_names={'user': 'Contact'})
 
 
 @admin.register(Event)

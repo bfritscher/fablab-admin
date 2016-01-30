@@ -60,6 +60,7 @@ div.breadcrumbs a {
     display: inline;
 }
 
+.module h2, .module caption, .inline-group h2,
 #header #navigation-menu,
 #header ul#navigation-menu li:hover, #header ul#navigation-menu li.over, #header ul#navigation-menu li.selected,
 #header ul#navigation-menu li:hover>ul li, #header ul#navigation-menu li.over>ul li, #header ul#navigation-menu li ul li:hover>ul li, #header ul#navigation-menu li ul li.over>ul li,
@@ -77,6 +78,7 @@ div.breadcrumbs a {
 }
 
 #changelist #toolbar form input,
+.selector-available h2, .selector-chosen h2,
 .yourlabs-autocomplete,
 .dashboard-module,
 #dashboard-panel h3 a,
@@ -87,9 +89,13 @@ div.breadcrumbs a {
 #changelist .actions .button,
 input[type=text], input[type=password], input[type=email], input[type=url], input[type=number], textarea, select, .vTextField,
 .button, input[type=submit], input[type=button], .submit-row input, a.button{
-    -moz-border-radius: 0;
-    -webkit-border-radius: 0;
-    border-radius: 0;
+    -moz-border-radius: 0 !important;
+    -webkit-border-radius: 0 !important;
+    border-radius: 0 !important;
+}
+
+.yourlabs-autocomplete .hilight {
+        background: #006EB8 !important;
 }
 
 .membership-yes {

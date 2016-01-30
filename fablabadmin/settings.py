@@ -203,7 +203,7 @@ THUMBNAIL_PROCESSORS = (
 
 #
 def show_toolbar(request):
-    return False
+    return True
 DEBUG_TOOLBAR_CONFIG = {
     "SHOW_TOOLBAR_CALLBACK" : show_toolbar,
 }
