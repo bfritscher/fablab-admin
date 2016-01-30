@@ -34,7 +34,9 @@ class CustomMenu(Menu):
                     'fablabadmin.base.models.ContactStatus',
                     'fablabadmin.base.models.ResourceType',
                     'filer*')
-            )
+            ),
+            items.MenuItem(_('report bug / new feature'), 'https://github.com/bfritscher/fablab-admin/issues')
+
         ]
 
     def init_with_context(self, context):
