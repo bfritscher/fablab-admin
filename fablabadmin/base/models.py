@@ -150,7 +150,7 @@ class Training(models.Model):
         ordering = ('member__first_name', 'resource_type__name',)
 
     def __str__(self):
-        return '%s - %s' % (self.resource_type, self.member)
+        return u'%s - %s' % (self.resource_type, self.member)
 
 
 @python_2_unicode_compatible
