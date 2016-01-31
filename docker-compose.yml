@@ -6,7 +6,7 @@ web:
   env_file: .env
   environment:
     - PYTHONUNBUFFERED=1
-  command: bash -c "python manage.py migrate;while true; do sleep 3; python manage.py runserver 0.0.0.0:8080; done"
+  command: bash -c "python manage.py collectstatic --noinput;python manage.py migrate;while true; do sleep 3; python manage.py runserver 0.0.0.0:8080; done"
   working_dir: /app
   volumes:
     - .:/app
