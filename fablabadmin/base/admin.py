@@ -246,7 +246,7 @@ class ContactAdmin(BaseDjangoObjectActions, ImportExportMixin, GuardedModelAdmin
             return HttpResponseRedirect(url)
 
         self.message_user(request, _("Found no entries to be invoiced"))
-
+        return
 
     create_invoice.label = _("create invoice")
     create_invoice.short_description = _("invoice open ledger entries")
@@ -258,7 +258,7 @@ class ContactAdmin(BaseDjangoObjectActions, ImportExportMixin, GuardedModelAdmin
             return HttpResponseRedirect(url)
 
         self.message_user(request, _("Found no expenses to be invoiced"))
-
+        return
 
     create_expense_invoice.label = _("bill expenses")
     create_expense_invoice.short_description = _("invoice open expenses")
@@ -399,6 +399,7 @@ class InvoiceAdmin(GuardedModelAdminMixin, BaseDjangoObjectActions, admin.ModelA
     def publish(self, request, obj):
         obj.publish()
         self.message_user(request, _('invoice sent to %s') % obj.buyer.email)
+        return
 
     publish.label = _('publish')
     publish.short_description = _('publish invoice and send it by email')
