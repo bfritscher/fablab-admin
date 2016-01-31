@@ -83,6 +83,7 @@ class Contact(models.Model):
     class Meta:
         verbose_name = _("contact")
         verbose_name_plural = _("contacts")
+        ordering = ('first_name', 'last_name')
 
     def __str__(self):
         return self.full_name()
