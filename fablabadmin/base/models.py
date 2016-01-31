@@ -29,7 +29,7 @@ class ContactStatus(models.Model):
         ordering = ('name',)
 
     def __str__(self):
-        return self.name
+        return self.name.decode('utf-8')
 
 
 @python_2_unicode_compatible
@@ -42,7 +42,7 @@ class ResourceType(models.Model):
         ordering = ('name',)
 
     def __str__(self):
-        return self.name
+        return self.name.decode('utf-8')
 
 
 @python_2_unicode_compatible
@@ -77,7 +77,7 @@ class Contact(models.Model):
     is_membership_paid.short_description = _('is %(year)s membership paid') % {'year': datetime.date.today().year}
 
     def full_name(self):
-        return '%s %s' % (self.first_name, self.last_name)
+        return u'%s %s' % (self.first_name, self.last_name)
     full_name.short_description = _('full name')
 
     class Meta:
@@ -119,7 +119,7 @@ class Function(models.Model):
         ordering = ['-year_from']
 
     def __str__(self):
-        full_name = '%s %s - %s' % (self.name, self.year_from, self.year_to or '')
+        full_name = u'%s %s - %s' % (self.name, self.year_from, self.year_to or '')
         return full_name.strip()
 
 
@@ -135,7 +135,7 @@ class Resource(models.Model):
         ordering = ('type__name', 'name')
 
     def __str__(self):
-        return '%s | %s' % (self.type, self.name)
+        return u'%s | %s' % (self.type, self.name)
 
 
 @python_2_unicode_compatible
@@ -219,7 +219,7 @@ class Invoice(models.Model):
         verbose_name_plural = _("invoices")
 
     def __str__(self):
-        return '%s %s' % (_(dict(self.INVOICE_TYPE)[self.type]).capitalize(), self.id)
+        return u'%s %s' % (_(dict(self.INVOICE_TYPE)[self.type]).capitalize(), self.id)
 
 
 @python_2_unicode_compatible
@@ -245,7 +245,7 @@ class LedgerEntry(PolymorphicModel):
         return sign * self.quantity * self.unit_price
 
     def __str__(self):
-        return _("Transaction on %(date)s for %(total)s by %(user)s") % {'user': self.user, 'total':self.total, 'date': self.date}
+        return _(u"Transaction on %(date)s for %(total)s by %(user)s") % {'user': self.user, 'total':self.total, 'date': self.date}
 
     class Meta:
         verbose_name = _("ledger entry")
@@ -296,7 +296,7 @@ class MembershipInvoice(LedgerEntry):
         verbose_name_plural = _("membership invoices")
 
     def __str__(self):
-        return _("Membership %(year)s for %(user)s") % {'user': self.user, 'year': self.year}
+        return _(u"Membership %(year)s for %(user)s") % {'user': self.user, 'year': self.year}
 
     @classmethod
     def _validate_unique(cls, self):
@@ -331,10 +331,10 @@ class Event(models.Model):
         verbose_name_plural = _("events")
 
     def __str__(self):
-        txt = "%s (%s" % (self.title, self.start_date)
+        txt = u"%s (%s" % (self.title, self.start_date)
         if self.end_date:
-            txt += " - %s" % (self.end_date,)
-        return txt + ")"
+            txt += u" - %s" % (self.end_date,)
+        return txt + u")"
 
 
 @python_2_unicode_compatible
@@ -368,7 +368,7 @@ class EventRegistration(LedgerEntry):
         super(EventRegistration, self).save(*args, **kwargs)
 
     def __str__(self):
-        return _("Registration to %(event)s by %(user)s") % {'user': self.user, 'event': self.event}
+        return _(u"Registration to %(event)s by %(user)s") % {'user': self.user, 'event': self.event}
 
 
 @python_2_unicode_compatible
@@ -387,7 +387,7 @@ class ResourceUsage(LedgerEntry):
         verbose_name_plural = _("resource usages")
 
     def __str__(self):
-        return _("Usage of %(resource)s by %(user)s") % {'user': self.user, 'resource': self.resource}
+        return _(u"Usage of %(resource)s by %(user)s") % {'user': self.user, 'resource': self.resource}
 
 
 @python_2_unicode_compatible
@@ -401,4 +401,4 @@ class Expense(LedgerEntry):
         verbose_name_plural = _("expenses")
 
     def __str__(self):
-        return _("Expense for %(expense)s by %(user)s") % {'user': self.user, 'expense': self.title}
+        return _(u"Expense for %(expense)s by %(user)s") % {'user': self.user, 'expense': self.title}
