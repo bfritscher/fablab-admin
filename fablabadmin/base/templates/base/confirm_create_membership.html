@@ -1,0 +1,14 @@
+{% extends "admin/base_site.html" %}
+{% load i18n l10n admin_urls %}
+
+{% block content %}
+<form action="." method="POST">
+  {% csrf_token %}
+  <label>Membership price: <input type="number" name="unit_price" min="0" required/></label>
+    {% for obj in queryset %}
+    <input type="hidden" name="{{ action_checkbox_name }}" value="{{ obj.pk|unlocalize }}" />
+    {% endfor %}
+    <input type="hidden" name="action" value="create_membership" />
+  <input type=submit value="create">
+</form>
+{% endblock %}

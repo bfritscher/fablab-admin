@@ -210,8 +210,8 @@ table.header{
                 {% for l in invoice.entries.all %}
                 <tr>
                     <td class="desc">
-                        <h3>{{ l.title }}</h3>
-                        <p>{{ l.description | linebreaks }}</p></td>
+                        {% ifchanged %}<h3>{{ l.title }}</h3>{% endifchanged %}
+                        <p>{{ l.description | linebreaksbr }}</p></td>
                     <td class="qty">{{ l.quantity }}</td>
                     <td class="unit">{{ l.unit_price |floatformat:2|intcomma }}</td>
                     <td class="total">{{ l.total |floatformat:2|intcomma }}</td>
@@ -227,7 +227,7 @@ table.header{
             <p>Coordonnées bancaires:<br/>
                 {{ invoice.seller.payment_info|linebreaks }}
                 </p>
-            <p>Pour toutes questions concernant cette facture, veuillez contacter: comite@fablab-lacote.ch.</p>
+            <p>Pour toutes questions concernant cette facture, veuillez contacter: {{ invoice.seller.email }}.</p>
             <p class="thanks">NOUS VOUS REMERCIONS DE VOTRE CONFIANCE</p>
         </div>
     </div>

@@ -18,6 +18,7 @@ easy-thumbnails==2.3
 django-filer==1.1.0
 django-mail-templated==2.4.7
 raven==5.10.2
+django-object-actions==0.7.0
 
 #dev
 django-debug-toolbar==1.4

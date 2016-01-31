@@ -87,3 +87,46 @@ def send_invoice(invoice):
     message.attach_file(invoice.document.path)
     # Send message when ready. It will be rendered automatically if needed.
     message.send()
+
+
+def invoice_open_ledegerentries(contact):
+    from fablabadmin.base.models import LedgerEntry, MembershipInvoice, Expense, Invoice
+    #check has open ledgerentries without invoices
+    #excluding credits, membership and expenses
+    entries = LedgerEntry.objects.not_instance_of(MembershipInvoice, Expense)\
+        .filter(type='D', invoice__isnull=True, user=contact).all()
+    if len(entries) == 0:
+        return
+
+    #check has an open draft invoice or create one
+    invoice = Invoice.objects.filter(buyer=contact, draft=True, type='I').first()
+    if invoice is None:
+        invoice = Invoice.objects.create(buyer=contact, type='I')
+        invoice.save()
+
+    #add open entries to invoice
+    for e in entries:
+        e.invoice = invoice
+        e.save()
+
+    return invoice
+
+
+def expense_open_expenses(contact):
+    from fablabadmin.base.models import Expense, Invoice
+    entries = Expense.objects.filter(invoice__isnull=True, user=contact).all()
+    if len(entries) == 0:
+        return
+
+    #check has an open draft invoice or create one
+    invoice = Invoice.objects.filter(seller=contact, draft=True, type='E').first()
+    if invoice is None:
+        invoice = Invoice.objects.create(seller=contact, type='E')
+        invoice.save()
+
+    #add open entries to invoice
+    for e in entries:
+        e.invoice = invoice
+        e.save()
+
+    return invoice

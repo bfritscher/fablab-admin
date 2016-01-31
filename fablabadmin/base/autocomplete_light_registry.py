@@ -2,7 +2,7 @@ import autocomplete_light.shortcuts as al
 from django.utils.translation import ugettext_lazy as _
 
 # This will generate a PersonAutocomplete class.
-from fablabadmin.base.models import Contact, Event, Resource
+from fablabadmin.base.models import Contact, Event, Resource, Invoice
 
 
 class ContactAutocomplete(al.AutocompleteModelBase):
@@ -65,6 +65,27 @@ class ResourceAutocomplete(al.AutocompleteModelBase):
     }
 
 
+class InvoiceeAutocomplete(al.AutocompleteModelBase):
+    search_fields=['id', 'seller__first_name', 'seller__last_name', 'buyer__first_name', 'buyer__last_name']
+    attrs={
+        # This will set the input placeholder attribute:
+        'placeholder': _('invoice'),
+        # This will set the yourlabs.Autocomplete.minimumCharacters
+        # options, the naming conversion is handled by jQuery.
+        'data-autocomplete-minimum-characters': 0,
+    }
+    # This will set the data-widget-maximum-values attribute on the
+    # widget container element, and will be set to
+    # yourlabs.Widget.maximumValues (jQuery handles the naming
+    # conversion).
+    widget_attrs={
+        'data-widget-maximum-values': 5,
+        # Enable modern-style widget !
+        'class': 'modern-style',
+    }
+
+
+al.register(Invoice, InvoiceeAutocomplete)
 al.register(Resource, ResourceAutocomplete)
 al.register(Event, EventAutocomplete)
 al.register(ContactAutocomplete, name='Contact',

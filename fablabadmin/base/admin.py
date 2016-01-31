@@ -1,9 +1,12 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.contrib.auth.models import User
+from django.contrib.contenttypes.models import ContentType
 from django.forms import forms, ModelForm
+from django.http import HttpResponseRedirect
+from django.shortcuts import render
 from django.utils.safestring import mark_safe
-from guardian.admin import GuardedModelAdmin
+from guardian.admin import GuardedModelAdmin, GuardedModelAdminMixin
 from django.utils.translation import ugettext_lazy as _
 from import_export.admin import ImportExportMixin
 import autocomplete_light
@@ -13,8 +16,10 @@ from django.utils.html import format_html
 from django.db.models import Q
 from django.core.urlresolvers import reverse
 from polymorphic.admin import PolymorphicParentModelAdmin, PolymorphicChildModelAdmin
-
+from django_object_actions import BaseDjangoObjectActions, takes_instance_or_queryset, DjangoObjectActions
 from .models import *
+from django.template.defaultfilters import date as date_filter
+from django.contrib.admin import helpers
 
 AdminSite.site_title = 'FabLab - admin'
 AdminSite.index_title = 'Dashboard'
@@ -104,7 +109,22 @@ class MembershipPaidListFilter(admin.SimpleListFilter):
             return queryset.filter(ledger_entries__id__in=ids)
 
 
-class MembershipsInline(admin.TabularInline):
+class LedgerEntryMixin(object):
+
+    def invoice_link(self, obj):
+        url = reverse('admin:base_invoice_change', args=(obj.invoice.id,))
+        return format_html('<a href="{}">{}</a>', url, obj.invoice)
+    invoice_link.short_description = _('invoice')
+
+
+    def edit_link(self, obj):
+        url = reverse('admin:base_ledgerentry_change',
+                      args=(obj.id,))
+        return format_html(u'<a href="{}">{}</a>', url, _('Edit'))
+    edit_link.short_description = _('action')
+
+
+class MembershipsInline(LedgerEntryMixin, admin.TabularInline):
     model = MembershipInvoice
     readonly_fields = ('ledgerentry_ptr', 'year', 'invoice_link', 'total', 'is_membership_paid',)
     extra = 0
@@ -120,19 +140,131 @@ class MembershipsInline(admin.TabularInline):
             answer_text = _('yes')
         return format_html('<span class="membership-{}">{}</span>', answer_class, answer_text)
 
-    def invoice_link(self, obj):
-        url = reverse('admin:base_invoice_change', args=(obj.invoice.id,))
-        return format_html('<a href="{}">{}</a>', url, obj.invoice)
-    invoice_link.short_description = _('invoice')
+
+class ExpenseInline(admin.TabularInline):
+    model = Expense
+    extra = 1
+    form = autocomplete_light.modelform_factory(Expense, fields='__all__',
+                                                autocomplete_names={'provider': 'Contact', 'user': 'Contact'})
+
+
+class ResourceUsageInline(admin.TabularInline):
+    model = ResourceUsage
+    extra = 1
+    form = autocomplete_light.modelform_factory(Expense, fields='__all__',
+                                                autocomplete_names={'user': 'Contact'})
+
+
+class UserLedgerEntryInline(LedgerEntryMixin, admin.TabularInline):
+    form = autocomplete_light.modelform_factory(LedgerEntry, fields='__all__')
+    model = LedgerEntry
+    extra = 0
+    max_num = 0
+    can_delete = False
+    readonly_fields = ('date', 'title', 'description', 'quantity', 'unit_price', 'total', 'invoice',
+                       'edit_link', 'invoice_link',)
+    fields = (
+        'date',
+        'invoice_link',
+        'title',
+        'description',
+        'quantity', 'unit_price', 'total',
+        'edit_link'
+    )
+
+    def get_queryset(self, request):
+        qs = super(UserLedgerEntryInline, self).get_queryset(request)
+        return qs.not_instance_of(MembershipInvoice, Expense)
+
+
+class UserExpenseInline(LedgerEntryMixin, admin.TabularInline):
+    model = Expense
+    fk_name = 'user'
+    readonly_fields = ('ledgerentry_ptr', 'date', 'description', 'event', 'invoice_link', 'total', 'edit_link',)
+    extra = 0
+    max_num = 0
+    can_delete = False
+    fields = ( 'date', 'invoice_link', 'description', 'event', 'total', 'edit_link')
 
 
 @admin.register(Contact)
-class ContactAdmin(ImportExportMixin, TabbedModelAdmin):
+class ContactAdmin(BaseDjangoObjectActions, ImportExportMixin, GuardedModelAdminMixin, TabbedModelAdmin):
     model = Contact
     search_fields = ('first_name', 'last_name', 'email', 'user__username')
     list_display = ('full_name', 'status', 'is_membership_paid_list')
     list_filter = ('status', MembershipPaidListFilter)
     readonly_fields = ('is_membership_paid',)
+
+    change_form_template = 'base/change_form_tabbed.html'
+
+    def get_object_actions(self, request, context, **kwargs):
+        objectactions = []
+
+        # Actions cannot be applied to new objects (i.e. Using "add" new obj)
+        if 'original' in context:
+            objectactions.extend(['create_invoice', 'create_expense_invoice'])
+            # The obj to perform checks against to determine object actions you want to support
+            obj = context['original']
+            if obj and obj.status.is_member:
+                m = obj.is_membership_paid()
+                if m == False:
+                    objectactions.extend(['create_membership', ])
+
+        return objectactions
+
+    @takes_instance_or_queryset
+    def create_membership(self, request, queryset):
+        selected = queryset.values_list('id', flat=True)
+        if request.POST.get('unit_price'):
+            unit_price = request.POST.get('unit_price')
+            created = []
+            for c in queryset:
+                #check membership
+                if c.status.is_member:
+                    m = MembershipInvoice.objects.filter(user=c, year=datetime.date.today().year).first()
+                    if m is None:
+                        m = MembershipInvoice.objects.create(user=c,
+                                                              year=datetime.date.today().year,
+                                                              unit_price=unit_price)
+                        m.save()
+                        created.append(str(c))
+            self.message_user(request, _("created memberships for: %s") % ', '.join(created))
+            return
+
+        return render(request, 'base/confirm_create_membership.html', {
+            'action_checkbox_name': helpers.ACTION_CHECKBOX_NAME,
+            'queryset': queryset
+        })
+
+    create_membership.label = _("Create membership invoice")
+    create_membership.short_description = _("Create membership invoice")
+
+    def create_invoice(self, request, obj):
+        invoice = invoice_open_ledegerentries(obj)
+        if invoice:
+            url = reverse('admin:base_invoice_change', args=(invoice.id,))
+            return HttpResponseRedirect(url)
+
+        self.message_user(request, _("Found no entries to be invoiced"))
+
+
+    create_invoice.label = _("create invoice")
+    create_invoice.short_description = _("invoice open ledger entries")
+
+    def create_expense_invoice(self, request, obj):
+        invoice = expense_open_expenses(obj)
+        if invoice:
+            url = reverse('admin:base_invoice_change', args=(invoice.id,))
+            return HttpResponseRedirect(url)
+
+        self.message_user(request, _("Found no expenses to be invoiced"))
+
+
+    create_expense_invoice.label = _("bill expenses")
+    create_expense_invoice.short_description = _("invoice open expenses")
+
+    objectactions = ['create_membership', 'create_invoice', 'create_expense_invoice']
+    actions = ['create_membership',]
 
     def is_membership_paid(self, obj):
         if obj.status.is_member:
@@ -144,9 +276,9 @@ class ContactAdmin(ImportExportMixin, TabbedModelAdmin):
                 answer_class = 'yes'
                 answer_text = _('yes')
             elif m == False:
-                html = '<input type="button" value="Create membership invoice">'
+                pass #html = '<input type="button" value="Create membership invoice">'
             elif m is None:
-                html = '<input type="button" value="send reminder" onclick="alert(\'not implemented\')">'
+                pass #html = '<input type="button" value="send reminder" onclick="alert(\'not implemented\')">'
 
             return format_html('<span class="membership-{}">{}</span> {}', answer_class, answer_text, mark_safe(html))
         return _('-')
@@ -199,11 +331,14 @@ class ContactAdmin(ImportExportMixin, TabbedModelAdmin):
     )
     tabs = [
         (_('Overview'), tab_overview),
+        (_('Detail'), tab_about),
         (_('Trainings'), tab_trainings),
         (_('Functions'), tab_functions),
-        (_('Detail'), tab_about),
-        (_('Memberships'), (MembershipsInline,))
+        (_('Memberships'), (MembershipsInline,)),
+        (_('Ledger entries'), (UserLedgerEntryInline,)),
+        (_('Expenses'), (UserExpenseInline,))
     ]
+
     class Media:
         css = { "all" : ("css/hide_admin_original.css",) }
 
@@ -216,6 +351,7 @@ admin.site.register(User, UserAdmin)
 class ResourceAdmin(GuardedModelAdmin):
     list_filter = ('type__name',)
     ordering = ('type__name', 'name',)
+    inlines = (ResourceUsageInline,)
 
 
 class LedgerEntryInline(admin.StackedInline):
@@ -228,19 +364,19 @@ class LedgerEntryInline(admin.StackedInline):
         'title',
         'description',
         'user',
-        ('quantity', 'unit_price', 'total')
+        ('type', 'quantity', 'unit_price', 'total')
     )
 
 
 @admin.register(Invoice)
-class InvoiceAdmin(GuardedModelAdmin):
+class InvoiceAdmin(GuardedModelAdminMixin, BaseDjangoObjectActions, admin.ModelAdmin):
     form = autocomplete_light.modelform_factory(Invoice, fields='__all__',
                                                 autocomplete_names={'seller': 'Contact',
                                                                     'buyer': 'Contact'})
     search_fields = ('id', 'seller__first_name', 'seller__last_name', 'buyer__first_name', 'buyer__last_name')
     list_display = ('id', '__str__', 'buyer', 'seller', 'total', 'paid',)
+    list_display_links = ('id', '__str__')
     list_filter = ('paid', 'type', 'payment_type', 'draft')
-    #readonly_fields = ('is_membership_paid',)
     date_hierarchy = "date"
     inlines = (LedgerEntryInline, )
     fields = (
@@ -249,13 +385,44 @@ class InvoiceAdmin(GuardedModelAdmin):
          ('payment_type', 'paid'),
          'manual_total', 'document', 'type'
     )
+    change_form_template = 'base/change_form.html'
+
+    def preview(self, request, obj):
+        return HttpResponseRedirect('/admin/invoice/%s' % obj.id)
+
+    preview.label = _('preview')
+    preview.short_description = _('preview of the invoice')
+    preview.attrs = {
+        'target': '_blank',
+    }
+
+    def publish(self, request, obj):
+        obj.publish()
+        self.message_user(request, _('invoice sent to %s') % obj.buyer.email)
+
+    publish.label = _('publish')
+    publish.short_description = _('publish invoice and send it by email')
+
+    def get_object_actions(self, request, context, **kwargs):
+        objectactions = []
+
+        # Actions cannot be applied to new objects (i.e. Using "add" new obj)
+        if 'original' in context:
+            # The obj to perform checks against to determine object actions you want to support
+            obj = context['original']
+            if obj and obj.draft:
+                objectactions.extend(['preview', 'publish'])
+
+        return objectactions
+
+    objectactions = ('preview', 'publish')
 
 
-class LedgerEntryChildAdmin(PolymorphicChildModelAdmin, GuardedModelAdmin):
+class LedgerEntryChildAdmin(GuardedModelAdminMixin, PolymorphicChildModelAdmin):
     base_model = LedgerEntry
-    form = autocomplete_light.modelform_factory(MembershipInvoice, fields='__all__',
-                                                autocomplete_names={'user': 'Contact'})
-    # By using these `base_...` attributes instead of the regular ModelAdmin `form` and `fieldsets`,
+    form = autocomplete_light.modelform_factory(LedgerEntry, fields='__all__',
+                                                 autocomplete_names={'user': 'Contact', 'provider': 'Contact'})
+    # # By using these `base_...` attributes instead of the regular ModelAdmin `form` and `fieldsets`,
     # the additional fields of the child models are automatically added to the admin form.
     #base_form = ...
     #base_fieldsets = (
@@ -269,30 +436,86 @@ class MembershipInvoiceAdmin(LedgerEntryChildAdmin):
                                                 autocomplete_names={'user': 'Member'})
 
     def get_form(self, request, obj=None, **kwargs):
-            # Proper kwargs are form, fields, exclude, formfield_callback
-            if obj: # obj is not N  one, so this is a change page
-                pass
-                #kwargs['exclude'] = ['foo', 'bar',]
-            else: # obj is None, so this is an add page
-                kwargs['fields'] = ('date', 'user', 'year', 'unit_price')
+        # Proper kwargs are form, fields, exclude, formfield_callback
+        if obj: # obj is not N  one, so this is a change page
+            pass
+            #kwargs['exclude'] = ['foo', 'bar',]
+        else: # obj is None, so this is an add page
+            kwargs['fields'] = ('date', 'user', 'year', 'unit_price')
 
-            return super(MembershipInvoiceAdmin, self).get_form(request, obj, **kwargs)
+        return super(MembershipInvoiceAdmin, self).get_form(request, obj, **kwargs)
 
 
 class ResourceUsageAdmin(LedgerEntryChildAdmin):
     base_model = ResourceUsage
+    form = autocomplete_light.modelform_factory(Expense, fields='__all__',
+                                                autocomplete_names={'user': 'Contact'})
+
+    def get_form(self, request, obj=None, **kwargs):
+        # Proper kwargs are form, fields, exclude, formfield_callback
+        if obj: # obj is not N  one, so this is a change page
+            pass
+            #kwargs['exclude'] = ['foo', 'bar',]
+        else: # obj is None, so this is an add page
+            kwargs['fields'] = ('date', 'user', 'resource', 'description', 'quantity', 'unit_price', 'event')
+
+        form = super(ResourceUsageAdmin, self).get_form(request, obj, **kwargs)
+        form.base_fields['description'].initial = "%s: " % date_filter(datetime.date.today(), 'SHORT_DATE_FORMAT')
+        return form
 
 
 class EventRegistrationAdmin(LedgerEntryChildAdmin):
     base_model = EventRegistration
+    form = autocomplete_light.modelform_factory(EventRegistration, fields='__all__',
+                                                autocomplete_names={'user': 'Contact'})
+
+    def get_form(self, request, obj=None, **kwargs):
+        # Proper kwargs are form, fields, exclude, formfield_callback
+        if obj: # obj is not N  one, so this is a change page
+            pass
+            #kwargs['exclude'] = ['foo', 'bar',]
+        else: # obj is None, so this is an add page
+            kwargs['fields'] = ('date', 'user', 'event', 'quantity', 'unit_price')
+
+        return super(EventRegistrationAdmin, self).get_form(request, obj, **kwargs)
 
 
 class ExpenseAdmin(LedgerEntryChildAdmin):
     base_model = Expense
+    form = autocomplete_light.modelform_factory(Expense, fields='__all__',
+                                                autocomplete_names={'provider': 'Contact', 'user': 'Contact'})
+
+    def get_form(self, request, obj=None, **kwargs):
+        # Proper kwargs are form, fields, exclude, formfield_callback
+        if obj: # obj is not N  one, so this is a change page
+            kwargs['fields'] = (
+                'date',
+                'user',
+                'title',
+                'description',
+                'quantity', 'unit_price',
+                'event',
+                'provider',
+                'document',
+                'invoice'
+            )
+        else: # obj is None, so this is an add page
+            kwargs['fields'] = (
+                'date',
+                'user',
+                'title',
+                'description',
+                'quantity', 'unit_price',
+                'event',
+                'provider',
+                'document',
+            )
+
+        return super(ExpenseAdmin, self).get_form(request, obj, **kwargs)
 
 
 @admin.register(LedgerEntry)
-class LedgerEntryAdmin(PolymorphicParentModelAdmin, GuardedModelAdmin):
+class LedgerEntryAdmin(GuardedModelAdminMixin, PolymorphicParentModelAdmin):
     """ The parent model admin """
     base_model = LedgerEntry
     child_models = (
@@ -303,6 +526,11 @@ class LedgerEntryAdmin(PolymorphicParentModelAdmin, GuardedModelAdmin):
         (LedgerEntry, LedgerEntryChildAdmin)
     )
     date_hierarchy = "date"
+    ordering = ('-date',)
+    list_display = ('__str__', 'title', 'description', 'user')
+    list_filter = (
+        ('user', admin.RelatedOnlyFieldListFilter),
+    )
 
 
 class EventDocumentInline(admin.StackedInline):
@@ -313,16 +541,17 @@ class EventDocumentInline(admin.StackedInline):
 class EventRegistrationInline(admin.TabularInline):
     model = EventRegistration
     extra = 1
-    form = autocomplete_light.modelform_factory(MembershipInvoice, fields='__all__',
+    form = autocomplete_light.modelform_factory(EventRegistration, fields='__all__',
                                                 autocomplete_names={'user': 'Contact'})
+    readonly_fields = ('date', 'total')
+    fields = ('date', 'user', 'quantity', 'unit_price', 'total')
 
 
 @admin.register(Event)
-class EventAdmin(TabbedModelAdmin, GuardedModelAdmin):
+class EventAdmin(GuardedModelAdminMixin, TabbedModelAdmin):
     filter_horizontal = ('organizers',)
     search_fields = ('title',)
     date_hierarchy = "start_date"
-    #list_display = ('full_name', 'status')
 
     tab_overview = (
         (_('Event'), {
@@ -345,9 +574,13 @@ class EventAdmin(TabbedModelAdmin, GuardedModelAdmin):
 
     tab_documents = (EventDocumentInline,)
     tab_registrations = (EventRegistrationInline,)
+    tab_expenses = (ExpenseInline,)
+    tab_resource_usages = (ResourceUsageInline,)
 
     tabs = [
         (_('Overview'), tab_overview),
         (_('Documents'), tab_documents),
         (_('Registrations'), tab_registrations),
+        (_('Expenses'), tab_expenses),
+        (_('Resource usages'), tab_resource_usages)
     ]

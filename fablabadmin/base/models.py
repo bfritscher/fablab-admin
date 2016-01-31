@@ -131,6 +131,7 @@ class Resource(models.Model):
     class Meta:
         verbose_name = _("resource")
         verbose_name_plural = _("resources")
+        ordering = ('type__name', 'name')
 
     def __str__(self):
         return '%s | %s' % (self.type, self.name)
@@ -161,7 +162,7 @@ class Invoice(models.Model):
         ("C", _("cash")),
         ("B", _("bank"))
     )
-    date = models.DateField(verbose_name=_("date"))
+    date = models.DateField(verbose_name=_("date"), default=datetime.date.today)
     buyer = models.ForeignKey(Contact, verbose_name=_("buyer"), related_name="invoices", on_delete=models.PROTECT)
     seller = models.ForeignKey(Contact, verbose_name=_("seller"), related_name="expenses", on_delete=models.PROTECT)
     paid = models.DateField(verbose_name=_("date paid"), blank=True, null=True)
@@ -182,6 +183,13 @@ class Invoice(models.Model):
 
     total.fget.short_description = _("total")
 
+    def save(self, *args, **kwargs):
+        if self.seller_id is None and self.type == 'I':
+            self.seller = Contact.objects.filter(status__name='fablab_invoice').first()
+        if self.buyer_id is None and self.type == 'E':
+            self.buyer = Contact.objects.filter(status__name='fablab_invoice').first()
+        super(Invoice, self).save(*args, **kwargs)
+
     def publish(self):
         if self.document is None:
             pdf = make_pdf('base/invoice.html', {'invoice': self})
@@ -198,9 +206,12 @@ class Invoice(models.Model):
                 file_obj.save()
                 self.document = file_obj
 
-        self.draft = True
-        self.save()
-        send_invoice(self)
+        if self.draft:
+            self.draft = False
+            self.save()
+            send_invoice(self)
+        else:
+            self.save()
 
     class Meta:
         verbose_name = _("invoice")
@@ -223,12 +234,14 @@ class LedgerEntry(PolymorphicModel):
     description = models.TextField(verbose_name=_("description"), blank=False, null=False)
     quantity = models.FloatField(verbose_name=_("quantity"), blank=False, default=1)
     unit_price = models.FloatField(verbose_name=_("unit price"), blank=False, default=0)
-    user = models.ForeignKey(Contact, verbose_name=_("member"), related_name="ledger_entries", blank=True, null=True, on_delete=models.PROTECT)
+    user = models.ForeignKey(Contact, verbose_name=_("member"), related_name="ledger_entries", on_delete=models.PROTECT)
     invoice = models.ForeignKey(Invoice, verbose_name=_("invoice"), related_name="entries", blank=True, null=True)
+    type = models.CharField(max_length=1,choices=LEDGER_TYPE,verbose_name=_("type"), default='D')
 
     @property
     def total(self):
-        return self.quantity * self.unit_price
+        sign = 1 if self.type == 'D' else -1
+        return sign * self.quantity * self.unit_price
 
     def __str__(self):
         return _("Transaction on %(date)s for %(total)s by %(user)s") % {'user': self.user, 'total':self.total, 'date': self.date}
@@ -236,6 +249,7 @@ class LedgerEntry(PolymorphicModel):
     class Meta:
         verbose_name = _("ledger entry")
         verbose_name_plural = _("ledger entries")
+        ordering = ('title', 'date',)
 
 
 def current_year():
@@ -253,7 +267,7 @@ class MembershipInvoice(LedgerEntry):
         return False
     is_membership_paid.short_description = _('is membership paid')
 
-    def save(self):
+    def save(self, *args, **kwargs):
         self.quantity = 1
         if not self.title or self.title is None:
             self.title = _('Membership')
@@ -270,9 +284,11 @@ class MembershipInvoice(LedgerEntry):
                                                   draft=False
                                                   )
 
-        super(MembershipInvoice, self).save()
-        #save invoice document
-        self.invoice.publish()
+        super(MembershipInvoice, self).save(*args, **kwargs)
+
+        #send membership to user
+        if self.invoice.draft:
+            self.invoice.publish()
 
     class Meta:
         verbose_name = _("membership invoice")
@@ -341,6 +357,15 @@ class EventRegistration(LedgerEntry):
         verbose_name = _("event registration")
         verbose_name_plural = _("event registrations")
 
+    def save(self, *args, **kwargs):
+        if not self.title or self.title is None:
+            self.title = _('Event registration')
+
+        if not self.description or self.description is None:
+            self.description = str(self.event)
+
+        super(EventRegistration, self).save(*args, **kwargs)
+
     def __str__(self):
         return _("Registration to %(event)s by %(user)s") % {'user': self.user, 'event': self.event}
 
@@ -349,6 +374,12 @@ class EventRegistration(LedgerEntry):
 class ResourceUsage(LedgerEntry):
     resource = models.ForeignKey(Resource, verbose_name=_("resource"), related_name="usages", on_delete=models.PROTECT)
     event = models.ForeignKey(Event, verbose_name=_("event"), related_name="resource_usages", blank=True, null=True, on_delete=models.PROTECT)
+
+    def save(self, *args, **kwargs):
+        if not self.title or self.title is None:
+            self.title = self.resource.type.name
+
+        super(ResourceUsage, self).save(*args, **kwargs)
 
     class Meta:
         verbose_name = _("resource usage")
@@ -361,7 +392,7 @@ class ResourceUsage(LedgerEntry):
 @python_2_unicode_compatible
 class Expense(LedgerEntry):
     event = models.ForeignKey(Event, verbose_name=_("event"), related_name="expenses", blank=True, null=True, on_delete=models.PROTECT)
-    contact = models.ForeignKey(Contact, verbose_name=_("provider"), blank=True, null=True, on_delete=models.PROTECT)
+    provider = models.ForeignKey(Contact, verbose_name=_("provider"), blank=True, null=True, on_delete=models.PROTECT)
     document = FilerFileField(verbose_name=_("document"), blank=True, null=True)
 
     class Meta:

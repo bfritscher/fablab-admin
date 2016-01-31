@@ -121,7 +121,6 @@ input[type=text], input[type=password], input[type=email], input[type=url], inpu
 .ui-tabs .ui-tabs-nav{
     padding:0;
     border: 0;
-    border-bottom: 1px solid #eee;
 }
 
 .ui-widget-content {
@@ -132,4 +131,9 @@ input[type=text], input[type=password], input[type=email], input[type=url], inpu
 
 .ui-state-active, .ui-widget-content .ui-state-active, .ui-widget-header .ui-state-active{
     background: #006EB8;
+}
+
+.dashboard-module h2 {
+    color: #fff;
+    background: #00416D;
 }
