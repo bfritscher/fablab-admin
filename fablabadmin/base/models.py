@@ -282,7 +282,7 @@ class MembershipInvoice(LedgerEntry):
                                                   date=self.date,
                                                   buyer=self.user,
                                                   seller=seller,
-                                                  draft=False
+                                                  draft=True
                                                   )
 
         super(MembershipInvoice, self).save(*args, **kwargs)
