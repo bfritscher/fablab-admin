@@ -29,7 +29,7 @@ class ContactStatus(models.Model):
         ordering = ('name',)
 
     def __str__(self):
-        return self.name.decode('utf-8')
+        return u'%s' % self.name
 
 
 @python_2_unicode_compatible
@@ -42,7 +42,7 @@ class ResourceType(models.Model):
         ordering = ('name',)
 
     def __str__(self):
-        return self.name.decode('utf-8')
+        return u'%s' % self.name
 
 
 @python_2_unicode_compatible
@@ -347,7 +347,7 @@ class EventDocument(models.Model):
         verbose_name_plural = _("event documents")
 
     def __str__(self):
-        return self.file.label.encode('utf-8')
+        return u'%s' % self.file.label
 
 
 @python_2_unicode_compatible
