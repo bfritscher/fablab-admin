@@ -191,9 +191,9 @@ class UserExpenseInline(LedgerEntryMixin, admin.TabularInline):
 class ContactAdmin(BaseDjangoObjectActions, ImportExportMixin, GuardedModelAdminMixin, TabbedModelAdmin):
     model = Contact
     search_fields = ('first_name', 'last_name', 'email', 'user__username')
-    list_display = ('full_name', 'status', 'is_membership_paid_list')
+    list_display = ('full_name', 'status', 'functions','is_membership_paid_list')
     list_filter = ('status', MembershipPaidListFilter)
-    readonly_fields = ('is_membership_paid',)
+    readonly_fields = ('is_membership_paid', 'functions')
 
     change_form_template = 'base/change_form_tabbed.html'
 
@@ -295,6 +295,10 @@ class ContactAdmin(BaseDjangoObjectActions, ImportExportMixin, GuardedModelAdmin
             return format_html('<span class="membership-{}">{}</span>', answer_class, answer_text)
         return _('-')
     is_membership_paid_list.short_description = is_membership_paid.short_description
+
+    def functions(self, obj):
+        return u",".join([f.name for f in obj.functions])
+    functions.short_description = _("functions")
 
     tab_overview = (
         (_('Contact'), {
