@@ -308,6 +308,7 @@ class ContactAdmin(BaseDjangoObjectActions, ImportExportMixin, GuardedModelAdmin
                        'phone',
                        'status',
                        'is_membership_paid',
+                       'comment',
                       )
         }),
         (_('Address'), {
