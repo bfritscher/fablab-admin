@@ -34,6 +34,7 @@ LANGUAGES = [
 # Application definition
 
 INSTALLED_APPS = (
+    'fablabadmin',
     'fablabadmin.base',
     'admin_tools',
     'admin_tools.theming',
@@ -180,9 +181,9 @@ CORS_ORIGIN_WHITELIST = (
 )
 CORS_URLS_REGEX = r'^/api/.*$'
 
-ADMIN_TOOLS_INDEX_DASHBOARD = 'fablabadmin.dashboard.CustomIndexDashboard'
-ADMIN_TOOLS_APP_INDEX_DASHBOARD = 'fablabadmin.dashboard.CustomAppIndexDashboard'
-ADMIN_TOOLS_MENU = 'fablabadmin.menu.CustomMenu'
+ADMIN_TOOLS_INDEX_DASHBOARD = 'fablabadmin.base.dashboard.CustomIndexDashboard'
+ADMIN_TOOLS_APP_INDEX_DASHBOARD = 'fablabadmin.base.dashboard.CustomAppIndexDashboard'
+ADMIN_TOOLS_MENU = 'fablabadmin.base.menu.CustomMenu'
 
 # REDACTOR Options
 REDACTOR_OPTIONS = {'lang': 'en'}
