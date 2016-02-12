@@ -171,7 +171,7 @@ table.header{
                     <p class="address">{{ invoice.seller.first_name }} {{ invoice.seller.last_name }}<br/>
                        {{ invoice.seller.address }}<br/>
                        {{ invoice.seller.postal_code }} {{ invoice.seller.city }}<br/>
-                       {{ invoice.seller.country }}
+                       {{ invoice.seller.country }}<br/>
                     <a href="mailto:{{ invoice.seller.email }}">{{ invoice.seller.email }}</a></p>
                 </td>
             </tr>
@@ -186,7 +186,7 @@ table.header{
                     <p class="address">{{ invoice.buyer.first_name }} {{ invoice.buyer.last_name }}<br/>
                        {{ invoice.buyer.address }}<br/>
                        {{ invoice.buyer.postal_code }} {{ invoice.buyer.city }}<br/>
-                       {{ invoice.buyer.country }}
+                       {{ invoice.buyer.country }}<br/>
                     <a href="mailto:{{ invoice.buyer.email }}">{{ invoice.buyer.email }}</a>
                     </p>
                 </td>
