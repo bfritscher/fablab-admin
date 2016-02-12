@@ -5,7 +5,7 @@
     {% for child in module.children %}
     <li class="{% cycle 'odd' 'even' %}">
         <span class="float-right">{{ child.action_time|date }}</span>
-        <span class="float-right">{{ child.user }}</span>
+        <span class="float-right">{{ child.user }},&nbsp;</span>
         {% if child.is_deletion %}
         <span class="deletelink">{% if child.content_type %}{% filter capfirst %}{{ child.content_type.name }}{% endfilter %}&nbsp;{% endif %}{{ child.object_repr }}</span>
         {% else %}
