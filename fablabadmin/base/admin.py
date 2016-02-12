@@ -557,9 +557,12 @@ class EventRegistrationInline(admin.TabularInline):
 
 @admin.register(Event)
 class EventAdmin(GuardedModelAdminMixin, TabbedModelAdmin):
+    model = Event
     filter_horizontal = ('organizers',)
     search_fields = ('title',)
     date_hierarchy = "start_date"
+
+    change_form_template = 'base/change_form_tabbed.html'
 
     tab_overview = (
         (_('Event'), {
