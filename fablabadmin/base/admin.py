@@ -190,7 +190,7 @@ class UserExpenseInline(LedgerEntryMixin, admin.TabularInline):
 @admin.register(Contact)
 class ContactAdmin(BaseDjangoObjectActions, ImportExportMixin, GuardedModelAdminMixin, TabbedModelAdmin):
     model = Contact
-    search_fields = ('first_name', 'last_name', 'email', 'user__username')
+    search_fields = ('first_name', 'last_name', 'email', 'user__username', 'functions__name')
     list_display = ('full_name', 'status', 'functions','is_membership_paid_list')
     list_filter = ('status', MembershipPaidListFilter)
     readonly_fields = ('is_membership_paid', 'functions')
