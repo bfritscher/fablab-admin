@@ -61,6 +61,7 @@ INSTALLED_APPS = (
     'mail_templated',
     'raven.contrib.django.raven_compat',
     'debug_toolbar',
+    'material'
 )
 
 
