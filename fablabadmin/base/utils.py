@@ -77,9 +77,6 @@ def mailchimp_remove(contact):
 
 
 def send_invoice(invoice):
-    # Create new empty message.
-    message = EmailMessage()
-
     # Initialize message on creation.
     message = EmailMessage('base/mail/invoice.html', {'invoice': invoice}, invoice.seller.email,
                            to=[invoice.buyer.email])

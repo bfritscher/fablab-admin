@@ -204,6 +204,8 @@ THUMBNAIL_PROCESSORS = (
     'easy_thumbnails.processors.filters',
 )
 
+CONTACT_REGISTRATION_STATUS_ID = 2
+
 #
 def show_toolbar(request):
     return True

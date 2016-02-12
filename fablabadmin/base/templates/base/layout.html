@@ -19,6 +19,7 @@
 </head>
 
 <body class="{% block bodyclass %}{% endblock %}">
+<header>
     <nav class="white blue-text" role="navigation">
         <div class="nav-wrapper container">
             <a id="logo" href="/" class="brand-logo"></a>
@@ -36,13 +37,15 @@
             </ul>
         </div>
     </nav>
+</header>
+<main>
     <div class="back-ribbon"></div>
     <div id="main">
         <div class="container">
             {% block content %}{% endblock %}
         </div>
     </div>
-
+</main>
     <footer class="page-footer grey darken-2">
         <div class="container">
           <div class="row">
@@ -82,6 +85,7 @@
     <script>
         $( document ).ready(function(){
             $(".button-collapse").sideNav();
+            {% block readyscript %}{% endblock %}
         });
     </script>
 </body>

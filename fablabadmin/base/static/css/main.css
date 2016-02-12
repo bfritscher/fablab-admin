@@ -18,3 +18,17 @@
 .container .blue-text {
     color: #006EB8 !important;
 }
+
+ body {
+    display: flex;
+    min-height: 100vh;
+    flex-direction: column;
+  }
+
+  main {
+    flex: 1 0 auto;
+  }
+
+  .block{
+      display: block;
+  }

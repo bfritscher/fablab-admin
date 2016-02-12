@@ -6,6 +6,7 @@ urlpatterns = [
     url(r'admin/invoice_html/(\d+)', views.invoice_html),
     url(r'admin/mail_template/(\d+)', views.mail_template),
     url(r'^$',  views.index, name='index'),
-    url(r'register',  views.ContactRegister.as_view(), name='register'),
+    url(r'register/success',  views.register_success, name='register_success'),
+    url(r'register',  views.register, name='register'),
     url(r'resource/(?P<id>\d+)',  views.resource, name='resource')
 ]

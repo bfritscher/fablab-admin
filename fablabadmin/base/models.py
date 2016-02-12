@@ -127,6 +127,8 @@ class Function(models.Model):
 class Resource(models.Model):
     name = models.CharField(max_length=60, verbose_name=_("name"), blank=False, null=False)
     type = models.ForeignKey(ResourceType, related_name="resources", verbose_name=_("type"), on_delete=models.PROTECT)
+    price = models.FloatField(verbose_name=_("usage price"), blank=True, null=True)
+    price_unit = models.CharField(verbose_name=_("price unit"), max_length=10, blank=False, default="")
     description = RedactorField(verbose_name=_("description"), blank=True, null=False)
 
     class Meta:

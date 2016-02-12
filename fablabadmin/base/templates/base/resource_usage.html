@@ -1,85 +1,75 @@
 {% extends "base/layout.html" %}
-{% load my_tags %}
+{% load material_form %}
+{% load i18n %}
 
 {% block content %}
-    <div class="demo-content mdl-color--white mdl-shadow--4dp content mdl-color-text--grey-800 mdl-cell mdl-cell--8-col">
-        <h3>{{ resource }}</h3>
-
-        <h4>Usage</h4>
-        <form action="" method="post" class="mdl-shadow--2dp">
-            {% csrf_token %}
-            <div class="mdl-textfield mdl-js-textfield {% if form.user.errors %}is-invalid{% endif %}">
-                {{ form.user.label_tag}}
-                {{ form.user }}
-                {% if form.user.errors %}
-                    <span class="mdl-textfield__error" style="visibility: visible;position:relative">{{ form.user.errors.0 }}</span>
-                {% endif %}
-            </div>
-            <div>
-                <div class="mdl-textfield mdl-js-textfield  mdl-textfield--floating-label">
-                {{ form.quantity|add_css:"mdl-textfield__input" }}
-                {{ form.quantity|label_with_classes:"mdl-textfield__label" }}
-                {% if form.quantity.errors %}
-                    <span class="mdl-textfield__error">{{ form.quantity.errors.0 }}</span>
-                {% endif %}
-                </div>
-                <div class="mdl-textfield mdl-js-textfield  mdl-textfield--floating-label">
-                {{ form.unit_price|add_css:"mdl-textfield__input" }}
-                {{ form.unit_price|label_with_classes:"mdl-textfield__label" }}
-                {% if form.unit_price.errors %}
-                    <span class="mdl-textfield__error">{{ form.unit_price.errors.0 }}</span>
-                {% endif %}
-                </div>
-            </div>
-            <div class="mdl-textfield mdl-js-textfield  mdl-textfield--floating-label {% if form.description.errors %}is-invalid{% endif %}" style="width:100%;">
-            {{ form.description|add_css:"mdl-textfield__input textarea" }}
-            {{ form.description|label_with_classes:"mdl-textfield__label" }}
-            {% if form.description.errors %}
-                <span class="mdl-textfield__error">{{ form.description.errors.0 }}</span>
-            {% endif %}
-            </div>
-            <div>
-                Optional (if used for an event)
-                <div class="mdl-textfield mdl-js-textfield  mdl-textfield--floating-label">
-                {{ form.event.errors }}
-                {{ form.event.label_tag }}
-                {{ form.event }}
-                </div>
-            </div>
-        <hr/>
-                <input type="submit"
-                   class="mdl-button mdl-js-button mdl-button--raised  mdl-js-ripple-effect mdl-button--accent"
-                   value="Submit" />
-        </form>
-
-        <h4>History</h4>
-        <table class="mdl-data-table mdl-js-data-table mdl-shadow--2dp" style="width:100%;">
+    <div class="row">
+        <div class="col s12 offset-m2 m8">
+             <div class="card">
+                <form method="post">
+                    <div class="card-content">
+                         <span class="card-title">{{ resource }}</span>
+                         {% csrf_token %}
+                         {% form form=form %}
+                             {% part form.user control %}{{ form.user }}{% endpart %}
+                             {% part form.user add_label_class %}{{ "block"}}{% endpart %}
+                             {% part form.user prefix %}<i class="material-icons prefix mdi-action-account-box"></i>{% endpart %}
+                             {% part form.description prefix %}<i class="material-icons prefix">mode_edit</i>{% endpart %}
+                             {% part form.quantity prefix %}<i class="material-icons prefix mdi-editor-format-list-numbered"></i>{% endpart %}
+                             {% part form.quantity help_text %}x {{ resource.price }} {{ resource.price_unit }} = <span id="total"></span>{% endpart %}
+                             {% part form.event control %}{{ form.event }}{% endpart %}
+                             {% part form.event add_label_class %}{{ "block"}}{% endpart %}
+                             {% part form.event prefix %}<i class="material-icons prefix mdi-av-movie"></i>{% endpart %}
+                             {% part form.event help_text %}<div><small>{% trans "Optional (if used for an event)" %}</small></div>{% endpart %}
+                         {% endform %}
+                    </div>
+                    <div class="card-action right-align">
+                        <button type="submit" name="_submit" class="btn red btn-primary btn-lg waves-effect waves-light">{% trans "Submit" %}</button>
+                    </div>
+                </form>
+             </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col s12">
+        <h5>{%  trans "History" %}</h5>
+        <table class="responsive-table striped highlight">
             <thead>
             <tr>
-                <th class="mdl-data-table__cell--non-numeric">Date</th>
-                <th class="mdl-data-table__cell--non-numeric">User</th>
-                <th class="mdl-data-table__cell--non-numeric">Material</th>
-                <th>Quantity</th>
-                <th>Unit price</th>
+                <th class="">{% trans "Date" %}</th>
+                <th class="">{% trans "User" %}</th>
+                <th class="">{% trans "Material" %}</th>
+                <th class="right-align">{% trans "Quantity" %}</th>
+                <th class="right-align">{% trans "Unit price"%}</th>
+                <th class="right-align">{% trans "Total" %}</th>
             </tr>
             </thead>
             <tbody>
             {% for u in last_usages %}
                 <tr>
-                    <td class="mdl-data-table__cell--non-numeric">
+                    <td class="">
                         {{ u.date|date:"SHORT_DATE_FORMAT" }}
                     </td>
-                    <td class="mdl-data-table__cell--non-numeric">
+                    <td class="">
                         {{ u.user }}
                     </td>
-                    <td class="mdl-data-table__cell--non-numeric">
+                    <td class="">
                         {{ u.description }}
                     </td>
-                    <td>{{ u.quantity }}</td>
-                    <td>{{ u.unit_price }}</td>
+                    <td class="right-align">{{ u.quantity }}</td>
+                    <td class="right-align">{{ u.unit_price }} {{ resource.price_unit }}</td>
+                    <td class="right-align">{{ u.total }}</td>
                 </tr>
             {% endfor %}
             </tbody>
         </table>
+
+        </div>
     </div>
+{% endblock %}
+{% block readyscript %}
+    jQuery('#id_quantity').on('change', function(){
+       jQuery('#total').text($(this).val() * {{ resource.price }});
+    });
+    jQuery('#total').text($('#id_quantity').val() * {{ resource.price }});
 {% endblock %}
