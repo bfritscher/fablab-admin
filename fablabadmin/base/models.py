@@ -108,7 +108,7 @@ def update_user(sender, instance, **kwargs):
 @python_2_unicode_compatible
 class Function(models.Model):
     member = models.ForeignKey(Contact, related_name="functions", verbose_name=_("member"), on_delete=models.CASCADE) #limit_choices_to={'is_staff': True},
-    name = models.CharField(max_length=60, verbose_name=_("name"), blank=False, null=False)
+    name = models.CharField(max_length=60, verbose_name=_("function name"), blank=False, null=False)
     year_from = models.PositiveIntegerField(verbose_name=_("year started"), blank=False, null=False)
     year_to = models.PositiveIntegerField(verbose_name=_("year ended"), blank=True, null=True)
     committee = models.BooleanField(verbose_name=_("committee"), default=True)

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-02-12 11:18+0000\n"
+"POT-Creation-Date: 2016-02-12 11:27+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -221,7 +221,7 @@ msgstr "Tableau de bord"
 msgid "report bug / new feature"
 msgstr "signaler bug / proposer modifications"
 
-#: models.py:23 models.py:37 models.py:111 models.py:128
+#: models.py:23 models.py:37 models.py:128
 msgid "name"
 msgstr "nom"
 
@@ -324,6 +324,10 @@ msgstr "Contact"
 #: models.py:110 models.py:143 models.py:238
 msgid "member"
 msgstr "membre"
+
+#: models.py:111
+msgid "function name"
+msgstr "nom de fonction"
 
 #: models.py:112
 msgid "year started"
