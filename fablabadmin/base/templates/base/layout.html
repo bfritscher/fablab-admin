@@ -7,47 +7,82 @@
     <meta name="robots" content="NONE,NOARCHIVE" />
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{% block title %}{% endblock %}</title>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:regular,bold,italic,thin,light,bolditalic,black,medium&amp;lang=en">
-    <link rel="stylesheet" href="https://storage.googleapis.com/code.getmdl.io/1.0.6/material.blue-red.min.css" />
+    <!--Import Google Icon Font-->
+    <link href="http://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.5/css/materialize.min.css">
+
     <link rel="stylesheet" type="text/css" href="{% static "css/theming.css" %}" />
     <link rel="stylesheet" type="text/css" href="{% static "css/main.css" %}" />
+
     {% block extrastyle %}{% endblock %}
     {% block extrahead %}{% endblock %}
 </head>
 
 <body class="{% block bodyclass %}{% endblock %}">
-   <div class="demo-layout mdl-layout mdl-layout--fixed-header mdl-js-layout mdl-color--grey-100">
-      <header class="demo-header mdl-layout__header mdl-layout__header--scroll  mdl-color--white">
-        <div class="mdl-layout__header-row">
-          <div class="mdl-layout-title"><a class="logo" href="/"></a></div>
-          <div class="mdl-layout-spacer"></div>
-          <a href="/admin/" class="mdl-button mdl-js-button mdl-button--icon mdl-button--colored">
-              <i class="material-icons">settings</i>
-          </a>
+    <nav class="white blue-text" role="navigation">
+        <div class="nav-wrapper container">
+            <a id="logo" href="/" class="brand-logo"></a>
+            <a href="#" data-activates="nav-mobile" class="button-collapse blue-text" ><i class="material-icons">menu</i></a>
+            <ul class="right hide-on-med-and-down">
+                <li><a  class="blue-text" href="/">Home</a></li>
+                <li><a  class="blue-text" href="/register">Register</a></li>
+                <li><a  class="blue-text" href="/admin"><i class="material-icons">settings</i></a></li>
+            </ul>
+
+            <ul id="nav-mobile" class="side-nav blue-text">
+                <li><a  class="blue-text" href="/">Home</a></li>
+                <li><a  class="blue-text" href="/register">Register</a></li>
+                <li><a  class="blue-text" href="/admin">Admin</a></li>
+            </ul>
         </div>
-      </header>
-      <div class="demo-ribbon"></div>
-      <main class="demo-main mdl-layout__content">
-        <div class="demo-container mdl-grid">
+    </nav>
+    <div class="back-ribbon"></div>
+    <div id="main">
+        <div class="container">
             {% block content %}{% endblock %}
         </div>
-        <footer class="demo-footer mdl-mini-footer">
-          <div class="mdl-mini-footer--left-section">
-            <ul class="mdl-mini-footer--link-list">
-                <li><a href="http://www.fablab-lacote.ch/">FabLab la Côte</a></li>
-                <li><a href="http://www.fablab-lacote.ch/wiki">Wiki</a></li>
-                <li><a href="https://www.facebook.com/FabLabLaCote">Facebook</a></li>
-                <li><a href="https://trello.com/fablablacote">Trello</a></li>
-                <li><a href="https://github.com/FabLab-LaCote">Github</a></li>
-                <li><a href="https://github.com/bfritscher/fablab-admin/issues">Report bug / new feature</a></li>
-            </ul>
-          </div>
-        </footer>
-      </main>
     </div>
-    <script src="https://storage.googleapis.com/code.getmdl.io/1.0.6/material.min.js"></script>
+
+    <footer class="page-footer grey darken-2">
+        <div class="container">
+          <div class="row">
+            <div class="col l6 s12">
+              <h5 class="white-text">FabLab la Côte</h5>
+              <p class="grey-text text-lighten-4">Make!</p>
+
+
+            </div>
+            <div class="col l3 s12">
+              <h5 class="white-text">Social</h5>
+              <ul>
+                <li><a  class="grey-text lighten-4" href="http://www.fablab-lacote.ch/">FabLab la Côte</a></li>
+                <li><a  class="grey-text lighten-4" href="http://www.fablab-lacote.ch/wiki">Wiki</a></li>
+                <li><a  class="grey-text lighten-4" href="https://www.facebook.com/FabLabLaCote">Facebook</a></li>
+              </ul>
+            </div>
+            <div class="col l3 s12">
+              <h5 class="white-text">Code</h5>
+              <ul>
+                <li><a  class="grey-text lighten-4" href="https://trello.com/fablablacote">Trello</a></li>
+                <li><a  class="grey-text lighten-4" href="https://github.com/FabLab-LaCote">Github</a></li>
+                <li><a  class="grey-text lighten-4" href="https://github.com/bfritscher/fablab-admin/issues">Report bug / new feature</a></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <div class="footer-copyright">
+          <div class="container">
+            Powered by <a class="blue-text text-lighten-3" href="https://github.com/bfritscher/fablab-admin">Fablab-admin</a>
+          </div>
+        </div>
+    </footer>
     <script src="{% static 'admin/js/vendor/jquery/jquery.min.js' %}" type="text/javascript"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.5/js/materialize.min.js"></script>
     {% include 'autocomplete_light/static.html' %}
+    <script>
+        $( document ).ready(function(){
+            $(".button-collapse").sideNav();
+        });
+    </script>
 </body>
 </html>

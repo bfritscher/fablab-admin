@@ -1,11 +1,13 @@
 import autocomplete_light
 from django.contrib.auth.decorators import permission_required
 from django.core.urlresolvers import reverse
+from django.forms import forms, CharField, Form, ModelForm
 from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseRedirect
-from fablabadmin.base.models import Invoice, Resource, ResourceUsage
+from fablabadmin.base.models import Invoice, Resource, ResourceUsage, Contact
 from fablabadmin.base.utils import make_pdf
-
+from material import LayoutMixin, Layout, Row, Fieldset, Field
+from django.views.generic.edit import CreateView
 
 def render_to_pdf(template_src, context_dict):
     try:
@@ -18,6 +20,33 @@ def render_to_pdf(template_src, context_dict):
 def index(request):
     resources = Resource.objects.all()
     return render(request, 'base/index.html', {'resources': resources})
+
+
+class ContactRegisterForm(ModelForm):
+    class Meta:
+        model = Contact
+        fields = '__all__'
+
+    def __init__(self, *args, **kwargs):
+        super(ContactRegisterForm, self).__init__(*args, **kwargs)
+        self.fields['first_name'].required = True
+
+    layout = Layout(Fieldset('Contact',
+                             Row('first_name', 'last_name'),
+                             'birth_year', 'address',
+                             Row('postal_code', 'city'),
+                             'phone'),
+                    Fieldset('Informations',
+                             'education', 'profession', 'employer', 'interests'))
+
+
+
+class ContactRegister(CreateView):
+    model = Contact
+    form_class = ContactRegisterForm
+    template_name = "base/register_form.html"
+    # success_url = ""
+
 
 
 class ResourceUsageModelForm(autocomplete_light.ModelForm):

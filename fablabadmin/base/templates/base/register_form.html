@@ -1,0 +1,22 @@
+{% extends "base/layout.html" %}
+{% load material_form %}
+
+{% block content %}
+    <div class="demo-content mdl-color--white mdl-shadow--4dp content mdl-color-text--grey-800 mdl-cell mdl-cell--8-col">
+        <div class="card">
+        <form method="POST" class="viewform">
+        <div class="card-content">
+            <span class="card-title">Membership registration</span>
+            {% csrf_token %}
+        </div>
+        {% form form=form %}
+        {% endform %}
+        <div class="card-action">
+            <button type="submit" name="_submit" class="btn btn-primary btn-lg waves-effect waves-light">Submit</button>
+        </div>
+
+        </form>
+        </div>
+
+    </div>
+{% endblock %}
