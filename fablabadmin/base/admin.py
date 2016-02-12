@@ -297,7 +297,9 @@ class ContactAdmin(BaseDjangoObjectActions, ImportExportMixin, GuardedModelAdmin
     is_membership_paid_list.short_description = is_membership_paid.short_description
 
     def functions(self, obj):
-        return ', '.join(obj.functions.values_list('name', flat=True))
+        return ', '.join(obj.functions.filter(
+            Q(year_from__lte=datetime.date.today().year),
+            Q(year_to__gte=datetime.date.today().year) | Q(year_to__isnull=True)).values_list('name', flat=True))
     functions.short_description = _("functions")
 
     tab_overview = (
