@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-01-31 22:00+0000\n"
+"POT-Creation-Date: 2016-02-12 10:58+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,542 +17,544 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 
-#: admin.py:59
+#: base/admin.py:59
 msgid "Start year cannot be greater than end year."
 msgstr "Année de début ne peut pas être supérieur à l'année de fin."
 
-#: admin.py:77 models.py:268
+#: base/admin.py:77 base/models.py:269
 msgid "is membership paid"
 msgstr "cotisation payée"
 
-#: admin.py:91 admin.py:137 admin.py:272 admin.py:290
+#: base/admin.py:91 base/admin.py:137 base/admin.py:272 base/admin.py:290
 msgid "no"
 msgstr "non"
 
-#: admin.py:92 admin.py:140 admin.py:277 admin.py:294
+#: base/admin.py:92 base/admin.py:140 base/admin.py:277 base/admin.py:294
 msgid "yes"
 msgstr "oui"
 
-#: admin.py:117 autocomplete_light_registry.py:72 models.py:159 models.py:217
-#: models.py:238
+#: base/admin.py:117 base/autocomplete_light_registry.py:72 base/models.py:160
+#: base/models.py:218 base/models.py:239
 msgid "invoice"
 msgstr "facture"
 
-#: admin.py:123
+#: base/admin.py:123
 msgid "Edit"
 msgstr ""
 
-#: admin.py:124
+#: base/admin.py:124
 msgid "action"
 msgstr "action"
 
-#: admin.py:231
+#: base/admin.py:231
 #, python-format
 msgid "created memberships for: %s"
 msgstr ""
 
-#: admin.py:239 admin.py:240
+#: base/admin.py:239 base/admin.py:240
 msgid "Create membership invoice"
 msgstr "Facturer cotisation"
 
-#: admin.py:248
+#: base/admin.py:248
 msgid "Found no entries to be invoiced"
 msgstr "Aucune transaction non facturée"
 
-#: admin.py:251
+#: base/admin.py:251
 msgid "create invoice"
 msgstr "créer facture"
 
-#: admin.py:252
+#: base/admin.py:252
 msgid "invoice open ledger entries"
 msgstr "facturer transactions ouvertes"
 
-#: admin.py:260
+#: base/admin.py:260
 msgid "Found no expenses to be invoiced"
 msgstr "Aucune note de frais non facturée"
 
-#: admin.py:263
+#: base/admin.py:263
 msgid "bill expenses"
 msgstr "facturer note de frais"
 
-#: admin.py:264
+#: base/admin.py:264
 msgid "invoice open expenses"
 msgstr "facturer transactions ouvertes"
 
-#: admin.py:284 admin.py:296
+#: base/admin.py:284 base/admin.py:296
 msgid "-"
 msgstr "-"
 
-#: admin.py:285 models.py:77
+#: base/admin.py:285 base/models.py:77
 #, python-format
 msgid "is %(year)s membership paid"
 msgstr "cotisation %(year)s payée"
 
-#: admin.py:300
+#: base/admin.py:301 base/models.py:118
+msgid "functions"
+msgstr "fonctions"
+
+#: base/admin.py:304
 msgid "Contact"
 msgstr "Contact"
 
-#: admin.py:309
+#: base/admin.py:314
 msgid "Address"
 msgstr "Adresse"
 
-#: admin.py:316
+#: base/admin.py:321
 msgid "Payment"
 msgstr "Paiement"
 
-#: admin.py:333 admin.py:581
+#: base/admin.py:338 base/admin.py:587
 msgid "Overview"
 msgstr "Vue d'ensemble"
 
-#: admin.py:334 admin.py:566
+#: base/admin.py:339 base/admin.py:572
 msgid "Detail"
 msgstr "Détail"
 
-#: admin.py:335
+#: base/admin.py:340
 msgid "Trainings"
 msgstr "Formations"
 
-#: admin.py:336
+#: base/admin.py:341
 msgid "Functions"
 msgstr "Fonctions"
 
-#: admin.py:337
+#: base/admin.py:342
 msgid "Memberships"
 msgstr "Cotisations"
 
-#: admin.py:338
+#: base/admin.py:343
 msgid "Ledger entries"
 msgstr "Écritures comptables"
 
-#: admin.py:339 admin.py:584
+#: base/admin.py:344 base/admin.py:590
 msgid "Expenses"
 msgstr "Note de frais"
 
-#: admin.py:393
+#: base/admin.py:398
 msgid "preview"
 msgstr "aperçu"
 
-#: admin.py:394
+#: base/admin.py:399
 msgid "preview of the invoice"
 msgstr "aperçu de la facture"
 
-#: admin.py:401
+#: base/admin.py:406
 #, python-format
 msgid "invoice sent to %s"
 msgstr "facture envoyée à %s"
 
-#: admin.py:403
+#: base/admin.py:409
 msgid "publish"
 msgstr "publier"
 
-#: admin.py:404
+#: base/admin.py:410
 msgid "publish invoice and send it by email"
 msgstr "publier facture et l'envoyer par e-mail"
 
-#: admin.py:557
+#: base/admin.py:563
 msgid "Event"
 msgstr "Événement"
 
-#: admin.py:582
+#: base/admin.py:588
 msgid "Documents"
 msgstr "Documents"
 
-#: admin.py:583
+#: base/admin.py:589
 msgid "Registrations"
 msgstr "Inscriptions"
 
-#: admin.py:585
+#: base/admin.py:591
 msgid "Resource usages"
 msgstr "Utilisation de ressources"
 
-#: apps.py:6
+#: base/apps.py:6
 msgid "Fablab Admin Base"
 msgstr "Fablab Admin Base"
 
-#: autocomplete_light_registry.py:12
+#: base/autocomplete_light_registry.py:12
 msgid "contact name"
 msgstr "nom d'un contact"
 
-#: autocomplete_light_registry.py:32
+#: base/autocomplete_light_registry.py:32
 msgid "event title"
 msgstr "titre d'un événement"
 
-#: autocomplete_light_registry.py:52
+#: base/autocomplete_light_registry.py:52
 msgid "resource name"
 msgstr "nom d'une ressource"
 
-#: models.py:23 models.py:37 models.py:110 models.py:127
+#: base/models.py:23 base/models.py:37 base/models.py:111 base/models.py:128
 msgid "name"
 msgstr "nom"
 
-#: models.py:24
+#: base/models.py:24
 msgid "is member"
 msgstr "est membre"
 
-#: models.py:27
+#: base/models.py:27
 msgid "contact status"
 msgstr "type de contact"
 
-#: models.py:28
+#: base/models.py:28
 msgid "contact statuses"
 msgstr "types de contacts"
 
-#: models.py:40 models.py:143
+#: base/models.py:40 base/models.py:144
 msgid "resource type"
 msgstr "type de ressource"
 
-#: models.py:41
+#: base/models.py:41
 msgid "resource types"
 msgstr "types de ressource"
 
-#: models.py:51
+#: base/models.py:51
 msgid "first name"
 msgstr "prénom"
 
-#: models.py:52
+#: base/models.py:52
 msgid "last name"
 msgstr "nom"
 
-#: models.py:53
+#: base/models.py:53
 msgid "email address"
 msgstr "adresse email"
 
-#: models.py:54
+#: base/models.py:54
 msgid "status"
 msgstr "status"
 
-#: models.py:55
+#: base/models.py:55
 msgid "address"
 msgstr "adresse"
 
-#: models.py:56
+#: base/models.py:56
 msgid "postal code"
 msgstr "NPA"
 
-#: models.py:57
+#: base/models.py:57
 msgid "city"
 msgstr "ville"
 
-#: models.py:58
+#: base/models.py:58
 msgid "country"
 msgstr "pays"
 
-#: models.py:59
+#: base/models.py:59
 msgid "phone"
 msgstr "téléphone"
 
-#: models.py:60
+#: base/models.py:60
 msgid "year of birth"
 msgstr "année de naissance"
 
-#: models.py:61
+#: base/models.py:61
 msgid "comment"
 msgstr "commentaire"
 
-#: models.py:62
+#: base/models.py:62
 msgid "education"
 msgstr "fonction"
 
-#: models.py:63
+#: base/models.py:63
 msgid "profession"
 msgstr "profession"
 
-#: models.py:64
+#: base/models.py:64
 msgid "employer"
 msgstr "employeur"
 
-#: models.py:65
+#: base/models.py:65
 msgid "interests"
 msgstr "intérêts"
 
-#: models.py:66
+#: base/models.py:66
 msgid "payment information"
 msgstr "informations de paiement"
 
-#: models.py:81
+#: base/models.py:81
 msgid "full name"
 msgstr "nom complet"
 
-#: models.py:84
+#: base/models.py:84
 msgid "contact"
 msgstr "Contact"
 
-#: models.py:85
+#: base/models.py:85
 msgid "contacts"
 msgstr "Contact"
 
-#: models.py:109 models.py:142 models.py:237
+#: base/models.py:110 base/models.py:143 base/models.py:238
 msgid "member"
 msgstr "membre"
 
-#: models.py:111
+#: base/models.py:112
 msgid "year started"
 msgstr "année début"
 
-#: models.py:112
+#: base/models.py:113
 msgid "year ended"
 msgstr "année fin"
 
-#: models.py:113
+#: base/models.py:114
 msgid "committee"
 msgstr "comité"
 
-#: models.py:116
+#: base/models.py:117
 msgid "function"
 msgstr "fonction"
 
-#: models.py:117
-msgid "functions"
-msgstr "fonctions"
-
-#: models.py:128 models.py:239
+#: base/models.py:129 base/models.py:240
 msgid "type"
 msgstr "type"
 
-#: models.py:129 models.py:234 models.py:321 templates/base/invoice.html:203
+#: base/models.py:130 base/models.py:235 base/models.py:322
+#: base/templates/base/invoice.html:203
 msgid "description"
 msgstr "description"
 
-#: models.py:132 models.py:375
+#: base/models.py:133 base/models.py:376
 msgid "resource"
 msgstr "ressource"
 
-#: models.py:133
+#: base/models.py:134
 msgid "resources"
 msgstr "ressources"
 
-#: models.py:144 models.py:165 models.py:232
+#: base/models.py:145 base/models.py:166 base/models.py:233
 msgid "date"
 msgstr "date"
 
-#: models.py:147
+#: base/models.py:148
 msgid "training"
 msgstr "formation"
 
-#: models.py:148
+#: base/models.py:149
 msgid "trainings"
 msgstr "formations"
 
-#: models.py:158 models.py:399
+#: base/models.py:159 base/models.py:400
 msgid "expense"
 msgstr "note de frais"
 
-#: models.py:162
+#: base/models.py:163
 msgid "cash"
 msgstr "caisse"
 
-#: models.py:163
+#: base/models.py:164
 msgid "bank"
 msgstr "banque"
 
-#: models.py:166
+#: base/models.py:167
 msgid "buyer"
 msgstr "acheteur"
 
-#: models.py:167
+#: base/models.py:168
 msgid "seller"
 msgstr "vendeur"
 
-#: models.py:168
+#: base/models.py:169
 msgid "date paid"
 msgstr "date payé"
 
-#: models.py:171
+#: base/models.py:172
 msgid "draft"
 msgstr "brouillon"
 
-#: models.py:172
+#: base/models.py:173
 msgid "manual total"
 msgstr "total manuel"
 
-#: models.py:173 models.py:341 models.py:396
+#: base/models.py:174 base/models.py:342 base/models.py:397
 msgid "document"
 msgstr "document"
 
-#: models.py:184 templates/base/invoice.html.py:206
+#: base/models.py:185 base/templates/base/invoice.html.py:206
 msgid "total"
 msgstr "total"
 
-#: models.py:218
+#: base/models.py:219
 msgid "invoices"
 msgstr "factures"
 
-#: models.py:228
+#: base/models.py:229
 msgid "debit"
 msgstr "débit"
 
-#: models.py:229
+#: base/models.py:230
 msgid "credit"
 msgstr "crédit"
 
-#: models.py:233 models.py:317
+#: base/models.py:234 base/models.py:318
 msgid "title"
 msgstr "titre"
 
-#: models.py:235 templates/base/invoice.html.py:204
+#: base/models.py:236 base/templates/base/invoice.html.py:204
 msgid "quantity"
 msgstr "quantité"
 
-#: models.py:236 templates/base/invoice.html.py:205
+#: base/models.py:237 base/templates/base/invoice.html.py:205
 msgid "unit price"
 msgstr "prix unitaire"
 
-#: models.py:247
+#: base/models.py:248
 #, python-format
 msgid "Transaction on %(date)s for %(total)s by %(user)s"
 msgstr "Transaction du %(date)s pour %(total)s par %(user)s"
 
-#: models.py:250
+#: base/models.py:251
 msgid "ledger entry"
 msgstr "écritures comptables"
 
-#: models.py:251
+#: base/models.py:252
 msgid "ledger entries"
 msgstr "écritures comptables"
 
-#: models.py:262
+#: base/models.py:263
 msgid "year"
 msgstr "année"
 
-#: models.py:273
+#: base/models.py:274
 msgid "Membership"
 msgstr "Cotisation"
 
-#: models.py:276
+#: base/models.py:277
 #, python-format
 msgid "membership %(year)s"
 msgstr "cotisation %(year)s"
 
-#: models.py:294
+#: base/models.py:295
 msgid "membership invoice"
-msgstr "cotisation payée"
+msgstr "facture cotisation"
 
-#: models.py:295
+#: base/models.py:296
 msgid "membership invoices"
-msgstr "cotisation %(year)s"
+msgstr "factures cotisations"
 
-#: models.py:298
+#: base/models.py:299
 #, python-format
 msgid "Membership %(year)s for %(user)s"
 msgstr "Cotisation %(year)s pour %(user)s"
 
-#: models.py:305
+#: base/models.py:306
 #, python-format
 msgid "Membership %(year)s for %(user)s already exists!"
 msgstr "Cotisation %(year)s pour %(user)s existe déjà!"
 
-#: models.py:318
+#: base/models.py:319
 msgid "start date"
 msgstr "date de début"
 
-#: models.py:319
+#: base/models.py:320
 msgid "end date"
 msgstr "date de fin"
 
-#: models.py:320
+#: base/models.py:321
 msgid "location"
 msgstr "lieu"
 
-#: models.py:322
+#: base/models.py:323
 msgid "website"
 msgstr "site web"
 
-#: models.py:323
+#: base/models.py:324
 msgid "trello"
 msgstr "trello"
 
-#: models.py:324
+#: base/models.py:325
 msgid "minimum number of participants"
 msgstr "nombre minimum de participants"
 
-#: models.py:325
+#: base/models.py:326
 msgid "maximum number of participants"
 msgstr "nombre maximum de participants"
 
-#: models.py:329 models.py:342 models.py:354 models.py:376 models.py:394
+#: base/models.py:330 base/models.py:343 base/models.py:355 base/models.py:377
+#: base/models.py:395
 msgid "event"
 msgstr "événement"
 
-#: models.py:330
+#: base/models.py:331
 msgid "events"
 msgstr "événements"
 
-#: models.py:345
+#: base/models.py:346
 msgid "event document"
 msgstr "document d'événement"
 
-#: models.py:346
+#: base/models.py:347
 msgid "event documents"
 msgstr "documents d'événement"
 
-#: models.py:357
+#: base/models.py:358
 msgid "event registration"
 msgstr "inscription à un événement"
 
-#: models.py:358
+#: base/models.py:359
 msgid "event registrations"
 msgstr "inscriptions à un événement"
 
-#: models.py:362
+#: base/models.py:363
 msgid "Event registration"
 msgstr "Inscription à un événement"
 
-#: models.py:370
+#: base/models.py:371
 #, python-format
 msgid "Registration to %(event)s by %(user)s"
 msgstr "Inscription à %(event)s de %(user)s"
 
-#: models.py:385
+#: base/models.py:386
 msgid "resource usage"
 msgstr "Utilisation de ressource"
 
-#: models.py:386
+#: base/models.py:387
 msgid "resource usages"
 msgstr "utilisations de ressource"
 
-#: models.py:389
+#: base/models.py:390
 #, python-format
 msgid "Usage of %(resource)s by %(user)s"
 msgstr "Utilisation de %(resource)s par %(user)s"
 
-#: models.py:395
+#: base/models.py:396
 msgid "provider"
 msgstr "fournisseur"
 
-#: models.py:400
+#: base/models.py:401
 msgid "expenses"
 msgstr "note de frais"
 
-#: models.py:403
+#: base/models.py:404
 #, python-format
 msgid "Expense for %(expense)s by %(user)s"
 msgstr "Note de frais pour %(expense)s par %(user)s"
 
-#: templates/base/change_form.html:17
-#: templates/base/change_form_tabbed.html:17
+#: base/templates/base/change_form.html:17
+#: base/templates/base/change_form_tabbed.html:17
 msgid "Object permissions"
 msgstr "Permissions d'un objet"
 
-#: templates/base/change_form_tabbed.html:32
+#: base/templates/base/change_form_tabbed.html:32
 msgid "Please correct the error below."
 msgstr "Corriger les erreurs si dessous"
 
-#: templates/base/change_form_tabbed.html:32
+#: base/templates/base/change_form_tabbed.html:32
 msgid "Please correct the errors below."
 msgstr "Corriger les erreurs si dessous"
 
-#: templates/base/index.html:15
+#: base/templates/base/index.html:15
 msgid "use"
 msgstr "utiliser"
 
-#: templates/base/invoice.html:185
+#: base/templates/base/invoice.html:185
 msgid "invoice to"
 msgstr "facture à"
 
-#: templates/base/invoice.html:195
+#: base/templates/base/invoice.html:195
 msgid "Date of invoice"
 msgstr "Date de comptabilisation"
 
-#: templates/base/invoice.html:221
+#: base/templates/base/invoice.html:221
 msgid "grand total"
 msgstr "total général"
