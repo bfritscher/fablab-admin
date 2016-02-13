@@ -36,6 +36,7 @@ LANGUAGES = [
 INSTALLED_APPS = (
     'fablabadmin',
     'fablabadmin.base',
+    'fablabadmin.nfc',
     'admin_tools',
     'admin_tools.theming',
     'admin_tools.menu',

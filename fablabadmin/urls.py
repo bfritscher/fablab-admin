@@ -19,6 +19,7 @@ from django.contrib import admin
 
 from rest_framework import routers
 
+import fablabadmin.nfc.views as nfc
 from fablabadmin.base import urls
 
 
@@ -40,6 +41,7 @@ urlpatterns = [
     url(r'^admin_tools/', include('admin_tools.urls')),
     url(r'^autocomplete/', include('autocomplete_light.urls')),
     url(r'^redactor/', include('redactor.urls')),
+    url(r'^api/nfc/record', nfc.record_log_entry),
     url(r'^api/', include(router.urls)),
     url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     url(r'^i18n/', include('django.conf.urls.i18n')),
