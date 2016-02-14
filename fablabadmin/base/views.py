@@ -95,7 +95,6 @@ class ResourceUsageModelForm(autocomplete_light.ModelForm):
 def resource(request, id):
     resource = Resource.objects.get(id=id)
     last_usages = ResourceUsage.objects.filter(resource=resource).order_by('-date', '-id')[:5]
-    form = ResourceUsageModelForm()
     if request.method == 'POST':
         form = ResourceUsageModelForm(request.POST)
         if form.is_valid():
@@ -104,6 +103,11 @@ def resource(request, id):
             resource_usage.unit_price = resource.price
             resource_usage.save()
             return HttpResponseRedirect(reverse('resource', kwargs={'id': id}))
+    else:
+        if request.user.is_authenticated() and request.user.contact:
+            form = ResourceUsageModelForm(initial={"user": request.user.contact})
+        else:
+            form = ResourceUsageModelForm()
     return render(request, 'base/resource_usage.html', locals())
 
 
