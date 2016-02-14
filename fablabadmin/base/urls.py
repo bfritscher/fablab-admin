@@ -8,5 +8,6 @@ urlpatterns = [
     url(r'^$',  views.index, name='index'),
     url(r'register/success',  views.register_success, name='register_success'),
     url(r'register',  views.register, name='register'),
-    url(r'resource/(?P<id>\d+)',  views.resource, name='resource')
+    url(r'resource/(?P<id>\d+)',  views.resource, name='resource'),
+    url(r'dokuwiki_login', views.dokuwiki_login)
 ]

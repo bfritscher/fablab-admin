@@ -1,17 +1,20 @@
 # -*- coding: utf-8 -*-
 import autocomplete_light
+from django.contrib.auth import authenticate
 from django.contrib.auth.decorators import permission_required
 from django.core.mail import send_mail
 from django.core.urlresolvers import reverse
 from django.forms import forms, CharField, Form, ModelForm
 from django.shortcuts import render
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from fablabadmin.base.models import Invoice, Resource, ResourceUsage, Contact, ContactStatus
 from fablabadmin.base.utils import make_pdf
 from material import LayoutMixin, Layout, Row, Fieldset, Field, Span6, Span8, Span4
 from django.views.generic.edit import CreateView
 from django.utils.translation import ugettext_lazy as _
 from fablabadmin.settings import CONTACT_REGISTRATION_STATUS_ID
+from django.views.decorators.csrf import csrf_exempt
+
 
 def render_to_pdf(template_src, context_dict):
     try:
@@ -142,3 +145,18 @@ def mail_template(request, id):
     return render(request, 'base/mail/invoice.html',{
                 'invoice': invoice
             })
+
+@csrf_exempt
+def dokuwiki_login(request):
+    if request.method == 'POST':
+        user = authenticate(username=request.POST.get('username'), password=request.POST.get('password'))
+        if user is not None:
+            # the password verified for the user
+            if user.is_active:
+                return JsonResponse({
+                    "user": user.username,
+                    "name": "%s %s" % (user.first_name, user.last_name),
+                    "mail": user.email,
+                    "grps": [x for x in user.groups.values_list('name', flat=True)]
+                })
+    return HttpResponse(status=403)
