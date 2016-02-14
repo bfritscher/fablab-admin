@@ -4,6 +4,7 @@ create .env file
 
 ```
 DEBUG=True
+SECRET_KEY=
 STATIC_ROOT=/app/static/
 STATIC_URL=static/
 MEDIA_ROOT=/app/media/

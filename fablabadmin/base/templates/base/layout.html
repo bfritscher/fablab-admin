@@ -25,15 +25,21 @@
             <a id="logo" href="/" class="brand-logo"></a>
             <a href="#" data-activates="nav-mobile" class="button-collapse blue-text" ><i class="material-icons">menu</i></a>
             <ul class="right hide-on-med-and-down">
-                <li><a  class="blue-text" href="/">Home</a></li>
-                <li><a  class="blue-text" href="/register">Register</a></li>
-                <li><a  class="blue-text" href="/admin"><i class="material-icons">settings</i></a></li>
+                <li class="{% if request.get_full_path == "/" %}active{%  endif %}"><a  class="blue-text" href="/">Home</a></li>
+                {% if user.is_authenticated != True %}<li class="{% if request.get_full_path == "/register" %}active{%  endif %}"><a  class="blue-text" href="/register">Register</a></li>{% endif %}
+                {% if user.is_authenticated == True %}<li class="{% if request.get_full_path == "/accounts/profile" %}active{%  endif %}"><a  class="blue-text" href="/accounts/profile">{{ user.first_name|default:'Profile' }}</a></li>{% endif %}
+                {% if user.is_authenticated == True %}<li><a  class="blue-text" href="/accounts/logout">{% trans 'Logout' %}</a></li>{% endif %}
+                {% if user.is_authenticated != True %}<li class="{% if request.get_full_path == "/accounts/login" %}active{%  endif %}"><a  class="blue-text" href="/accounts/login">{% trans 'Login' %}</a></li>{% endif %}
+                {% if user.is_staff == True %}<li><a  class="blue-text" href="/admin"><i class="material-icons">settings</i></a></li>{% endif %}
             </ul>
 
             <ul id="nav-mobile" class="side-nav blue-text">
-                <li><a  class="blue-text" href="/">Home</a></li>
-                <li><a  class="blue-text" href="/register">Register</a></li>
-                <li><a  class="blue-text" href="/admin">Admin</a></li>
+                <li class="{% if request.get_full_path == "/" %}active{%  endif %}"><a  class="blue-text" href="/">Home</a></li>
+                {% if user.is_authenticated != True %}<li class="{% if request.get_full_path == "/register" %}active{%  endif %}"><a  class="blue-text" href="/register">Register</a></li>{% endif %}
+                {% if user.is_authenticated == True %}<li class="{% if request.get_full_path == "/accounts/profile" %}active{%  endif %}"><a  class="blue-text" href="/accounts/profile">{{ user.first_name|default:'Profile' }}</a></li>{% endif %}
+                {% if user.is_authenticated == True %}<li><a  class="blue-text" href="/accounts/logout">{% trans 'Logout' %}</a></li>{% endif %}
+                {% if user.is_authenticated != True %}<li class="{% if request.get_full_path == "/accounts/login" %}active{%  endif %}"><a  class="blue-text" href="/accounts/login">{% trans 'Login' %}</a></li>{% endif %}
+                {% if user.is_staff == True %}<li><a  class="blue-text" href="/admin">Admin</a></li>{% endif %}
             </ul>
         </div>
     </nav>
@@ -75,7 +81,7 @@
         </div>
         <div class="footer-copyright">
           <div class="container">
-            Powered by <a class="blue-text text-lighten-3" href="https://github.com/bfritscher/fablab-admin">Fablab-admin</a>
+            Powered by <a class="blue-grey-text text-lighten-2" href="https://github.com/bfritscher/fablab-admin">Fablab-admin</a>
           </div>
         </div>
     </footer>

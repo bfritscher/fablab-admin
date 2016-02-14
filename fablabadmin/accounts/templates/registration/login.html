@@ -1,0 +1,37 @@
+{% extends "base/layout.html" %}
+{% load material_form %}
+{% load i18n %}
+
+{% block content %}
+    <div class="row">
+        <div class="col s12 offset-m2 m8">
+            <div class="card">
+                <form method="post" action="{% url 'login' %}">
+                    <div class="card-content">
+                        <span class="card-title">Login</span>
+                        {% csrf_token %}
+                        {% if next %}
+                            <div class="card-panel red white-text">
+                            {% if user.is_authenticated %}
+                                <p>Your account doesn't have access to this page. To proceed,
+                                    please login with an account that has access.</p>
+                            {% else %}
+                                <p>Please login to see this page.</p>
+                            {% endif %}
+                            </div>
+                        {% endif %}
+
+                        {% form form=form %}
+                        {% endform %}
+                    </div>
+                    <div class="card-action right-align">
+                        <p class="left"><a href="{% url 'password_reset' %}">Lost password?</a></p>
+                        <button type="submit" name="_submit" class="btn red btn-primary btn-lg waves-effect waves-light">{% trans "Login" %}</button>
+                        <input type="hidden" name="next" value="{{ next }}"/>
+
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}

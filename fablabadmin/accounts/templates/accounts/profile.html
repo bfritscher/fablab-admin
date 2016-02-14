@@ -1,0 +1,41 @@
+{% extends "base/layout.html" %}
+{% load material_form %}
+{% load i18n %}
+
+{% block content %}
+    <div class="row">
+        <div class="col s12 offset-m2 m8">
+            <div class="card">
+                <div class="section">
+                    <h4>Profile <div class="right"><small>badges training</small></div></h4>
+                    {{ user.contact }}
+                    user profile
+                    change profile
+                    change password
+                    functions list
+                    <a href="{% url "password_change" %}">{%  trans "change password" %}</a>
+                </div>
+                <div class="section">
+                    <h4>Events</h4>
+                    event/registrations?
+                </div>
+                <div class="section">
+                    <h4>Invoices</h4>
+                    view usages/invoices
+                    membership status/invoice
+                </div>
+
+                <div class="section">
+                    <h4>Expenses</h4>
+                    submit
+                </div>
+
+                <div class="section">
+                    <h4>Logs</h4>
+                    nfc/logs
+                </div>
+                (docs? pre usage?)
+            </div>
+        </div>
+    </div>
+{% endblock %}

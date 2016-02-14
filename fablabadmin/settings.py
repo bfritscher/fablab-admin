@@ -15,10 +15,10 @@ environ.Env.read_env(BASE_DIR + '/.env') # reading .env file
 # See https://docs.djangoproject.com/en/1.8/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '_+rso1#3$0(@hlvg=%2j(_ly#y0a@qqi)2f(g91_4@rb3me+!#'
+SECRET_KEY = env('SECRET_KEY', default='_+rso1#3$0(@hlvg=%2j(_ly#y0a@qqi)2f(g91_4@rb3me+!#')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = env('DEBUG')
+DEBUG = env('DEBUG', default=False)
 
 ALLOWED_HOSTS = ['*']
 
@@ -37,6 +37,7 @@ INSTALLED_APPS = (
     'fablabadmin',
     'fablabadmin.base',
     'fablabadmin.nfc',
+    'fablabadmin.accounts',
     'admin_tools',
     'admin_tools.theming',
     'admin_tools.menu',
@@ -63,7 +64,7 @@ INSTALLED_APPS = (
     'mail_templated',
     'raven.contrib.django.raven_compat',
     'debug_toolbar',
-    'material'
+    'material',
 )
 
 
