@@ -215,7 +215,7 @@ class CustomAppIndexDashboard(AppIndexDashboard):
                      'fablabadmin.base.models.ContactStatus',
                      'fablabadmin.base.models.ResourceType',
                      'filer*')),
-            modules.RecentActions(
+            RecentActions(
                 _('Recent Actions'),
                 include_list=self.get_app_content_types(),
                 limit=20
