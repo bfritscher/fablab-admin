@@ -2,7 +2,7 @@ from django.core.exceptions import ValidationError
 from django.core.files.uploadedfile import InMemoryUploadedFile
 from django.db import models, IntegrityError
 from django.contrib.auth.models import User
-from django.db.models import Sum, F, FloatField, ExpressionWrapper
+from django.db.models import Sum, F, FloatField, ExpressionWrapper, Q
 from django.utils.translation import ugettext_lazy as _
 from django.db.models.signals import post_save
 from django.dispatch import receiver
@@ -79,6 +79,12 @@ class Contact(models.Model):
     def full_name(self):
         return u'%s %s' % (self.first_name, self.last_name)
     full_name.short_description = _('full name')
+
+    def current_functions(self):
+        return self.functions.filter(
+            Q(year_from__lte=datetime.date.today().year),
+            Q(year_to__gte=datetime.date.today().year) | Q(year_to__isnull=True))
+    current_functions.short_description = _("functions")
 
     class Meta:
         verbose_name = _("contact")
@@ -219,9 +225,15 @@ class Invoice(models.Model):
     class Meta:
         verbose_name = _("invoice")
         verbose_name_plural = _("invoices")
+        ordering = ('-date',)
 
     def __str__(self):
-        return u'%s %s' % (_(dict(self.INVOICE_TYPE)[self.type]).capitalize(), self.id)
+        first_entry = self.entries.first()
+        title = ""
+        if first_entry:
+            title = first_entry.description
+
+        return u'%s %s: %s' % (_(dict(self.INVOICE_TYPE)[self.type]).capitalize(), self.id, title)
 
 
 @python_2_unicode_compatible

@@ -61,8 +61,14 @@ input:not([type]):focus:not([readonly]), input[type=text]:focus:not([readonly]),
 }
 */
 /* icon prefix focus color */
-.input-field .prefix.active {
- color: #006EB8;
+.input-field .prefix.active,
+.tabs .tab a,
+.tabs .tab a:hover {
+    color: #006EB8;
+}
+
+.tabs .indicator{
+    background-color: #006EB8;
 }
 
 .error {

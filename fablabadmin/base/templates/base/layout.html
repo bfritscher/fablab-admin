@@ -25,8 +25,8 @@
             <a id="logo" href="/" class="brand-logo"></a>
             <a href="#" data-activates="nav-mobile" class="button-collapse blue-text" ><i class="material-icons">menu</i></a>
             <ul class="right hide-on-med-and-down">
-                <li class="{% if request.get_full_path == "/" %}active{%  endif %}"><a  class="blue-text" href="/">Home</a></li>
-                {% if user.is_authenticated != True %}<li class="{% if request.get_full_path == "/register" %}active{%  endif %}"><a  class="blue-text" href="/register">Register</a></li>{% endif %}
+                <li class="{% if request.get_full_path == "/" %}active{%  endif %}"><a  class="blue-text" href="/">{% trans "Home" %}</a></li>
+                {% if user.is_authenticated != True %}<li class="{% if request.get_full_path == "/register" %}active{%  endif %}"><a  class="blue-text" href="/register">{% trans "Register" %}</a></li>{% endif %}
                 {% if user.is_authenticated == True %}<li class="{% if request.get_full_path == "/accounts/profile" %}active{%  endif %}"><a  class="blue-text" href="/accounts/profile">{{ user.first_name|default:'Profile' }}</a></li>{% endif %}
                 {% if user.is_authenticated == True %}<li><a  class="blue-text" href="/accounts/logout">{% trans 'Logout' %}</a></li>{% endif %}
                 {% if user.is_authenticated != True %}<li class="{% if request.get_full_path == "/accounts/login" %}active{%  endif %}"><a  class="blue-text" href="/accounts/login">{% trans 'Login' %}</a></li>{% endif %}
@@ -34,12 +34,12 @@
             </ul>
 
             <ul id="nav-mobile" class="side-nav blue-text">
-                <li class="{% if request.get_full_path == "/" %}active{%  endif %}"><a  class="blue-text" href="/">Home</a></li>
-                {% if user.is_authenticated != True %}<li class="{% if request.get_full_path == "/register" %}active{%  endif %}"><a  class="blue-text" href="/register">Register</a></li>{% endif %}
+                <li class="{% if request.get_full_path == "/" %}active{%  endif %}"><a  class="blue-text" href="/">{% trans "Home" %}</a></li>
+                {% if user.is_authenticated != True %}<li class="{% if request.get_full_path == "/register" %}active{%  endif %}"><a  class="blue-text" href="/register">{% trans "Register" %}</a></li>{% endif %}
                 {% if user.is_authenticated == True %}<li class="{% if request.get_full_path == "/accounts/profile" %}active{%  endif %}"><a  class="blue-text" href="/accounts/profile">{{ user.first_name|default:'Profile' }}</a></li>{% endif %}
                 {% if user.is_authenticated == True %}<li><a  class="blue-text" href="/accounts/logout">{% trans 'Logout' %}</a></li>{% endif %}
                 {% if user.is_authenticated != True %}<li class="{% if request.get_full_path == "/accounts/login" %}active{%  endif %}"><a  class="blue-text" href="/accounts/login">{% trans 'Login' %}</a></li>{% endif %}
-                {% if user.is_staff == True %}<li><a  class="blue-text" href="/admin">Admin</a></li>{% endif %}
+                {% if user.is_staff == True %}<li><a  class="blue-text" href="/admin">{% trans "Admin" %}</a></li>{% endif %}
             </ul>
         </div>
     </nav>

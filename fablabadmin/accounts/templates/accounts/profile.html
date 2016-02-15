@@ -1,41 +1,141 @@
 {% extends "base/layout.html" %}
 {% load material_form %}
 {% load i18n %}
+{% load humanize %}
 
 {% block content %}
     <div class="row">
         <div class="col s12 offset-m2 m8">
-            <div class="card">
+            <div class="card-panel">
+                <h4>{{ user.contact.full_name }} <small>({{ user.contact.status.name }})</small>
+                        <div class="right">
+                            {% for training in user.contact.trainings.all %}
+                                <small class="chip">{{ training }}</small>
+                            {% endfor %}
+                        </div>
+                    </h4>
+                    <p>
+                        {% for function in user.contact.current_functions.all %}
+                            <small>{{ function.name }}</small>
+                        {% endfor %}
+                    </p>
+
+                    <form method="POST" class="viewform">{% csrf_token %}
+                    <div class="card">
+                        <div class="card-content">
+                        <div class="row">
+                            <div class="col s12">
+                                <ul class="tabs">
+                                    <li class="tab col s3"><a class="active" href="#tab_contact">{% trans "Contact" %}</a></li>
+                                    <li class="tab col s3"><a href="#tab_detail">{% trans "Detail" %}</a></li>
+                                </ul>
+                            </div>
+                            <div id="tab_contact" class="col s12">
+                                <div class="section">
+                                {% form form=profile_form %}
+                                    {% part form.email prefix %}<i class="mdi-communication-email prefix"></i>
+                                    {% endpart %}
+                                    {% part form.phone prefix %}<i class="mdi-communication-call prefix"></i>
+                                    {% endpart %}
+                                    {% part form.address prefix %}<i class="mdi-maps-place prefix"></i>{% endpart %}
+                                    {% part form.postal_code prefix %}<i class="prefix"></i>{% endpart %}
+                                    {% part form.payment_info prefix %}<i class="mdi-action-credit-card prefix"></i>
+                                    {% endpart %}
+                                {% endform %}
+                                </div>
+                            </div>
+                            <div id="tab_detail" class="col s12">
+                                <div class="section">
+                                {% form form=profile_detail_form %}
+
+                                {% endform %}
+                                </div>
+                            </div>
+                        </div>
+
+                        </div>
+                        <div class="card-action right-align">
+                        <a href="{% url "password_change" %}">{% trans "Change my password" %}</a>
+                        <button type="submit" name="_submit"
+                                class="btn red btn-primary btn-lg waves-effect waves-light">{% trans "Save" %}</button>
+                        </div>
+                    </div>
+                    </form>
                 <div class="section">
-                    <h4>Profile <div class="right"><small>badges training</small></div></h4>
-                    {{ user.contact }}
-                    user profile
-                    change profile
-                    change password
-                    functions list
-                    <a href="{% url "password_change" %}">{%  trans "change password" %}</a>
-                </div>
-                <div class="section">
-                    <h4>Events</h4>
-                    event/registrations?
-                </div>
-                <div class="section">
-                    <h4>Invoices</h4>
-                    view usages/invoices
-                    membership status/invoice
+                    <h4>{% trans "Invoices" %}</h4>
+                    <ul class="collapsible" data-collapsible="accordion">
+                        {% regroup user.contact.invoices.all by date|date:'Y' as invoice_list %}
+                        {% for invoice_group in invoice_list %}
+                            <tr>
+                                <td colspan="4"></td>
+                            </tr>
+                            <li>
+                                <div class="collapsible-header {% if forloop.counter == 1 %}active{% endif %}"><i
+                                        class="material-icons">insert_drive_file</i>{{ invoice_group.grouper }}</div>
+                                <div class="collapsible-body">
+                                    <table class="bordered highlight">
+                                        <thead>
+                                        <tr>
+                                            <th style="width:140px">{% trans "Date" %}</th>
+                                            <th >{% trans "Invoice" %}</th>
+                                            <th style="width:200px" class="right-align">{% trans "Total" %}</th>
+                                            <th style="width:100px" class="center-align">{% trans "Paid" %}</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+
+                                        {% for invoice in invoice_group.list %}
+                                            {% if invoice.draft == False %}
+                                                <tr>
+                                                    <td class="">{{ invoice.date }}</td>
+                                                    <td class=""><a href="{{ invoice.document.url }}">{{ invoice }}</a></td>
+                                                    <td class="right-align">{{ invoice.total }}</td>
+                                                    <td class="center-align"><input type="checkbox"
+                                                                                    {% if invoice.paid %}checked="checked"{% endif %}
+                                                                                    disabled="disabled"/><label></label>
+                                                    </td>
+                                                </tr>
+                                            {% endif %}
+                                        {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </li>
+                        {% endfor %}
+                    </ul>
                 </div>
 
                 <div class="section">
-                    <h4>Expenses</h4>
-                    submit
-                </div>
+                    <h4>{% trans "Logs" %}</h4>
 
-                <div class="section">
-                    <h4>Logs</h4>
-                    nfc/logs
+                <div class="card-panel">
+                    {% for token in user.contact.tokens.all %}
+                        <div class="chip">{{ token.description }} ({{ token.id }})</div>
+                    {% endfor %}
+
+                    <table class="bordered highlight">
+                        <thead>
+                        <tr>
+                            <th>{% trans "Token" %}</th>
+                            <th>{% trans "Time" %}</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for log in user.contact.logentries.all|slice:":10" %}
+                            <tr>
+                                <td>{{ log.token.description }} ({{ log.token.id }})</td>
+                                <td>{{ log.timestamp|naturaltime }}</td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                    </div>
                 </div>
-                (docs? pre usage?)
             </div>
         </div>
     </div>
+{% endblock %}
+{% block readyscript %}
+    $('ul.tabs').tabs();
+    $('.collapsible').collapsible();
 {% endblock %}

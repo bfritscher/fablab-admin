@@ -25,7 +25,7 @@
                         {% endform %}
                     </div>
                     <div class="card-action right-align">
-                        <p class="left"><a href="{% url 'password_reset' %}">Lost password?</a></p>
+                        <p class="left"><a href="{% url 'password_reset' %}">{% trans "Lost password?" %}</a></p>
                         <button type="submit" name="_submit" class="btn red btn-primary btn-lg waves-effect waves-light">{% trans "Login" %}</button>
                         <input type="hidden" name="next" value="{{ next }}"/>
 

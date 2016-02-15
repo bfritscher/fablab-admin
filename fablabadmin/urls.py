@@ -21,7 +21,7 @@ from rest_framework import routers
 
 import fablabadmin.nfc.views as nfc
 from fablabadmin.base import urls
-
+from django.contrib.auth.views import password_change
 
 import autocomplete_light.shortcuts as al
 from fablabadmin.base.autocomplete_light_registry import *
@@ -46,6 +46,7 @@ urlpatterns = [
     url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     url(r'^i18n/', include('django.conf.urls.i18n')),
     url(r'^filer/', include('filer.urls')),
+    url('^accounts/password_change/', password_change, {'template_name': 'accounts/password_change_form.html'}),
     url('^accounts/', include('django.contrib.auth.urls')),
     url('^accounts/', include('fablabadmin.accounts.urls')),
     url(r'^', include(urls))
