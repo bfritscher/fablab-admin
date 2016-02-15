@@ -1,3 +1,6 @@
+import string
+import random
+
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.contrib.auth.models import User
@@ -209,6 +212,8 @@ class ContactAdmin(BaseDjangoObjectActions, ImportExportMixin, GuardedModelAdmin
                 m = obj.is_membership_paid()
                 if m == False:
                     objectactions.extend(['create_membership', ])
+            if obj and not obj.user:
+                objectactions.extend(['create_user', ])
 
         return objectactions
 
@@ -263,7 +268,24 @@ class ContactAdmin(BaseDjangoObjectActions, ImportExportMixin, GuardedModelAdmin
     create_expense_invoice.label = _("bill expenses")
     create_expense_invoice.short_description = _("invoice open expenses")
 
-    objectactions = ['create_membership', 'create_invoice', 'create_expense_invoice']
+    def create_user(self, request, obj):
+        if not obj.user:
+            password = ''.join(random.SystemRandom().choice(string.ascii_uppercase + string.digits) for _ in range(8))
+            base_username = obj.first_name[:1].lower() + obj.last_name.lower()
+            username = base_username
+            i = 1
+            while User.objects.filter(username=username).first():
+                username = "%s%s" % ( base_username, i)
+                i += 1
+
+            obj.user = User.objects.create_user(username, obj.email, password)
+            obj.save()
+            self.message_user(request, _("Created user %(username)s with password %(password)s") % {'username': obj.user.username, 'password': password})
+        return
+    create_user.label = _("create user")
+    create_user.short_description = _("create user account for contact")
+
+    objectactions = ['create_membership', 'create_invoice', 'create_expense_invoice', 'create_user']
     actions = ['create_membership',]
 
     def is_membership_paid(self, obj):
