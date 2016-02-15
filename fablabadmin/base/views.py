@@ -157,10 +157,13 @@ def dokuwiki_login(request):
         if user is not None:
             # the password verified for the user
             if user.is_active:
+                grps = [x for x in user.groups.values_list('name', flat=True)]
+                if user.contact:
+                    grps += [user.contact.status.name]
                 return JsonResponse({
                     "user": user.username,
                     "name": "%s %s" % (user.first_name, user.last_name),
                     "mail": user.email,
-                    "grps": [x for x in user.groups.values_list('name', flat=True)]
+                    "grps": grps
                 })
     return HttpResponse(status=403)
