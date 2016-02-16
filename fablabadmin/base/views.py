@@ -167,3 +167,22 @@ def dokuwiki_login(request):
                     "grps": grps
                 })
     return HttpResponse(status=403)
+
+
+@csrf_exempt
+def user_login(request):
+    if request.method == 'POST':
+        user = authenticate(username=request.POST.get('username'), password=request.POST.get('password'))
+        if user is not None:
+            # the password verified for the user
+            # TODO use a real api and serializer?
+            if user.is_active:
+                return JsonResponse({
+                    "user": {
+                        "username": user.username,
+                        "first_name": user.first_name,
+                        "last_name": user.last_name,
+                        "email": user.email
+                    },
+                })
+    return HttpResponse(status=403)

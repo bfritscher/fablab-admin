@@ -9,5 +9,6 @@ urlpatterns = [
     url(r'register/success',  views.register_success, name='register_success'),
     url(r'register',  views.register, name='register'),
     url(r'resource/(?P<id>\d+)',  views.resource, name='resource'),
-    url(r'dokuwiki_login', views.dokuwiki_login)
+    url(r'dokuwiki_login', views.dokuwiki_login),
+    url(r'rest_login', views.user_login)
 ]
