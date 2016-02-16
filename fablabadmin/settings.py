@@ -144,6 +144,8 @@ else:
     EMAIL_HOST_USER = env('EMAIL_HOST_USER')
     EMAIL_HOST_PASSWORD = env('EMAIL_HOST_PASSWORD')
     EMAIL_USE_TLS = env('EMAIL_USE_TLS')
+
+DEFAULT_FROM_EMAIL=env('DJANGO_EMAIL_BACKEND', default='webmaster@localhost')
 # Internationalization
 # https://docs.djangoproject.com/en/1.8/topics/i18n/
 
