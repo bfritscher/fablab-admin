@@ -20,47 +20,8 @@
                         {% endfor %}
                     </p>
 
-                    <form method="POST" class="viewform">{% csrf_token %}
-                    <div class="card">
-                        <div class="card-content">
-                        <div class="row">
-                            <div class="col s12">
-                                <ul class="tabs">
-                                    <li class="tab col s3"><a class="active" href="#tab_contact">{% trans "Contact" %}</a></li>
-                                    <li class="tab col s3"><a href="#tab_detail">{% trans "Detail" %}</a></li>
-                                </ul>
-                            </div>
-                            <div id="tab_contact" class="col s12">
-                                <div class="section">
-                                {% form form=profile_form %}
-                                    {% part form.email prefix %}<i class="mdi-communication-email prefix"></i>
-                                    {% endpart %}
-                                    {% part form.phone prefix %}<i class="mdi-communication-call prefix"></i>
-                                    {% endpart %}
-                                    {% part form.address prefix %}<i class="mdi-maps-place prefix"></i>{% endpart %}
-                                    {% part form.postal_code prefix %}<i class="prefix"></i>{% endpart %}
-                                    {% part form.payment_info prefix %}<i class="mdi-action-credit-card prefix"></i>
-                                    {% endpart %}
-                                {% endform %}
-                                </div>
-                            </div>
-                            <div id="tab_detail" class="col s12">
-                                <div class="section">
-                                {% form form=profile_detail_form %}
-
-                                {% endform %}
-                                </div>
-                            </div>
-                        </div>
-
-                        </div>
-                        <div class="card-action right-align">
-                        <a href="{% url "password_change" %}">{% trans "Change my password" %}</a>
-                        <button type="submit" name="_submit"
-                                class="btn red btn-primary btn-lg waves-effect waves-light">{% trans "Save" %}</button>
-                        </div>
-                    </div>
-                    </form>
+                    <a class="waves-effect waves-light  btn-flat orange-text" href="{% url 'profile_edit' %}">{% trans 'Change profile details' %}</a>
+                    <a class="waves-effect waves-light  btn-flat orange-text" href="{% url "password_change" %}">{% trans "Change my password" %}</a>
                 <div class="section">
                     <h4>{% trans "Invoices" %}</h4>
                     <ul class="collapsible" data-collapsible="accordion">
@@ -106,7 +67,7 @@
                 </div>
 
                 <div class="section">
-                    <h4>{% trans "Logs" %}</h4>
+                    <h4>{% trans "Logs" %} NFC</h4>
 
                 <div class="card-panel">
                     {% for token in user.contact.tokens.all %}

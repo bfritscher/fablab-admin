@@ -35,6 +35,14 @@ def profile(request):
     profile_form = ContactProfileModelForm(instance=request.user.contact)
     profile_detail_form = ContactProfileDetailModelForm(instance=request.user.contact)
 
+    return render(request, 'accounts/profile.html', locals())
+
+
+@login_required
+def profile_edit(request):
+    profile_form = ContactProfileModelForm(instance=request.user.contact)
+    profile_detail_form = ContactProfileDetailModelForm(instance=request.user.contact)
+
     if request.method == 'POST':
         profile_form = ContactProfileModelForm(request.POST, instance=request.user.contact)
         if profile_form.is_valid():
@@ -43,4 +51,4 @@ def profile(request):
         if profile_detail_form.is_valid():
             profile_detail_form.save(commit=True)
 
-    return render(request, 'accounts/profile.html', locals())
+    return render(request, 'accounts/profile_edit.html', locals())

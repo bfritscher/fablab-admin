@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-02-23 23:04+0000\n"
+"POT-Creation-Date: 2016-02-23 23:32+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -58,53 +58,61 @@ msgid "Cancel"
 msgstr "Annuler"
 
 #: templates/accounts/password_change_form.html:61
-#: templates/accounts/profile.html:58
+#: templates/accounts/profile.html:24
 msgid "Change my password"
 msgstr ""
 
-#: templates/accounts/profile.html:29
-msgid "Contact"
-msgstr "Contact"
+#: templates/accounts/profile.html:23
+msgid "Change profile details"
+msgstr "Modifier mon profil"
 
-#: templates/accounts/profile.html:30
-msgid "Detail"
-msgstr "Détail"
-
-#: templates/accounts/profile.html:60
-msgid "Save"
-msgstr "Enregistrer"
-
-#: templates/accounts/profile.html:65
+#: templates/accounts/profile.html:26
 msgid "Invoices"
 msgstr "Factures"
 
-#: templates/accounts/profile.html:79
+#: templates/accounts/profile.html:40
 msgid "Date"
 msgstr "Date"
 
-#: templates/accounts/profile.html:80
+#: templates/accounts/profile.html:41
 msgid "Invoice"
 msgstr "Facture"
 
-#: templates/accounts/profile.html:81
+#: templates/accounts/profile.html:42
 msgid "Total"
 msgstr "Total"
 
-#: templates/accounts/profile.html:82
+#: templates/accounts/profile.html:43
 msgid "Paid"
 msgstr "Payé"
 
-#: templates/accounts/profile.html:109
+#: templates/accounts/profile.html:70
 msgid "Logs"
 msgstr "Logs"
 
-#: templates/accounts/profile.html:119
+#: templates/accounts/profile.html:80
 msgid "Token"
 msgstr "Token"
 
-#: templates/accounts/profile.html:120
+#: templates/accounts/profile.html:81
 msgid "Time"
 msgstr "Temps"
+
+#: templates/accounts/profile_edit.html:28
+msgid "Contact"
+msgstr "Contact"
+
+#: templates/accounts/profile_edit.html:29
+msgid "Detail"
+msgstr "Détail"
+
+#: templates/accounts/profile_edit.html:57
+msgid "Back"
+msgstr ""
+
+#: templates/accounts/profile_edit.html:59
+msgid "Save"
+msgstr "Enregistrer"
 
 #: templates/registration/login.html:28
 msgid "Lost password?"

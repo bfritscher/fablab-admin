@@ -1,0 +1,70 @@
+{% extends "base/layout.html" %}
+{% load material_form %}
+{% load i18n %}
+{% load humanize %}
+
+{% block content %}
+    <div class="row">
+        <div class="col s12 offset-m2 m8">
+            <div class="card-panel">
+                <h4>{{ user.contact.full_name }} <small>({{ user.contact.status.name }})</small>
+                        <div class="right">
+                            {% for training in user.contact.trainings.all %}
+                                <small class="chip">{{ training }}</small>
+                            {% endfor %}
+                        </div>
+                    </h4>
+                    <p>
+                        {% for function in user.contact.current_functions.all %}
+                            <small>{{ function.name }}</small>
+                        {% endfor %}
+                    </p>
+                    <form method="POST" class="viewform">{% csrf_token %}
+                    <div class="card">
+                        <div class="card-content">
+                        <div class="row">
+                            <div class="col s12">
+                                <ul class="tabs">
+                                    <li class="tab col s3"><a class="active" href="#tab_contact">{% trans "Contact" %}</a></li>
+                                    <li class="tab col s3"><a href="#tab_detail">{% trans "Detail" %}</a></li>
+                                </ul>
+                            </div>
+                            <div id="tab_contact" class="col s12">
+                                <div class="section">
+                                {% form form=profile_form %}
+                                    {% part form.email prefix %}<i class="mdi-communication-email prefix"></i>
+                                    {% endpart %}
+                                    {% part form.phone prefix %}<i class="mdi-communication-call prefix"></i>
+                                    {% endpart %}
+                                    {% part form.address prefix %}<i class="mdi-maps-place prefix"></i>{% endpart %}
+                                    {% part form.postal_code prefix %}<i class="prefix"></i>{% endpart %}
+                                    {% part form.payment_info prefix %}<i class="mdi-action-credit-card prefix"></i>
+                                    {% endpart %}
+                                {% endform %}
+                                </div>
+                            </div>
+                            <div id="tab_detail" class="col s12">
+                                <div class="section">
+                                {% form form=profile_detail_form %}
+
+                                {% endform %}
+                                </div>
+                            </div>
+                        </div>
+
+                        </div>
+                        <div class="card-action right-align">
+                            <a class="waves-effect waves-light  btn blue" href="{% url 'profile' %}">{% trans 'Back' %}</a>
+                            <button type="submit" name="_submit"
+                                class="btn red btn-primary btn-lg waves-effect waves-light">{% trans "Save" %}</button>
+                        </div>
+                    </div>
+                    </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+{% block readyscript %}
+    $('ul.tabs').tabs();
+    $('.collapsible').collapsible();
+{% endblock %}
