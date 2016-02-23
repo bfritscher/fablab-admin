@@ -1,7 +1,9 @@
+from django import forms
 from django.contrib.auth.decorators import login_required
 from django.forms import ModelForm
 from django.shortcuts import render
 from material import Layout, Row, Span5, Span2
+from django.utils.translation import ugettext_lazy as _
 
 from fablabadmin.base.models import Contact
 
@@ -9,6 +11,10 @@ from fablabadmin.base.models import Contact
 class ContactProfileModelForm(ModelForm):
     class Meta:
         model = Contact
+        widgets = {
+            'payment_info': forms.Textarea(
+                attrs={'placeholder': _('IBAN or other to receive refunds')}),
+        }
         fields = ('email', 'phone', 'address', 'postal_code', 'city', 'country', 'payment_info')
     layout = Layout(
         Row('email', 'phone'),
