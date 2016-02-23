@@ -607,7 +607,7 @@ msgstr "total général"
 
 #: templates/base/layout.html:28 templates/base/layout.html.py:37
 msgid "Home"
-msgstr ""
+msgstr "Accueil"
 
 #: templates/base/layout.html:29 templates/base/layout.html.py:38
 msgid "Register"
@@ -615,15 +615,15 @@ msgstr "S'inscrire"
 
 #: templates/base/layout.html:31 templates/base/layout.html.py:40
 msgid "Logout"
-msgstr ""
+msgstr "Déconnexion"
 
 #: templates/base/layout.html:32 templates/base/layout.html.py:41
 msgid "Login"
-msgstr ""
+msgstr "Connexion"
 
 #: templates/base/layout.html:42
 msgid "Admin"
-msgstr ""
+msgstr "Admin"
 
 #: templates/base/register_form.html:11
 msgid "Membership registration"
