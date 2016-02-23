@@ -83,12 +83,13 @@ class ResourceUsageModelForm(autocomplete_light.ModelForm):
     class Meta:
         autocomplete_names = {'user': 'Contact', 'event': 'EventAutocomplete'}
         model = ResourceUsage
-        fields = ('user', 'description', 'quantity', 'event')
+        fields = ('user', 'description', 'quantity', 'event', 'date')
 
     layout = Layout(Fieldset('Usage',
                              'user',
                              'description',
-                             'quantity',
+                             Row('quantity',
+                             'date'),
                              'event'))
 
 

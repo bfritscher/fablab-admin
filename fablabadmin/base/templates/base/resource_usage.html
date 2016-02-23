@@ -72,4 +72,9 @@
        jQuery('#total').text($(this).val() * {{ resource.price }});
     });
     jQuery('#total').text($('#id_quantity').val() * {{ resource.price }});
+    jQuery('#id_date').pickadate({
+        selectMonths: true, // Creates a dropdown to control month
+        format: 'dd/mm/yyyy',
+        selectYears: 2 // Creates a dropdown of 15 years to control year
+    });
 {% endblock %}
