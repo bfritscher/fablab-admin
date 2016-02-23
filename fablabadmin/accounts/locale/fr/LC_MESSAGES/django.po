@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-02-15 21:59+0000\n"
+"POT-Creation-Date: 2016-02-23 18:01+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,6 +17,51 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 
+#: templates/accounts/password_change_form.html:4
+msgid "Documentation"
+msgstr ""
+
+#: templates/accounts/password_change_form.html:4
+#, fuzzy
+#| msgid "Lost password?"
+msgid "Change password"
+msgstr "Mot de passe perdu?"
+
+#: templates/accounts/password_change_form.html:4
+msgid "Log out"
+msgstr ""
+
+#: templates/accounts/password_change_form.html:7
+msgid "Home"
+msgstr ""
+
+#: templates/accounts/password_change_form.html:8
+msgid "Password change"
+msgstr ""
+
+#: templates/accounts/password_change_form.html:26
+msgid "Please correct the error below."
+msgstr ""
+
+#: templates/accounts/password_change_form.html:26
+msgid "Please correct the errors below."
+msgstr ""
+
+#: templates/accounts/password_change_form.html:31
+msgid ""
+"Please enter your old password, for security's sake, and then enter your new "
+"password twice so we can verify you typed it in correctly."
+msgstr ""
+
+#: templates/accounts/password_change_form.html:60
+msgid "Cancel"
+msgstr "Annuler"
+
+#: templates/accounts/password_change_form.html:61
+#: templates/accounts/profile.html:58
+msgid "Change my password"
+msgstr ""
+
 #: templates/accounts/profile.html:29
 msgid "Contact"
 msgstr "Contact"
@@ -24,7 +69,6 @@ msgstr "Contact"
 #: templates/accounts/profile.html:30
 msgid "Detail"
 msgstr "Détail"
-
 
 #: templates/accounts/profile.html:60
 msgid "Save"
@@ -68,4 +112,4 @@ msgstr "Mot de passe perdu?"
 
 #: templates/registration/login.html:29
 msgid "Login"
-msgstr "Login"
+msgstr "Connexion"
