@@ -11,7 +11,7 @@ from django.shortcuts import render
 from django.utils.safestring import mark_safe
 from guardian.admin import GuardedModelAdmin, GuardedModelAdminMixin
 from django.utils.translation import ugettext_lazy as _
-from import_export.admin import ImportExportMixin
+from import_export.admin import ImportExportMixin, ExportMixin
 import autocomplete_light
 from django.contrib.admin import AdminSite
 from tabbed_admin import TabbedModelAdmin
@@ -375,7 +375,7 @@ admin.site.register(User, UserAdmin)
 
 
 @admin.register(Resource)
-class ResourceAdmin(GuardedModelAdmin):
+class ResourceAdmin(ImportExportMixin, GuardedModelAdmin):
     list_filter = ('type__name',)
     ordering = ('type__name', 'name',)
     inlines = (ResourceUsageInline,)
@@ -396,7 +396,7 @@ class LedgerEntryInline(admin.StackedInline):
 
 
 @admin.register(Invoice)
-class InvoiceAdmin(GuardedModelAdminMixin, BaseDjangoObjectActions, admin.ModelAdmin):
+class InvoiceAdmin(ExportMixin, GuardedModelAdminMixin, BaseDjangoObjectActions, admin.ModelAdmin):
     form = autocomplete_light.modelform_factory(Invoice, fields='__all__',
                                                 autocomplete_names={'seller': 'Contact',
                                                                     'buyer': 'Contact'})
@@ -543,7 +543,7 @@ class ExpenseAdmin(LedgerEntryChildAdmin):
 
 
 @admin.register(LedgerEntry)
-class LedgerEntryAdmin(GuardedModelAdminMixin, PolymorphicParentModelAdmin):
+class LedgerEntryAdmin(ExportMixin, GuardedModelAdminMixin, PolymorphicParentModelAdmin):
     """ The parent model admin """
     base_model = LedgerEntry
     child_models = (
@@ -576,7 +576,7 @@ class EventRegistrationInline(admin.TabularInline):
 
 
 @admin.register(Event)
-class EventAdmin(GuardedModelAdminMixin, TabbedModelAdmin):
+class EventAdmin(ImportExportMixin, GuardedModelAdminMixin, TabbedModelAdmin):
     model = Event
     filter_horizontal = ('organizers',)
     search_fields = ('title',)

@@ -2,6 +2,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.contrib.admin import ModelAdmin
 from django.core.urlresolvers import reverse
 from django.utils.html import format_html
+from import_export.admin import ImportExportMixin, ExportMixin
 
 from fablabadmin.nfc.models import Token, LogEntry
 from django.contrib import admin
@@ -9,7 +10,7 @@ import autocomplete_light
 
 
 @admin.register(Token)
-class TokenAdmin(ModelAdmin):
+class TokenAdmin(ImportExportMixin, ModelAdmin):
     search_fields = ['owner__first_name', 'owner__last_name', 'id']
     list_display = ('id', 'owner', 'modified_date')
     form = autocomplete_light.modelform_factory(Token, fields='__all__',
@@ -17,7 +18,7 @@ class TokenAdmin(ModelAdmin):
 
 
 @admin.register(LogEntry)
-class LogEntryAdmin(ModelAdmin):
+class LogEntryAdmin(ExportMixin, ModelAdmin):
     actions = None
     search_fields = ['owner__first_name', 'owner__last_name', 'token__id']
     date_hierarchy = "timestamp"
