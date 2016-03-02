@@ -91,8 +91,9 @@ class MembershipPaidListFilter(admin.SimpleListFilter):
         in the right sidebar.
         """
         return (
-            ('no', _('no')),
-            ('yes', _('yes')),
+            ('yes', _('Yes')),
+            ('no', _('No')),
+
         )
 
     def queryset(self, request, queryset):
@@ -111,6 +112,41 @@ class MembershipPaidListFilter(admin.SimpleListFilter):
             ids = MembershipInvoice.objects.filter(year=datetime.date.today().year, invoice__paid__isnull=False).values_list('id', flat=True)
             return queryset.filter(ledger_entries__id__in=ids)
 
+
+class InvoicePaidListFilter(admin.SimpleListFilter):
+    # Human-readable title which will be displayed in the
+    # right admin sidebar just above the filter options.
+    title = _('is invoice paid')
+
+    # Parameter for the filter that will be used in the URL query.
+    parameter_name = 'ipaid'
+
+    def lookups(self, request, model_admin):
+        """
+        Returns a list of tuples. The first element in each
+        tuple is the coded value for the option that will
+        appear in the URL query. The second element is the
+        human-readable name for the option that will appear
+        in the right sidebar.
+        """
+        return (
+            ('yes', _('Yes')),
+            ('no', _('No')),
+        )
+
+    def queryset(self, request, queryset):
+        """
+        Returns the filtered queryset based on the value
+        provided in the query string and retrievable via
+        `self.value()`.
+        """
+        # Compare the requested value (either '80s' or '90s')
+        # to decide how to filter the queryset.
+        if self.value() == 'no':
+            return queryset.filter(paid__isnull=True)
+
+        if self.value() == 'yes':
+            return queryset.filter(paid__isnull=False)
 
 class LedgerEntryMixin(object):
 
@@ -275,7 +311,7 @@ class ContactAdmin(BaseDjangoObjectActions, ImportExportMixin, GuardedModelAdmin
             username = base_username
             i = 1
             while User.objects.filter(username=username).first():
-                username = "%s%s" % ( base_username, i)
+                username = "%s%s" % (base_username, i)
                 i += 1
 
             obj.user = User.objects.create_user(username, obj.email, password)
@@ -401,9 +437,9 @@ class InvoiceAdmin(ExportMixin, GuardedModelAdminMixin, BaseDjangoObjectActions,
                                                 autocomplete_names={'seller': 'Contact',
                                                                     'buyer': 'Contact'})
     search_fields = ('id', 'seller__first_name', 'seller__last_name', 'buyer__first_name', 'buyer__last_name')
-    list_display = ('id', '__str__', 'buyer', 'seller', 'total', 'paid',)
+    list_display = ('id', '__str__', 'buyer', 'seller', 'payment_type', 'total', 'paid', 'draft', )
     list_display_links = ('id', '__str__')
-    list_filter = ('paid', 'type', 'payment_type', 'draft')
+    list_filter = (InvoicePaidListFilter, 'type', 'payment_type', 'draft')
     date_hierarchy = "date"
     inlines = (LedgerEntryInline, )
     fields = (

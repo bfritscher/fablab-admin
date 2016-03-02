@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-02-15 21:57+0000\n"
+"POT-Creation-Date: 2016-03-02 19:30+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,155 +17,167 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 
-#: admin.py:59
+#: admin.py:62
 msgid "Start year cannot be greater than end year."
 msgstr "Année de début ne peut pas être supérieur à l'année de fin."
 
-#: admin.py:77 models.py:283
+#: admin.py:80 models.py:283
 msgid "is membership paid"
 msgstr "cotisation payée"
 
-#: admin.py:91 admin.py:137 admin.py:272 admin.py:290
-msgid "no"
-msgstr "non"
+#: admin.py:94 admin.py:133
+msgid "Yes"
+msgstr "Oui"
 
-#: admin.py:92 admin.py:140 admin.py:277 admin.py:294
-msgid "yes"
-msgstr "oui"
+#: admin.py:95 admin.py:134
+msgid "No"
+msgstr "Non"
 
-#: admin.py:117 autocomplete_light_registry.py:72 models.py:168 models.py:226
+#: admin.py:119
+msgid "is invoice paid"
+msgstr "facture payé"
+
+#: admin.py:156 autocomplete_light_registry.py:72 models.py:168 models.py:226
 #: models.py:253
 msgid "invoice"
 msgstr "facture"
 
-#: admin.py:123
+#: admin.py:162
 msgid "Edit"
 msgstr "Modifier"
 
-#: admin.py:124
+#: admin.py:163
 msgid "action"
 msgstr "action"
 
-#: admin.py:231
+#: admin.py:176 admin.py:330 admin.py:348
+msgid "no"
+msgstr "non"
+
+#: admin.py:179 admin.py:335 admin.py:352
+msgid "yes"
+msgstr "oui"
+
+#: admin.py:272
 #, python-format
 msgid "created memberships for: %s"
 msgstr "créer cotisation pour: %s"
 
-#: admin.py:239 admin.py:240
+#: admin.py:280 admin.py:281
 msgid "Create membership invoice"
 msgstr "Facturer cotisation"
 
-#: admin.py:248
+#: admin.py:289
 msgid "Found no entries to be invoiced"
 msgstr "Aucune transaction non facturée"
 
-#: admin.py:251
+#: admin.py:292
 msgid "create invoice"
 msgstr "créer facture"
 
-#: admin.py:252
+#: admin.py:293
 msgid "invoice open ledger entries"
 msgstr "facturer transactions ouvertes"
 
-#: admin.py:260
+#: admin.py:301
 msgid "Found no expenses to be invoiced"
 msgstr "Aucune note de frais non facturée"
 
-#: admin.py:263
+#: admin.py:304
 msgid "bill expenses"
 msgstr "facturer note de frais"
 
-#: admin.py:264
+#: admin.py:305
 msgid "invoice open expenses"
 msgstr "facturer transactions ouvertes"
 
-#: admin.py:284 admin.py:296
+#: admin.py:342 admin.py:354
 msgid "-"
 msgstr "-"
 
-#: admin.py:285 models.py:77
+#: admin.py:343 models.py:77
 #, python-format
 msgid "is %(year)s membership paid"
 msgstr "cotisation %(year)s payée"
 
-#: admin.py:301 models.py:87 models.py:124
+#: admin.py:359 models.py:87 models.py:124
 msgid "functions"
 msgstr "fonctions"
 
-#: admin.py:304 views.py:49
+#: admin.py:362 views.py:49
 msgid "Contact"
 msgstr "Contact"
 
-#: admin.py:314
+#: admin.py:372
 msgid "Address"
 msgstr "Adresse"
 
-#: admin.py:321
+#: admin.py:379
 msgid "Payment"
 msgstr "Paiement"
 
-#: admin.py:338 admin.py:590
+#: admin.py:396 admin.py:648
 msgid "Overview"
 msgstr "Vue d'ensemble"
 
-#: admin.py:339 admin.py:575
+#: admin.py:397 admin.py:633
 msgid "Detail"
 msgstr "Détail"
 
-#: admin.py:340
+#: admin.py:398
 msgid "Trainings"
 msgstr "Formations"
 
-#: admin.py:341
+#: admin.py:399
 msgid "Functions"
 msgstr "Fonctions"
 
-#: admin.py:342
+#: admin.py:400
 msgid "Memberships"
 msgstr "Cotisations"
 
-#: admin.py:343
+#: admin.py:401
 msgid "Ledger entries"
 msgstr "Écritures comptables"
 
-#: admin.py:344 admin.py:593
+#: admin.py:402 admin.py:651
 msgid "Expenses"
 msgstr "Note de frais"
 
-#: admin.py:398
+#: admin.py:456
 msgid "preview"
 msgstr "aperçu"
 
-#: admin.py:399
+#: admin.py:457
 msgid "preview of the invoice"
 msgstr "aperçu de la facture"
 
-#: admin.py:406
+#: admin.py:464
 #, python-format
 msgid "invoice sent to %s"
 msgstr "facture envoyée à %s"
 
-#: admin.py:409
+#: admin.py:467
 msgid "publish"
 msgstr "publier"
 
-#: admin.py:410
+#: admin.py:468
 msgid "publish invoice and send it by email"
 msgstr "publier facture et l'envoyer par e-mail"
 
-#: admin.py:566
+#: admin.py:624
 msgid "Event"
 msgstr "Événement"
 
-#: admin.py:591
+#: admin.py:649
 msgid "Documents"
 msgstr "Documents"
 
-#: admin.py:592
+#: admin.py:650
 msgid "Registrations"
 msgstr "Inscriptions"
 
-#: admin.py:594
+#: admin.py:652
 msgid "Resource usages"
 msgstr "Utilisation de ressources"
 
