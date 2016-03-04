@@ -65,6 +65,7 @@ INSTALLED_APPS = (
     'raven.contrib.django.raven_compat',
     'debug_toolbar',
     'material',
+    'snowpenguin.django.recaptcha2',
 )
 
 
@@ -210,7 +211,11 @@ THUMBNAIL_PROCESSORS = (
 
 CONTACT_REGISTRATION_STATUS_ID = 5
 
-#
+#RECAPTCHA
+RECAPTCHA_PRIVATE_KEY = env('RECAPTCHA_PRIVATE_KEY')
+RECAPTCHA_PUBLIC_KEY = env('RECAPTCHA_PUBLIC_KEY')
+
+
 def show_toolbar(request):
     return True
 DEBUG_TOOLBAR_CONFIG = {

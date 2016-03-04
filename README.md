@@ -12,6 +12,8 @@ MEDIA_URL=media/
 POSTGRES_USER=user
 POSTGRES_PASSWORD=password
 DATABASE_URL=postgres://user:password@db/fablabadmin
+RECAPTCHA_PRIVATE_KEY = 'your private key'
+RECAPTCHA_PUBLIC_KEY = 'your public key'
 ``` 
 
 ```

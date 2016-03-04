@@ -14,7 +14,8 @@ from django.views.generic.edit import CreateView
 from django.utils.translation import ugettext_lazy as _
 from fablabadmin.settings import CONTACT_REGISTRATION_STATUS_ID
 from django.views.decorators.csrf import csrf_exempt
-
+from snowpenguin.django.recaptcha2.fields import ReCaptchaField
+from snowpenguin.django.recaptcha2.widgets import ReCaptchaWidget
 
 def render_to_pdf(template_src, context_dict):
     try:
@@ -46,6 +47,7 @@ class ContactRegisterForm(ModelForm):
         self.fields['phone'].required = True
         self.fields['birth_year'].required = True
 
+    captcha = ReCaptchaField(widget=ReCaptchaWidget())
     layout = Layout(Fieldset(_('Contact'),
                              Row('first_name', 'last_name'),
                              'email',
@@ -53,7 +55,7 @@ class ContactRegisterForm(ModelForm):
                              Row('postal_code', 'city'),
                              Row(Span8('phone'), Span4('birth_year')),
                     Fieldset(_('Informations'),
-                             'education', 'profession', 'employer', 'interests')))
+                             'education', 'profession', 'employer', 'interests'), 'captcha'))
 
 
 def register(request):
