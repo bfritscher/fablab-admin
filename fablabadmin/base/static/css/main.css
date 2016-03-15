@@ -81,3 +81,8 @@ input:not([type]):focus:not([readonly]), input[type=text]:focus:not([readonly]),
     right: 15px;
     height: 150px;
 }
+
+.resources .card .card-image {
+    height: 250px;
+    overflow: hidden;
+}
