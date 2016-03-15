@@ -72,6 +72,7 @@ class FunctionInline(admin.TabularInline):
 
 class TrainingInline(admin.TabularInline):
     model = Training
+    fk_name = "member"
     extra = 1
 
 

@@ -64,7 +64,7 @@ class Contact(models.Model):
     employer = models.CharField(verbose_name=_("employer"), max_length=200, blank=True, null=False)
     interests = models.TextField(verbose_name=_("interests"), blank=True, null=False)
     payment_info = models.TextField(verbose_name=_("payment information"), blank=True, null=False)
-    trainings = models.ManyToManyField(ResourceType, through="Training")
+    trainings = models.ManyToManyField(ResourceType, through="Training", through_fields=("member", "resource_type"))
     created = models.DateField(verbose_name=_("created"), auto_now_add=True)
     modified = models.DateField(verbose_name=_("modified"), auto_now=True)
 
@@ -157,6 +157,7 @@ class Training(models.Model):
     member = models.ForeignKey(Contact, verbose_name=_("member"), on_delete=models.CASCADE)
     resource_type = models.ForeignKey(ResourceType, verbose_name=_("resource type"), on_delete=models.CASCADE)
     date = models.DateField(verbose_name=_("date"))
+    instructor = models.ForeignKey(Contact, verbose_name=_("instructor"), related_name="+", on_delete=models.CASCADE, null=True)
 
     class Meta:
         verbose_name = _("training")
