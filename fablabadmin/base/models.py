@@ -103,10 +103,13 @@ def update_user(sender, instance, **kwargs):
         contact.user.first_name = contact.first_name
         contact.user.last_name = contact.last_name
         contact.user.email = contact.email
+        #only allow members to login
+        contact.user.is_active = contact.status.is_member
         contact.user.save()
 
     if contact.status.is_member:
         mailchimp_add(contact)
+
     else:
         mailchimp_remove(contact)
 
