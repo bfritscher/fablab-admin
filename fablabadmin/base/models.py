@@ -65,6 +65,8 @@ class Contact(models.Model):
     interests = models.TextField(verbose_name=_("interests"), blank=True, null=False)
     payment_info = models.TextField(verbose_name=_("payment information"), blank=True, null=False)
     trainings = models.ManyToManyField(ResourceType, through="Training")
+    created = models.DateField(verbose_name=_("created"), auto_now_add=True)
+    modified = models.DateField(verbose_name=_("modified"), auto_now=True)
 
     def is_membership_paid(self):
         m = MembershipInvoice.objects.filter(user=self, year=datetime.date.today().year).first()

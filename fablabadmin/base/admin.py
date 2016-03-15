@@ -233,7 +233,7 @@ class ContactAdmin(BaseDjangoObjectActions, ImportExportMixin, GuardedModelAdmin
     search_fields = ('first_name', 'last_name', 'email', 'user__username', 'functions__name')
     list_display = ('full_name', 'status', 'functions','is_membership_paid_list')
     list_filter = ('status', MembershipPaidListFilter, 'functions__name')
-    readonly_fields = ('is_membership_paid', 'functions')
+    readonly_fields = ('is_membership_paid', 'functions', 'created', 'modified')
 
     change_form_template = 'base/change_form_tabbed.html'
 
@@ -389,6 +389,8 @@ class ContactAdmin(BaseDjangoObjectActions, ImportExportMixin, GuardedModelAdmin
     tab_about = (
             (None, {
                 'fields': ('user',
+                           ('created',
+                           'modified'),
                            'birth_year',
                          'education',
                          'profession',
