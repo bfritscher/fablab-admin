@@ -159,7 +159,7 @@ class Training(models.Model):
     member = models.ForeignKey(Contact, verbose_name=_("member"), on_delete=models.CASCADE)
     resource_type = models.ForeignKey(ResourceType, verbose_name=_("resource type"), on_delete=models.CASCADE)
     date = models.DateField(verbose_name=_("date"))
-    instructor = models.ForeignKey(Contact, verbose_name=_("instructor"), related_name="+", on_delete=models.CASCADE, null=True)
+    instructor = models.ForeignKey(Contact, verbose_name=_("instructor"), related_name="+", on_delete=models.CASCADE, null=True, blank=True)
 
     class Meta:
         verbose_name = _("training")
