@@ -74,3 +74,10 @@ input:not([type]):focus:not([readonly]), input[type=text]:focus:not([readonly]),
 .error {
     color: #F44336;
 }
+
+.resource-thumb {
+    position: absolute;
+    top: 0;
+    right: 15px;
+    height: 150px;
+}

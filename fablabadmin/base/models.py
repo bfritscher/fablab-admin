@@ -6,6 +6,7 @@ from django.db.models import Sum, F, FloatField, ExpressionWrapper, Q
 from django.utils.translation import ugettext_lazy as _
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from filer.fields.image import FilerImageField
 from redactor.fields import RedactorField
 from filer.fields.file import FilerFileField
 import datetime
@@ -142,6 +143,7 @@ class Resource(models.Model):
     price = models.FloatField(verbose_name=_("usage price"), blank=True, null=True)
     price_unit = models.CharField(verbose_name=_("price unit"), max_length=10, blank=False, default="")
     description = RedactorField(verbose_name=_("description"), blank=True, null=False)
+    image = FilerImageField(verbose_name=_("image"), blank=True, null=True)
 
     class Meta:
         verbose_name = _("resource")

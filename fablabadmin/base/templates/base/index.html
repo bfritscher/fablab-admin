@@ -1,14 +1,19 @@
 {% extends "base/layout.html" %}
 {% load i18n %}
 {% block content %}
-      <div class="row">
 
-    {% for r in resources%}
-        <div class="col s12 m6">
+{% regroup resources by type as resources_list %}
+    {% for type in resources_list %}
+        <h3 class="btn-large light-green">{{ type.grouper }}</h3>
+        <div class="row">
+         {% for r in type.list  %}
+        <div class="col s12 m4">
             <div class="card">
-                <div class="card-content">
+                                <div class="card-content">
                     <span class="card-title">{{ r.name }}</span>
-                    <p>{{ r.type.name }}</p>
+                </div>
+                <div class="card-image">
+                    <a href="{% url 'fablabadmin.base.views.resource' slug=r.slug %}"><img src="{{ r.image.url }}"></a>
                 </div>
                 <div class="card-action">
                    <a class="blue-text btn-flat waves-effect waves-blue" href="{% url 'fablabadmin.base.views.resource' slug=r.slug %}">
@@ -16,6 +21,8 @@
                 </a>
                 </div>
             </div>
+        </div>
+         {%  endfor %}
         </div>
     {%  endfor %}
       </div>
