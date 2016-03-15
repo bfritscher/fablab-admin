@@ -16,7 +16,7 @@ from django.core.files.base import ContentFile
 from fablabadmin.base.utils import *
 from django.forms.models import modelform_factory
 from fablabadmin.base.utils import send_invoice
-
+from autoslug import AutoSlugField
 
 @python_2_unicode_compatible
 class ContactStatus(models.Model):
@@ -132,6 +132,7 @@ class Function(models.Model):
 @python_2_unicode_compatible
 class Resource(models.Model):
     name = models.CharField(max_length=60, verbose_name=_("name"), blank=False, null=False)
+    slug = AutoSlugField(populate_from='name', unique=True, always_update=True)
     type = models.ForeignKey(ResourceType, related_name="resources", verbose_name=_("type"), on_delete=models.PROTECT)
     price = models.FloatField(verbose_name=_("usage price"), blank=True, null=True)
     price_unit = models.CharField(verbose_name=_("price unit"), max_length=10, blank=False, default="")
@@ -330,6 +331,7 @@ class MembershipInvoice(LedgerEntry):
 @python_2_unicode_compatible
 class Event(models.Model):
     title = models.CharField(max_length=200, verbose_name=_("title"))
+    slug = AutoSlugField(populate_from='title', unique=True, always_update=True)
     start_date = models.DateField(verbose_name=_("start date"))
     end_date = models.DateField(verbose_name=_("end date"), blank=True, null=True)
     location = models.TextField(verbose_name=_("location"), blank=True)

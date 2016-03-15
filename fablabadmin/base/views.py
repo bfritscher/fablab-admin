@@ -16,6 +16,9 @@ from fablabadmin.settings import CONTACT_REGISTRATION_STATUS_ID
 from django.views.decorators.csrf import csrf_exempt
 from snowpenguin.django.recaptcha2.fields import ReCaptchaField
 from snowpenguin.django.recaptcha2.widgets import ReCaptchaWidget
+from django.db.models import Q
+from django.shortcuts import get_object_or_404
+
 
 def render_to_pdf(template_src, context_dict):
     try:
@@ -95,8 +98,8 @@ class ResourceUsageModelForm(autocomplete_light.ModelForm):
                              'event'))
 
 
-def resource(request, id):
-    resource = Resource.objects.get(id=id)
+def resource(request, id=None, slug=None):
+    resource = get_object_or_404(Resource, Q(id=id) | Q(slug=slug))
     last_usages = ResourceUsage.objects.filter(resource=resource).order_by('-date', '-id')[:5]
     if request.method == 'POST':
         form = ResourceUsageModelForm(request.POST)
@@ -105,7 +108,10 @@ def resource(request, id):
             resource_usage.resource = resource
             resource_usage.unit_price = resource.price
             resource_usage.save()
-            return HttpResponseRedirect(reverse('resource', kwargs={'id': id}))
+            if slug:
+                return HttpResponseRedirect(reverse('resource', kwargs={'slug': slug}))
+            if id:
+                return HttpResponseRedirect(reverse('resource', kwargs={'id': id}))
     else:
         if request.user.is_authenticated() and request.user.contact:
             form = ResourceUsageModelForm(initial={"user": request.user.contact})

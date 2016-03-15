@@ -21,6 +21,7 @@ raven==5.10.2
 django-object-actions==0.7.0
 django-material==0.5.1
 django-recaptcha2==0.1.7
+django-autoslug==1.9.3
 
 #dev
 django-debug-toolbar==1.4

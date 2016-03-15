@@ -11,7 +11,7 @@
                     <p>{{ r.type.name }}</p>
                 </div>
                 <div class="card-action">
-                   <a class="blue-text btn-flat waves-effect waves-blue" href="{% url 'fablabadmin.base.views.resource' id=r.id %}">
+                   <a class="blue-text btn-flat waves-effect waves-blue" href="{% url 'fablabadmin.base.views.resource' slug=r.slug %}">
                   {% trans "use" %}
                 </a>
                 </div>
