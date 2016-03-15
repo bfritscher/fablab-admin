@@ -254,24 +254,26 @@ class ContactAdmin(BaseDjangoObjectActions, ImportExportMixin, GuardedModelAdmin
 
         return objectactions
 
-    @transaction.non_atomic_requests
     @takes_instance_or_queryset
     def create_membership(self, request, queryset):
-        selected = queryset.values_list('id', flat=True)
         if request.POST.get('unit_price'):
-            unit_price = request.POST.get('unit_price')
-            created = []
-            for c in queryset:
-                #check membership
-                if c.status.is_member:
-                    m = MembershipInvoice.objects.filter(user=c, year=datetime.date.today().year).first()
-                    if m is None:
-                        m = MembershipInvoice.objects.create(user=c,
-                                                              year=datetime.date.today().year,
-                                                              unit_price=unit_price)
-                        m.save()
-                        created.append(str(c))
-            self.message_user(request, _(u"created memberships for: %s") % ', '.join(created))
+            try:
+                unit_price = request.POST.get('unit_price')
+                created = []
+                for c in queryset:
+                    #check membership
+                    if c.status.is_member:
+                        m = MembershipInvoice.objects.filter(user=c, year=datetime.date.today().year).first()
+                        if m is None:
+                            m = MembershipInvoice.objects.create(user=c,
+                                                                  year=datetime.date.today().year,
+                                                                  unit_price=unit_price)
+                            m.save()
+                            created.append(unicode(str(c), 'utf-8'))
+
+                self.message_user(request, _(u"created memberships for: %s") % ', '.join(created))
+            except Exception as e:
+                self.message_user(request, e)
             return
 
         return render(request, 'base/confirm_create_membership.html', {
