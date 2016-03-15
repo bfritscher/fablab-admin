@@ -23,6 +23,7 @@ from django_object_actions import BaseDjangoObjectActions, takes_instance_or_que
 from .models import *
 from django.template.defaultfilters import date as date_filter
 from django.contrib.admin import helpers
+from django.db import transaction
 
 AdminSite.site_title = 'FabLab - admin'
 AdminSite.index_title = 'Dashboard'
@@ -253,6 +254,7 @@ class ContactAdmin(BaseDjangoObjectActions, ImportExportMixin, GuardedModelAdmin
 
         return objectactions
 
+    @transaction.non_atomic_requests
     @takes_instance_or_queryset
     def create_membership(self, request, queryset):
         selected = queryset.values_list('id', flat=True)
@@ -269,7 +271,7 @@ class ContactAdmin(BaseDjangoObjectActions, ImportExportMixin, GuardedModelAdmin
                                                               unit_price=unit_price)
                         m.save()
                         created.append(str(c))
-            self.message_user(request, _("created memberships for: %s") % ', '.join(created))
+            self.message_user(request, _(u"created memberships for: %s") % ', '.join(created))
             return
 
         return render(request, 'base/confirm_create_membership.html', {
@@ -311,12 +313,12 @@ class ContactAdmin(BaseDjangoObjectActions, ImportExportMixin, GuardedModelAdmin
             username = base_username
             i = 1
             while User.objects.filter(username=username).first():
-                username = "%s%s" % (base_username, i)
+                username = u"%s%s" % (base_username, i)
                 i += 1
 
             obj.user = User.objects.create_user(username, obj.email, password)
             obj.save()
-            self.message_user(request, _("Created user %(username)s with password %(password)s") % {'username': obj.user.username, 'password': password})
+            self.message_user(request, _(u"Created user %(username)s with password %(password)s") % {'username': obj.user.username, 'password': password})
         return
     create_user.label = _("create user")
     create_user.short_description = _("create user account for contact")
@@ -461,7 +463,7 @@ class InvoiceAdmin(ExportMixin, GuardedModelAdminMixin, BaseDjangoObjectActions,
 
     def publish(self, request, obj):
         obj.publish()
-        self.message_user(request, _('invoice sent to %s') % obj.buyer.email)
+        self.message_user(request, _(u'invoice sent to %s') % obj.buyer.email)
         return
 
     publish.label = _('publish')
