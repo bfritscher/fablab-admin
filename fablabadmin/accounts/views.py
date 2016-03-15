@@ -3,9 +3,10 @@ from django.contrib.auth.decorators import login_required
 from django.forms import ModelForm
 from django.shortcuts import render
 from material import Layout, Row, Span5, Span2
+from django.db.models import Q
 from django.utils.translation import ugettext_lazy as _
-
-from fablabadmin.base.models import Contact
+from datetime import date, timedelta
+from fablabadmin.base.models import Contact, ResourceUsage
 
 
 class ContactProfileModelForm(ModelForm):
@@ -34,6 +35,8 @@ class ContactProfileDetailModelForm(ModelForm):
 def profile(request):
     profile_form = ContactProfileModelForm(instance=request.user.contact)
     profile_detail_form = ContactProfileDetailModelForm(instance=request.user.contact)
+    last_usages = ResourceUsage.objects.filter(Q(user=request.user.contact),
+                                               Q(invoice__paid__isnull=True) | Q(date__gte=date.today() - timedelta(days=30))).order_by('-date', '-id')
 
     return render(request, 'accounts/profile.html', locals())
 

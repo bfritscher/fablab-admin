@@ -67,6 +67,45 @@
                 </div>
 
                 <div class="section">
+                    <h4>{% trans "Resource Usage" %}</h4>
+
+                <div class="card-panel">
+                        <table class="responsive-table striped highlight">
+                            <thead>
+                            <tr>
+                                <th class="">{% trans "Date" %}</th>
+                                <th class="">{% trans "Material" %}</th>
+                                <th class="right-align">{% trans "Quantity" %}</th>
+                                <th class="right-align">{% trans "Unit price"%}</th>
+                                <th class="right-align">{% trans "Total" %}</th>
+                                <th class="">{% trans "Paid" %}</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for u in last_usages %}
+                                <tr>
+                                    <td class="">
+                                        {{ u.date|date:"SHORT_DATE_FORMAT" }}
+                                    </td>
+                                    <td class="">
+                                        {{ u.description }}
+                                    </td>
+                                    <td class="right-align">{{ u.quantity }}</td>
+                                    <td class="right-align">{{ u.unit_price }} {{ resource.price_unit }}</td>
+                                    <td class="right-align">{{ u.total }}</td>
+                                    <td class="">
+                                        <input type="checkbox"
+                                            {% if u.invoice and u.invoice.paid %}checked="checked"{% endif %}
+                                            disabled="disabled"/><label></label>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="section">
                     <h4>{% trans "Logs" %} NFC</h4>
 
                 <div class="card-panel">
