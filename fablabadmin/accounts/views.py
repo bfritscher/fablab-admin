@@ -55,3 +55,9 @@ def profile_edit(request):
             profile_detail_form.save(commit=True)
 
     return render(request, 'accounts/profile_edit.html', locals())
+
+
+@login_required
+def list_members(request):
+    members = Contact.objects.filter(status__is_member=True)
+    return render(request, 'members/list.html', locals())

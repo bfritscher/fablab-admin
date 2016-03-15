@@ -1,0 +1,64 @@
+{% extends "base/layout.html" %}
+{% load material_form %}
+{% load i18n %}
+{% load humanize %}
+
+{% block content %}
+    <div class="row">
+        <div class="col s12 m12">
+            <div class="card-panel">
+
+                <div class="section">
+                    <h4>{% trans "Members" %}</h4>
+
+                <div class="card-panel">
+                        <table class="responsive-table striped highlight">
+                            <thead>
+                            <tr>
+                                <th class="">{% trans "First name" %}</th>
+                                <th class="">{% trans "Last name" %}</th>
+                                <th class="">{% trans "Phone" %}</th>
+                                <th class="">{% trans "Email"%}</th>
+                                <th class="">{% trans "Trainings" %}</th>
+                                <th class="">{% trans "Function" %}</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for m in members %}
+                                <tr>
+                                    <td class="">
+                                        {{ m.first_name }}
+                                    </td>
+                                    <td class="">
+                                        {{ m.last_name }}
+                                    </td>
+                                    <td class="">{{ m.phone }}</td>
+                                    <td class="">{{ m.email }}</td>
+                                    <td class="">
+                                        {% for training in m.trainings.all %}
+                                            <small class="chip">{{ training }}</small>
+                                        {% endfor %}
+                                    </td>
+                                    <td class="">
+                                        {% for f in m.current_functions.all %}
+                                            {% if f.committee %}
+                                                <span>{{ f.name }}</span>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+
+            </div>
+        </div>
+    </div>
+{% endblock %}
+{% block readyscript %}
+    $('ul.tabs').tabs();
+    $('.collapsible').collapsible();
+{% endblock %}

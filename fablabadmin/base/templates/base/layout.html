@@ -27,6 +27,7 @@
             <ul class="right hide-on-med-and-down">
                 <li class="{% if request.get_full_path == "/" %}active{%  endif %}"><a  class="blue-text" href="/">{% trans "Home" %}</a></li>
                 {% if user.is_authenticated != True %}<li class="{% if request.get_full_path == "/register" %}active{%  endif %}"><a  class="blue-text" href="/register">{% trans "Register" %}</a></li>{% endif %}
+                {% if user.is_authenticated == True %}<li class="{% if request.get_full_path == "/accounts/members" %}active{%  endif %}"><a  class="blue-text" href="/accounts/members">{% trans 'Members' %}</a></li>{% endif %}
                 {% if user.is_authenticated == True %}<li class="{% if request.get_full_path == "/accounts/profile" %}active{%  endif %}"><a  class="blue-text" href="/accounts/profile">{{ user.first_name|default:'Profile' }}</a></li>{% endif %}
                 {% if user.is_authenticated == True %}<li><a  class="blue-text" href="/accounts/logout">{% trans 'Logout' %}</a></li>{% endif %}
                 {% if user.is_authenticated != True %}<li class="{% if request.get_full_path == "/accounts/login" %}active{%  endif %}"><a  class="blue-text" href="/accounts/login">{% trans 'Login' %}</a></li>{% endif %}
@@ -36,6 +37,7 @@
             <ul id="nav-mobile" class="side-nav blue-text">
                 <li class="{% if request.get_full_path == "/" %}active{%  endif %}"><a  class="blue-text" href="/">{% trans "Home" %}</a></li>
                 {% if user.is_authenticated != True %}<li class="{% if request.get_full_path == "/register" %}active{%  endif %}"><a  class="blue-text" href="/register">{% trans "Register" %}</a></li>{% endif %}
+                {% if user.is_authenticated == True %}<li class="{% if request.get_full_path == "/accounts/members" %}active{%  endif %}"><a  class="blue-text" href="/accounts/members">{% trans 'Members' %}</a></li>{% endif %}
                 {% if user.is_authenticated == True %}<li class="{% if request.get_full_path == "/accounts/profile" %}active{%  endif %}"><a  class="blue-text" href="/accounts/profile">{{ user.first_name|default:'Profile' }}</a></li>{% endif %}
                 {% if user.is_authenticated == True %}<li><a  class="blue-text" href="/accounts/logout">{% trans 'Logout' %}</a></li>{% endif %}
                 {% if user.is_authenticated != True %}<li class="{% if request.get_full_path == "/accounts/login" %}active{%  endif %}"><a  class="blue-text" href="/accounts/login">{% trans 'Login' %}</a></li>{% endif %}

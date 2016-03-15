@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-02-23 23:32+0000\n"
+"POT-Creation-Date: 2016-03-15 18:17+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -70,7 +70,7 @@ msgstr "Modifier mon profil"
 msgid "Invoices"
 msgstr "Factures"
 
-#: templates/accounts/profile.html:40
+#: templates/accounts/profile.html:40 templates/accounts/profile.html.py:76
 msgid "Date"
 msgstr "Date"
 
@@ -78,23 +78,39 @@ msgstr "Date"
 msgid "Invoice"
 msgstr "Facture"
 
-#: templates/accounts/profile.html:42
+#: templates/accounts/profile.html:42 templates/accounts/profile.html.py:80
 msgid "Total"
 msgstr "Total"
 
-#: templates/accounts/profile.html:43
+#: templates/accounts/profile.html:43 templates/accounts/profile.html.py:81
 msgid "Paid"
 msgstr "Payé"
 
 #: templates/accounts/profile.html:70
+msgid "Resource Usage"
+msgstr "Utilisation de ressources"
+
+#: templates/accounts/profile.html:77
+msgid "Material"
+msgstr "Matériel"
+
+#: templates/accounts/profile.html:78
+msgid "Quantity"
+msgstr "Quantité"
+
+#: templates/accounts/profile.html:79
+msgid "Unit price"
+msgstr "Prix unitaire"
+
+#: templates/accounts/profile.html:109
 msgid "Logs"
 msgstr "Logs"
 
-#: templates/accounts/profile.html:80
+#: templates/accounts/profile.html:119
 msgid "Token"
 msgstr "Token"
 
-#: templates/accounts/profile.html:81
+#: templates/accounts/profile.html:120
 msgid "Time"
 msgstr "Temps"
 
@@ -108,11 +124,39 @@ msgstr "Détail"
 
 #: templates/accounts/profile_edit.html:57
 msgid "Back"
-msgstr ""
+msgstr "Retour"
 
 #: templates/accounts/profile_edit.html:59
 msgid "Save"
 msgstr "Enregistrer"
+
+#: templates/members/list.html:12
+msgid "Members"
+msgstr "Membres"
+
+#: templates/members/list.html:18
+msgid "First name"
+msgstr "Prénom"
+
+#: templates/members/list.html:19
+msgid "Last name"
+msgstr "Nom"
+
+#: templates/members/list.html:20
+msgid "Phone"
+msgstr "Téléphone"
+
+#: templates/members/list.html:21
+msgid "Email"
+msgstr "E-mail"
+
+#: templates/members/list.html:22
+msgid "Trainings"
+msgstr "Formations"
+
+#: templates/members/list.html:23
+msgid "Function"
+msgstr "Fonction"
 
 #: templates/registration/login.html:28
 msgid "Lost password?"
@@ -122,6 +166,6 @@ msgstr "Mot de passe perdu?"
 msgid "Login"
 msgstr "Connexion"
 
-#: views.py:16
+#: views.py:17
 msgid "IBAN or other to receive refunds"
 msgstr "IBAN ou autre pour les remboursements"
