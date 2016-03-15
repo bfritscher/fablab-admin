@@ -163,7 +163,7 @@ class CustomIndexDashboard(Dashboard):
             Q(committee=True),
             Q(year_to__gte=datetime.date.today().year) | Q(year_to__isnull=True)).all()
 
-        html = "\n".join(["<tr><td>%s</td><td>%s</td></tr>" % (f.name, f.member) for f in current_committee])
+        html = "\n".join(['<tr><td>%s</td><td><a href="%s">%s</a></td></tr>' % (f.name, reverse('admin:base_contact_change', args=(f.id,)), f.member) for f in current_committee])
 
         self.children.append(modules.DashboardModule(
             _('Committee'),
