@@ -38,6 +38,7 @@ router = routers.DefaultRouter(trailing_slash=False)
 
 urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
+    url(r'^admin/accounting', include('fablabadmin.accounting.urls')),
     url(r'^admin_tools/', include('admin_tools.urls')),
     url(r'^autocomplete/', include('autocomplete_light.urls')),
     url(r'^redactor/', include('redactor.urls')),

@@ -1,0 +1,49 @@
+{% extends "admin/base_site.html" %}
+{% load i18n %}
+{% load humanize %}
+{% load admin_urls %}
+
+{% block content %}
+<form method="post"  enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form }}
+    <input type="submit" value="Submit" />
+</form>
+
+{% regroup bts by iban as bts_list %}
+
+{% for bt in bts_list %}
+    <h2>{{ bt.grouper }}</h2>
+    {% for item in bt.list %}
+    <div>
+         <p>
+             <b>{{ item.booking_date }}</b> <i>{{ item.type }}</i> <b>{{ item.amount }} {{ item.currency }}</b>
+             <a href="{% url 'admin:accounting_banktransaction_change' item.id %}">edit</a>
+         </p>
+         <p>
+             {% for k, v in item.details.items %}
+                {{ k }}: {{ v }}<br/>
+             {% endfor %}
+         </p>
+         <p>
+             {% for i in item.potential_invoices %}
+                 {% if i.type == "I" %}
+                 <a href="{% url 'admin:base_invoice_change' i.id %}">{{ i }} {{ i.buyer }} {{ i.buyer.payment_info }}</a>
+                 {% endif %}
+                 {% if i.type == "E" %}
+                 <a href="{% url 'admin:base_invoice_change' i.id %}">{{ i }} {{ i.seller }} {{ i.seller.payment_info }}</a>
+                 {%  endif %}
+                 <form method="post">
+                     {% csrf_token %}
+                     <input type="hidden" name="invoice_id" value="{{ i.id }}">
+                     <input type="hidden" name="bt_id" value="{{ item.id }}">
+                     <input type="submit" value="Consolidate" />
+                 </form>
+                 <br/>
+             {% endfor %}
+         </p>
+    </div>
+    {% endfor %}
+{% endfor %}
+
+{% endblock %}

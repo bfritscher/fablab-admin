@@ -348,7 +348,7 @@ class Event(models.Model):
     trello = models.URLField(verbose_name=_("trello"), blank=True)
     min_participants = models.PositiveIntegerField(verbose_name=_("minimum number of participants"), default=0)
     max_participants = models.PositiveIntegerField(verbose_name=_("maximum number of participants"), default=0)
-    organizers = models.ManyToManyField(Contact, blank=True, null=True)
+    organizers = models.ManyToManyField(Contact, blank=True)
 
     class Meta:
         verbose_name = _("event")

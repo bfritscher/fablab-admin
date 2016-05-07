@@ -38,6 +38,7 @@ INSTALLED_APPS = (
     'fablabadmin.base',
     'fablabadmin.nfc',
     'fablabadmin.accounts',
+    'fablabadmin.accounting',
     'admin_tools',
     'admin_tools.theming',
     'admin_tools.menu',

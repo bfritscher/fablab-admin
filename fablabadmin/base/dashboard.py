@@ -146,6 +146,7 @@ class CustomIndexDashboard(Dashboard):
             exclude=('django.contrib.*',
                      'fablabadmin.base.models.ContactStatus',
                      'fablabadmin.base.models.ResourceType',
+                     'fablabadmin.accounting.models.BankTransaction',
                      'filer*'),
         ))
 
@@ -155,6 +156,7 @@ class CustomIndexDashboard(Dashboard):
             models=('django.contrib.*',
                     'fablabadmin.base.models.ContactStatus',
                     'fablabadmin.base.models.ResourceType',
+                    'fablabadmin.accounting.models.BankTransaction',
                     'filer*'),
         ))
 

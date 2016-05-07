@@ -22,6 +22,10 @@ django-object-actions==0.7.0
 django-material==0.5.1
 django-recaptcha2==0.1.7
 django-autoslug==1.9.3
+# parsing xml files
+untangle==1.1.0
+# api requests
+requests==2.10.0
 
 #dev
 django-debug-toolbar==1.4

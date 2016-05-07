@@ -18,23 +18,32 @@ class CustomMenu(Menu):
     """
     def __init__(self, **kwargs):
         Menu.__init__(self, **kwargs)
-        self.children += [
-            items.MenuItem(_('Dashboard'), reverse('admin:index')),
-            items.Bookmarks(),
-            items.AppList(
+
+        app_menu = items.AppList(
                 _('Applications'),
                 exclude=('django.contrib.*',
                      'fablabadmin.base.models.ContactStatus',
                      'fablabadmin.base.models.ResourceType',
+                     'fablabadmin.accounting.models.BankTransaction',
                      'filer*')
-            ),
-            items.AppList(
+            )
+        admin_menu = items.AppList(
                 _('Administration'),
                 models=('django.contrib.*',
                     'fablabadmin.base.models.ContactStatus',
                     'fablabadmin.base.models.ResourceType',
+                    'fablabadmin.accounting.models.BankTransaction',
                     'filer*')
-            ),
+            )
+        app_menu.children += [items.MenuItem(_('Accounting'), children=[
+            items.MenuItem(_('Consolidation'), '/admin/accounting/consolidation')
+        ])]
+
+        self.children += [
+            items.MenuItem(_('Dashboard'), reverse('admin:index')),
+            items.Bookmarks(),
+            app_menu,
+            admin_menu,
             items.MenuItem(_('report bug / new feature'), 'https://github.com/bfritscher/fablab-admin/issues')
 
         ]
