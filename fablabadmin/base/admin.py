@@ -422,6 +422,13 @@ class ResourceAdmin(ImportExportMixin, GuardedModelAdmin):
     list_filter = ('type__name',)
     ordering = ('type__name', 'name',)
     inlines = (ResourceUsageInline,)
+    readonly_fields = ('slug',)
+    fields = (('name', 'slug'),
+              'type',
+              ('price', 'price_unit'),
+              'image',
+              'description',
+              )
 
 
 class LedgerEntryInline(admin.StackedInline):
@@ -624,12 +631,13 @@ class EventAdmin(ImportExportMixin, GuardedModelAdminMixin, TabbedModelAdmin):
     filter_horizontal = ('organizers',)
     search_fields = ('title',)
     date_hierarchy = "start_date"
+    readonly_fields = ('slug',)
 
     change_form_template = 'base/change_form_tabbed.html'
 
     tab_overview = (
         (_('Event'), {
-            'fields': ('title',
+            'fields': (('title','slug'),
                        'start_date',
                        'end_date',
                        'website',
