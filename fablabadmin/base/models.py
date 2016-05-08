@@ -189,6 +189,7 @@ class Invoice(models.Model):
     draft = models.BooleanField(verbose_name=_("draft"), default=True)
     manual_total = models.FloatField(verbose_name=_("manual total"), blank=True, null=True)
     document = FilerFileField(verbose_name=_("document"), related_name="invoice_document", blank=True, null=True)
+    external_reference = models.TextField(verbose_name=_("external reference"), blank=True, null=False, default="")
 
     @property
     def total(self):
@@ -208,6 +209,9 @@ class Invoice(models.Model):
             self.buyer = Contact.objects.filter(status__name='fablab_invoice').first()
         super(Invoice, self).save(*args, **kwargs)
 
+    # if document empty creates doc
+    # draft set state to False and send email
+    # maybe split into to?
     def publish(self):
         if self.document is None:
             pdf = make_pdf('base/invoice.html', {'invoice': self})
@@ -261,6 +265,7 @@ class LedgerEntry(PolymorphicModel):
     user = models.ForeignKey(Contact, verbose_name=_("member"), related_name="ledger_entries", on_delete=models.PROTECT)
     invoice = models.ForeignKey(Invoice, verbose_name=_("invoice"), related_name="entries", blank=True, null=True)
     type = models.CharField(max_length=1,choices=LEDGER_TYPE,verbose_name=_("type"), default='D')
+    external_reference = models.TextField(verbose_name=_("external reference"), blank=True, null=False, default="")
 
     @property
     def total(self):
