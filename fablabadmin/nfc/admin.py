@@ -30,13 +30,13 @@ class LogEntryAdmin(ExportMixin, ModelAdmin):
 
     def token_link(self, obj):
         url = reverse('admin:nfc_token_change', args=(obj.token.id,))
-        return format_html('<a href="{}">{}</a>', url, obj.token.id)
+        return format_html(u'<a href="{}">{}</a>', url, obj.token.id)
     token_link.short_description = _('token')
 
     def owner_link(self, obj):
         if obj.owner:
             url = reverse('admin:base_contact_change', args=(obj.owner.id,))
-            return format_html('<a href="{}">{}</a>', url, obj.owner)
+            return format_html(u'<a href="{}">{}</a>', url, obj.owner)
         else:
             return "-"
     owner_link.short_description = _('owner')
