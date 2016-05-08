@@ -460,7 +460,11 @@ class InvoiceAdmin(ExportMixin, GuardedModelAdminMixin, BaseDjangoObjectActions,
         ('date', 'draft'),
          'buyer', 'seller',
          ('payment_type', 'paid'),
-         'manual_total', 'document', 'type', 'external_reference'
+         'manual_total',
+         'title',
+         'document',
+         'type',
+         'external_reference'
     )
     change_form_template = 'base/change_form.html'
 

@@ -190,6 +190,7 @@ class Invoice(models.Model):
     manual_total = models.FloatField(verbose_name=_("manual total"), blank=True, null=True)
     document = FilerFileField(verbose_name=_("document"), related_name="invoice_document", blank=True, null=True)
     external_reference = models.TextField(verbose_name=_("external reference"), blank=True, null=False, default="")
+    title = models.CharField(verbose_name=_("title"), blank=True, null=False, default="", max_length=30)
 
     @property
     def total(self):
@@ -245,6 +246,8 @@ class Invoice(models.Model):
         title = ""
         if first_entry:
             title = first_entry.description
+        if self.title != "":
+            title = self.title
 
         return u'%s %s: %s' % (_(dict(self.INVOICE_TYPE)[self.type]).capitalize(), self.id, title)
 
