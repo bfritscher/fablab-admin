@@ -1,12 +1,17 @@
+import thread
 from django import forms
 from django.shortcuts import render
 from django.contrib.auth.decorators import permission_required
 from django.db.models import Q
-from fablabadmin.accounting.models import BankTransaction
-from fablabadmin.accounting.utils import parse_CAMT
 from django.contrib import messages
 from django.contrib.auth.models import User
+from django.views.decorators.csrf import csrf_exempt
+import json
 from fablabadmin.base.models import Invoice
+from django.http import HttpResponse, HttpResponseServerError, HttpResponseBadRequest
+
+from .models import BankTransaction
+from .utils import parse_CAMT, ccvshop_parse_order
 
 
 class UploadFileForm(forms.Form):
@@ -52,5 +57,22 @@ def consolidation(request):
         # - account
         # - invoice number
 
-
     return render(request, 'accounting/consolidation.html', locals())
+
+@csrf_exempt
+def ccvshop_order_webhook(request):
+    if request.method == 'POST':
+        try:
+            json_data = json.loads(request.body)
+            # thread for processing because hook has to respond < 1s
+            # TODO: should be moved to a task queue system
+            thread.start_new_thread(ccvshop_parse_order, (json_data['id'],))
+        except KeyError:
+            HttpResponseServerError("Malformed data!")
+
+        return HttpResponse(status=200)
+
+    if request.method == 'GET' and 'id' in request.GET:
+        ccvshop_parse_order(request.GET['id'])
+
+    return HttpResponseBadRequest()
