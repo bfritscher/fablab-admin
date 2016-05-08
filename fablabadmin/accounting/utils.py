@@ -97,8 +97,8 @@ def ccvshop_parse_order(order_id):
             e.event = event
 
         e.title = item['product_name']
-        e.quantity = 1
-        e.unit_price = item['total_price']
+        e.quantity = item['count']
+        e.unit_price = item['price_with_attributes']
         e.description = "\n".join(["%s: %s" % (a['option_name'], a['value_name']) for a in item['attributes']])
         e.date = invoice.date
         e.user = contact
