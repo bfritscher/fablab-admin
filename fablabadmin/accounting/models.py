@@ -4,17 +4,18 @@ from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from fablabadmin.base.models import Invoice
 import re
+from django.utils.encoding import smart_text
 
 # CRDT
 # VIREMENT DU COMPTE (compte) (nom adresse) [EXPÉDITEUR: (nom adresse)] [COMMUNICATIONS: (text)]
-virement_du_compte = re.compile(r"VIREMENT DU COMPTE ([\d-]*) (.*?)(?: EXPÉDITEUR: (.*?))?(?: COMMUNICATIONS: (.*?))?$")
+virement_du_compte = re.compile(ur"VIREMENT DU COMPTE ([\d-]*) (.*?)(?: EXPÉDITEUR: (.*?))?(?: COMMUNICATIONS: (.*?))?$")
 
 # VIREMENT DE SIC ONLINE (SIC_IID) DONNEUR D'ORDRE: (nom) (iban) [COMMUNICATIONS: (text)]
-virement_de_sic = re.compile(r"VIREMENT DE SIC ONLINE ([\d]*) DONNEUR D'ORDRE: (.*?)( [\dA-Z]+)(?: COMMUNICATIONS: (.*?))$")
+virement_de_sic = re.compile(ur"VIREMENT DE SIC ONLINE ([\d]*) DONNEUR D'ORDRE: (.*?)( [\dA-Z]+)(?: COMMUNICATIONS: (.*?))$")
 
 # DBIT
-# E-FINANCE (compte) nom [(iban) (nom adresse)]
-e_finance = re.compile(r"E-FINANCE ([\d-]*) (.*?)(?:( [\dA-Z]{20,34} )(.*?))?$")
+# E-FINANCE (compte) (nom) [(iban) (nom adresse)]
+e_finance = re.compile(ur"E-FINANCE ([\d-]*) (.*?)(?:( [\dA-Z]{20,34} )(.*?))?$")
 
 @python_2_unicode_compatible
 class BankTransaction(models.Model):
@@ -51,7 +52,7 @@ class BankTransaction(models.Model):
         o = BankTransactionDetail()
         o.type = 'NONE'
         if self.type == BankTransaction.CREDIT:
-            m = virement_du_compte.match(self.raw_text)
+            m = virement_du_compte.match(smart_text(self.raw_text))
             if m is not None:
                 res = m.groups()
                 o.type = 'COMPTE'
@@ -60,7 +61,7 @@ class BankTransaction(models.Model):
                 o.sender = res[2]
                 o.message = res[3]
             else:
-                m = virement_de_sic.match(self.raw_text)
+                m = virement_de_sic.match(smart_text(self.raw_text))
                 if m is not None:
                     res = m.groups()
                     o.type = 'SIC'
@@ -70,13 +71,14 @@ class BankTransaction(models.Model):
                     o.message = res[3]
 
         if self.type == BankTransaction.DEBIT:
-            m = e_finance.match(self.raw_text)
+            m = e_finance.match(smart_text(self.raw_text))
             if m is not None:
                 res = m.groups()
                 o.type = 'E_FINANCE'
                 o.account = res[0]
-                o.iban = res[1]
-                o.contact = res[2]
+                o.contact = res[1]
+                o.iban = res[2]
+                o.message = res[3]
 
         return o
 
