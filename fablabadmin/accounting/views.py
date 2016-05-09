@@ -1,4 +1,6 @@
 import thread
+from decimal import Decimal
+
 from django import forms
 from django.shortcuts import render
 from django.contrib.auth.decorators import permission_required
@@ -14,9 +16,13 @@ from .models import BankTransaction
 from .utils import parse_CAMT, ccvshop_parse_order
 
 
+# TODO: use math.isclose when python > 3.5
+def isclose(a, b, rel_tol=1e-09, abs_tol=0.0):
+    return abs(a-b) <= max(rel_tol * max(abs(a), abs(b)), abs_tol)
+
+
 class UploadFileForm(forms.Form):
     file = forms.FileField()
-
 
 @permission_required('accounting.change_banktransaction')
 def consolidation(request):
@@ -43,7 +49,7 @@ def consolidation(request):
     form = UploadFileForm()
 
     # Display non-consolidated items
-    bts = BankTransaction.objects.filter(invoice__isnull=True, counterpart_account__isnull=True)
+    bts = BankTransaction.objects.filter(Q(counterpart_account__isnull=True) | Q(counterpart_account=""), invoice__isnull=True)
 
     # find potential matches
     for bt in bts:
@@ -51,7 +57,7 @@ def consolidation(request):
         potential_invoices = Invoice.objects.filter(date__lte=bt.booking_date, paid__isnull=True,
                                                     type="I" if bt.type == BankTransaction.CREDIT else "E")
         # total not yet stored in db :-( and need poymorphic aggregation support
-        bt.potential_invoices = [i for i in potential_invoices if i.total == bt.amount]
+        bt.potential_invoices = [i for i in potential_invoices if isclose(float(i.total), float(bt.amount))]
         # TODO: more filtering
         # - lastname
         # - account
