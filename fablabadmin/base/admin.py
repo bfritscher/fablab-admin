@@ -435,6 +435,8 @@ class LedgerEntryInline(admin.StackedInline):
     form = autocomplete_light.modelform_factory(LedgerEntry, fields='__all__')
     model = LedgerEntry
     extra = 1
+    can_delete = False
+    show_change_link = True
     readonly_fields = ('total',)
     fields = (
         'date',
