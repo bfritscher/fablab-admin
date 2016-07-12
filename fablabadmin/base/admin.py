@@ -432,7 +432,9 @@ class ResourceAdmin(ImportExportMixin, GuardedModelAdmin):
 
 
 class LedgerEntryInline(admin.StackedInline):
-    form = autocomplete_light.modelform_factory(LedgerEntry, fields='__all__')
+    form = autocomplete_light.modelform_factory(LedgerEntry, fields='__all__',
+                                                autocomplete_names={'user': 'Contact'}
+                                                )
     model = LedgerEntry
     extra = 1
     can_delete = False
