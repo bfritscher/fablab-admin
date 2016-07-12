@@ -128,9 +128,8 @@ def register_success(request):
     return HttpResponse(u"Votre inscription a bien été enregistrée. Une confirmation vous sera envoyée par e-mail au plus vite.")
 
 
-@permission_required('invoice.can_view')
+@permission_required('base.change_invoice')
 def invoice(request, id):
-    print 'test:', id
     invoice = Invoice.objects.prefetch_related('entries').get(id=id)
     #Retrieve data or whatever you need
     return render_to_pdf(
@@ -140,7 +139,7 @@ def invoice(request, id):
             }
         )
 
-@permission_required('invoice.can_view')
+@permission_required('base.change_invoice')
 def invoice_html(request, id):
     invoice = Invoice.objects.prefetch_related('entries').get(id=id)
     #Retrieve data or whatever you need
@@ -152,7 +151,7 @@ def invoice_html(request, id):
         )
 
 
-@permission_required('invoice.can_view')
+@permission_required('base.change_invoice')
 def mail_template(request, id):
     invoice = Invoice.objects.prefetch_related('entries').get(id=id)
     return render(request, 'base/mail/invoice.html',{
