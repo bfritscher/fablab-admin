@@ -20,6 +20,8 @@ from django.db.models import Q
 from django.core.urlresolvers import reverse
 from polymorphic.admin import PolymorphicParentModelAdmin, PolymorphicChildModelAdmin
 from django_object_actions import BaseDjangoObjectActions, takes_instance_or_queryset, DjangoObjectActions
+
+from fablabadmin.accounting.models import BankTransaction
 from .models import *
 from django.template.defaultfilters import date as date_filter
 from django.contrib.admin import helpers
@@ -449,6 +451,15 @@ class LedgerEntryInline(admin.StackedInline):
     )
 
 
+class BankTransactionInline(admin.TabularInline):
+    model = BankTransaction
+    extra = 0
+    can_delete = False
+    show_change_link = True
+    readonly_fields = ('__str__', )
+    fields = ('__str__', )
+
+
 @admin.register(Invoice)
 class InvoiceAdmin(ExportMixin, GuardedModelAdminMixin, BaseDjangoObjectActions, admin.ModelAdmin):
     form = autocomplete_light.modelform_factory(Invoice, fields='__all__',
@@ -459,7 +470,7 @@ class InvoiceAdmin(ExportMixin, GuardedModelAdminMixin, BaseDjangoObjectActions,
     list_display_links = ('id', '__str__')
     list_filter = (InvoicePaidListFilter, 'type', 'payment_type', 'draft')
     date_hierarchy = "date"
-    inlines = (LedgerEntryInline, )
+    inlines = (LedgerEntryInline, BankTransactionInline, )
     fields = (
         ('date', 'draft'),
          'buyer', 'seller',
