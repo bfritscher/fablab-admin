@@ -455,7 +455,7 @@ class InvoiceAdmin(ExportMixin, GuardedModelAdminMixin, BaseDjangoObjectActions,
                                                 autocomplete_names={'seller': 'Contact',
                                                                     'buyer': 'Contact'})
     search_fields = ('id', 'seller__first_name', 'seller__last_name', 'buyer__first_name', 'buyer__last_name')
-    list_display = ('id', '__str__', 'buyer', 'seller', 'payment_type', 'total', 'paid', 'draft', )
+    list_display = ('id', '__str__', 'date', 'buyer', 'seller', 'payment_type', 'total', 'paid', 'draft', )
     list_display_links = ('id', '__str__')
     list_filter = (InvoicePaidListFilter, 'type', 'payment_type', 'draft')
     date_hierarchy = "date"
