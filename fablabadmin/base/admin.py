@@ -152,13 +152,14 @@ class InvoicePaidListFilter(admin.SimpleListFilter):
         if self.value() == 'yes':
             return queryset.filter(paid__isnull=False)
 
+
 class LedgerEntryMixin(object):
 
     def invoice_link(self, obj):
         url = reverse('admin:base_invoice_change', args=(obj.invoice.id,))
+        print obj
         return format_html('<a href="{}">{}</a>', url, obj.invoice)
     invoice_link.short_description = _('invoice')
-
 
     def edit_link(self, obj):
         url = reverse('admin:base_ledgerentry_change',
@@ -184,7 +185,7 @@ class MembershipsInline(LedgerEntryMixin, admin.TabularInline):
         return format_html('<span class="membership-{}">{}</span>', answer_class, answer_text)
 
 
-class ExpenseInline(admin.TabularInline):
+class ExpenseInline(LedgerEntryMixin, admin.TabularInline):
     model = Expense
     extra = 1
     form = autocomplete_light.modelform_factory(Expense, fields='__all__',
@@ -227,7 +228,7 @@ class UserExpenseInline(LedgerEntryMixin, admin.TabularInline):
     extra = 0
     max_num = 0
     can_delete = False
-    fields = ( 'date', 'invoice_link', 'description', 'event', 'total', 'edit_link')
+    fields = ('date', 'invoice_link', 'description', 'event', 'total', 'edit_link')
 
 
 @admin.register(Contact)
