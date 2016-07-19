@@ -12,3 +12,4 @@ class BankTransactionAdmin(ModelAdmin):
     readonly_fields =  ['iban', 'transaction_id', 'details']
     form = autocomplete_light.modelform_factory(BankTransaction, fields='__all__')
     fields = (('iban', 'transaction_id'), 'booking_date', ('amount', 'currency'), 'type', ('raw_text', 'details'), 'invoice', 'counterpart_account', 'comment')
+    list_display = ('__str__', 'booking_date', 'amount', 'invoice')

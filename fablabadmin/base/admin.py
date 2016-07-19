@@ -624,7 +624,8 @@ class LedgerEntryAdmin(ExportMixin, GuardedModelAdminMixin, PolymorphicParentMod
     )
     date_hierarchy = "date"
     ordering = ('-date',)
-    list_display = ('__str__', 'title', 'description', 'user')
+    list_display = ('__str__', 'date', 'total', 'title', 'description', 'user')
+    search_fields = ('title', 'description')
     list_filter = (
         ('user', admin.RelatedOnlyFieldListFilter),
     )
