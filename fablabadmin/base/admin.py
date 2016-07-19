@@ -175,6 +175,7 @@ class MembershipsInline(LedgerEntryMixin, admin.TabularInline):
     max_num = 0
     can_delete = False
     fields = ('year', 'invoice_link', 'total', 'is_membership_paid')
+    ordering = ('-year',)
 
     def is_membership_paid(self, obj):
         answer_class = 'no'
@@ -215,6 +216,7 @@ class UserLedgerEntryInline(LedgerEntryMixin, admin.TabularInline):
         'quantity', 'unit_price', 'total',
         'edit_link'
     )
+    ordering = ('-date',)
 
     def get_queryset(self, request):
         qs = super(UserLedgerEntryInline, self).get_queryset(request)
@@ -229,6 +231,7 @@ class UserExpenseInline(LedgerEntryMixin, admin.TabularInline):
     max_num = 0
     can_delete = False
     fields = ('date', 'invoice_link', 'description', 'event', 'total', 'edit_link')
+    ordering = ('-date',)
 
 
 @admin.register(Contact)
