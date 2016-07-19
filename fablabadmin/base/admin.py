@@ -157,8 +157,7 @@ class LedgerEntryMixin(object):
 
     def invoice_link(self, obj):
         url = reverse('admin:base_invoice_change', args=(obj.invoice.id,))
-        print obj
-        return format_html('<a href="{}">{}</a>', url, obj.invoice)
+        return format_html(u'<a href="{}">{}</a>', url, obj.invoice)
     invoice_link.short_description = _('invoice')
 
     def edit_link(self, obj):
