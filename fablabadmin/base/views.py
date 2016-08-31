@@ -29,7 +29,7 @@ def render_to_pdf(template_src, context_dict):
 
 
 def index(request):
-    resources = Resource.objects.all()
+    resources = Resource.objects.all().order_by('type__order', 'name')
     return render(request, 'base/index.html', {'resources': resources})
 
 

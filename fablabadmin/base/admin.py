@@ -26,6 +26,7 @@ from .models import *
 from django.template.defaultfilters import date as date_filter
 from django.contrib.admin import helpers
 from django.db import transaction
+from adminsortable.admin import SortableAdmin
 
 AdminSite.site_title = 'FabLab - admin'
 AdminSite.index_title = 'Dashboard'
@@ -37,7 +38,7 @@ class ContactStatusAdmin(GuardedModelAdmin):
 
 
 @admin.register(ResourceType)
-class ResourceTypeAdmin(GuardedModelAdmin):
+class ResourceTypeAdmin(GuardedModelAdmin, SortableAdmin):
    pass
 
 

@@ -18,6 +18,7 @@ from fablabadmin.base.utils import *
 from django.forms.models import modelform_factory
 from fablabadmin.base.utils import send_invoice
 from autoslug import AutoSlugField
+from adminsortable.models import SortableMixin
 
 @python_2_unicode_compatible
 class ContactStatus(models.Model):
@@ -34,13 +35,15 @@ class ContactStatus(models.Model):
 
 
 @python_2_unicode_compatible
-class ResourceType(models.Model):
+class ResourceType(SortableMixin):
     name = models.CharField(max_length=60, verbose_name=_("name"), blank=False, null=False)
+    # define the field the model should be ordered by
+    order = models.PositiveIntegerField(default=0, editable=False, db_index=True)
 
     class Meta:
         verbose_name = _("resource type")
         verbose_name_plural = _("resource types")
-        ordering = ('name',)
+        ordering = ('order',)
 
     def __str__(self):
         return u'%s' % self.name

@@ -49,6 +49,7 @@ INSTALLED_APPS = (
     'django.contrib.admin',
     'django.contrib.auth',
     'polymorphic',
+    'adminsortable',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
@@ -222,7 +223,7 @@ CCVSHOP_PRIVATE_KEY = env('CCVSHOP_PRIVATE_KEY')
 CCVSHOP_PUBLIC_KEY = env('CCVSHOP_PUBLIC_KEY')
 
 def show_toolbar(request):
-    return True
+    return False
 DEBUG_TOOLBAR_CONFIG = {
     "SHOW_TOOLBAR_CALLBACK" : show_toolbar,
 }
