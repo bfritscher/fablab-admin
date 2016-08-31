@@ -3,9 +3,16 @@
 {% block content %}
 
 {% regroup resources by type as resources_list %}
+    <div class="col s12">
+      <ul class="tabs z-depth-1">
     {% for type in resources_list %}
-        <h3 class="btn-large light-green">{{ type.grouper }}</h3>
-        <div class="row">
+          <li class="tab col s3"><a href="#rt_{{ type.grouper.id }}">{{ type.grouper }}</a></li>
+    {%  endfor %}
+      </ul>
+    </div>
+    <br/>
+    {% for type in resources_list %}
+        <div class="row" id="rt_{{ type.grouper.id }}">
          {% for r in type.list  %}
         <div class="col s12 m4 resources">
             <div class="card">
@@ -27,3 +34,5 @@
     {%  endfor %}
       </div>
 {% endblock %}
+
+<div id="test1" class="col s12">Test 1</div>
