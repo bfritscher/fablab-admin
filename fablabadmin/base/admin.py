@@ -657,6 +657,7 @@ class EventAdmin(ImportExportMixin, GuardedModelAdminMixin, TabbedModelAdmin):
     search_fields = ('title',)
     date_hierarchy = "start_date"
     readonly_fields = ('slug',)
+    list_display = ('__str__', 'cost_total', 'revenue_total', 'profit_total')
 
     change_form_template = 'base/change_form_tabbed.html'
 

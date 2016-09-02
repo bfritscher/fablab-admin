@@ -373,6 +373,22 @@ class Event(models.Model):
         verbose_name = _("event")
         verbose_name_plural = _("events")
 
+    @property
+    def revenue_total(self):
+        return Event.objects.filter(pk=self.id).annotate(
+            revenue=Sum(F('registrations__quantity') + F('registrations__unit_price'))).first().revenue or 0
+
+    @property
+    def cost_total(self):
+        return (Event.objects.filter(pk=self.id).annotate(
+            cost=Sum(F('expenses__quantity') + F('expenses__unit_price'))).first().cost or 0) + \
+               (Event.objects.filter(pk=self.id).annotate(
+            cost=Sum(F('resource_usages__quantity') + F('resource_usages__unit_price'))).first().cost or 0)
+
+    @property
+    def profit_total(self):
+        return self.revenue_total - self.cost_total
+
     def __str__(self):
         txt = u"%s (%s" % (self.title, self.start_date)
         if self.end_date:
