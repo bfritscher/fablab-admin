@@ -641,13 +641,13 @@ class EventDocumentInline(admin.StackedInline):
     extra = 1
 
 
-class EventRegistrationInline(admin.TabularInline):
+class EventRegistrationInline(LedgerEntryMixin, admin.TabularInline):
     model = EventRegistration
     extra = 1
     form = autocomplete_light.modelform_factory(EventRegistration, fields='__all__',
                                                 autocomplete_names={'user': 'Contact'})
-    readonly_fields = ('date', 'total')
-    fields = ('date', 'user', 'quantity', 'unit_price', 'total')
+    readonly_fields = ('invoice_link', 'date', 'total')
+    fields = ('invoice_link', 'date', 'user', 'quantity', 'unit_price', 'total')
 
 
 @admin.register(Event)
