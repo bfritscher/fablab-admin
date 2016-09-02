@@ -278,6 +278,14 @@ class LedgerEntry(PolymorphicModel):
         sign = 1 if self.type == 'D' else -1
         return sign * self.quantity * self.unit_price
 
+    @property
+    def is_paid(self):
+        if self.invoice:
+            return self.invoice.paid
+        return False
+
+    is_paid.fget.short_description = _("is paid")
+
     def __str__(self):
         return _(u"Transaction on %(date)s for %(total)s by %(user)s") % {'user': self.user, 'total':self.total, 'date': self.date}
 
