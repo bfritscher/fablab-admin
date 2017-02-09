@@ -19,19 +19,23 @@
     color: #006EB8 !important;
 }
 
- body {
+body {
     display: flex;
     min-height: 100vh;
     flex-direction: column;
-  }
+}
 
-  main {
+.light {
+    font-size: 1rem;
+}
+
+main {
     flex: 1 0 auto;
-  }
+}
 
-  .block{
-      display: block;
-  }
+.block{
+  display: block;
+}
 
 /* label color */
 .input-field label {

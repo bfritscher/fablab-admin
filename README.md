@@ -103,7 +103,7 @@ CCVSHOP_PUBLIC_KEY = 'your public key'
 
 ## During Development
 ### making translations
-Inside eacho app module folder
+Inside each app module folder
 ```
 django-admin makemessages
 ```

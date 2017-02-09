@@ -117,6 +117,7 @@ def resource(request, id=None, slug=None):
             form = ResourceUsageModelForm(initial={"user": request.user.contact})
         else:
             form = ResourceUsageModelForm()
+        form.fields['quantity'].label = u"%s %s" % (_('Quantity in'), resource.price_unit)
     return render(request, 'base/resource_usage.html', locals())
 
 
