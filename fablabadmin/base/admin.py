@@ -18,7 +18,7 @@ from tabbed_admin import TabbedModelAdmin
 from django.utils.html import format_html
 from django.db.models import Q
 from django.core.urlresolvers import reverse
-from polymorphic.admin import PolymorphicParentModelAdmin, PolymorphicChildModelAdmin
+from polymorphic.admin import PolymorphicParentModelAdmin, PolymorphicChildModelAdmin, PolymorphicChildModelFilter
 from django_object_actions import BaseDjangoObjectActions, takes_instance_or_queryset, DjangoObjectActions
 
 from fablabadmin.accounting.models import BankTransaction
@@ -240,9 +240,10 @@ class UserExpenseInline(LedgerEntryMixin, admin.TabularInline):
 class ContactAdmin(BaseDjangoObjectActions, ImportExportMixin, GuardedModelAdminMixin, TabbedModelAdmin):
     model = Contact
     search_fields = ('first_name', 'last_name', 'email', 'user__username', 'functions__name')
-    list_display = ('full_name', 'status', 'functions','is_membership_paid_list')
+    list_display = ('full_name', 'status', 'functions','is_membership_paid_list', 'modified')
     list_filter = ('status', MembershipPaidListFilter, 'functions__name')
     readonly_fields = ('is_membership_paid', 'functions', 'created', 'modified')
+    ordering = ('-modified',)
 
     change_form_template = 'base/change_form_tabbed.html'
 
@@ -496,7 +497,7 @@ class InvoiceAdmin(ExportMixin, GuardedModelAdminMixin, BaseDjangoObjectActions,
     form = autocomplete_light.modelform_factory(Invoice, fields='__all__',
                                                 autocomplete_names={'seller': 'Contact',
                                                                     'buyer': 'Contact'})
-    search_fields = ('id', 'seller__first_name', 'seller__last_name', 'buyer__first_name', 'buyer__last_name')
+    search_fields = ('id', 'seller__first_name', 'seller__last_name', 'buyer__first_name', 'buyer__last_name', 'manual_total', 'title', 'entries__title', 'entries__description')
     list_display = ('id', '__str__', 'date', 'buyer', 'seller', 'payment_type', 'total', 'paid', 'draft', )
     list_display_links = ('id', '__str__')
     list_filter = (InvoicePaidListFilter, 'type', 'payment_type', 'draft')
@@ -655,11 +656,30 @@ class LedgerEntryAdmin(ExportMixin, GuardedModelAdminMixin, PolymorphicParentMod
     )
     date_hierarchy = "date"
     ordering = ('-date',)
-    list_display = ('__str__', 'date', 'total', 'title', 'description', 'user')
+    list_display = ('polymorphic_ctype', 'date', 'total', 'title', 'description', 'user', 'invoice', 'is_paid')
     search_fields = ('title', 'description')
     list_filter = (
+        PolymorphicChildModelFilter,
+        ('invoice', NotNullFieldListFilter),
+        ('invoice__paid', NotNullFieldListFilter),
         ('user', admin.RelatedOnlyFieldListFilter),
     )
+
+    def is_paid(selfs, obj):
+        answer_class = 'no'
+        answer_text = _('no')
+        html = ''
+        m = obj.invoice
+        if m and m.paid:
+            answer_class = 'yes'
+            answer_text = _('yes')
+        elif m == False:
+            pass  # html = '<input type="button" value="Create membership invoice">'
+        elif m is None:
+            pass  # html = '<input type="button" value="send reminder" onclick="alert(\'not implemented\')">'
+
+        return format_html('<span class="membership-{}">{}</span> {}', answer_class, answer_text, mark_safe(html))
+    is_paid.short_description = _('is paid')
 
 
 class EventDocumentInline(admin.StackedInline):
