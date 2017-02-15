@@ -439,30 +439,6 @@ class ResourceAdmin(ImportExportMixin, GuardedModelAdmin):
               'description',
               )
 
-@admin.register(MembershipInvoice)
-class MembershipInvoiceAdmin(ImportExportMixin, GuardedModelAdmin):
-    model = MembershipInvoice
-    list_display = ('year', 'user', 'is_paid', 'unit_price')
-    search_fields = ('user__first_name', 'user__last_name', 'user__email', 'user__user__username', 'user__functions__name')
-    list_filter = (('invoice__paid', NotNullFieldListFilter), 'year')
-    ordering = ('-year',)
-
-    def is_paid(selfs, obj):
-        answer_class = 'no'
-        answer_text = _('no')
-        html = ''
-        m = obj.is_membership_paid()
-        if m:
-            answer_class = 'yes'
-            answer_text = _('yes')
-        elif m == False:
-            pass  # html = '<input type="button" value="Create membership invoice">'
-        elif m is None:
-            pass  # html = '<input type="button" value="send reminder" onclick="alert(\'not implemented\')">'
-
-        return format_html('<span class="membership-{}">{}</span> {}', answer_class, answer_text, mark_safe(html))
-    is_paid.short_description = _('is membership paid')
-
 
 
 class LedgerEntryInline(admin.StackedInline):
@@ -680,6 +656,30 @@ class LedgerEntryAdmin(ExportMixin, GuardedModelAdminMixin, PolymorphicParentMod
 
         return format_html('<span class="membership-{}">{}</span> {}', answer_class, answer_text, mark_safe(html))
     is_paid.short_description = _('is paid')
+
+
+@admin.register(MembershipInvoice)
+class MembershipInvoiceAdminStandalone(ImportExportMixin, GuardedModelAdmin):
+    list_display = ('year', 'user', 'is_paid', 'unit_price')
+    search_fields = ('user__first_name', 'user__last_name', 'user__email', 'user__user__username', 'user__functions__name')
+    list_filter = (('invoice__paid', NotNullFieldListFilter), 'year')
+    ordering = ('-year',)
+
+    def is_paid(selfs, obj):
+        answer_class = 'no'
+        answer_text = _('no')
+        html = ''
+        m = obj.is_membership_paid()
+        if m:
+            answer_class = 'yes'
+            answer_text = _('yes')
+        elif m == False:
+            pass  # html = '<input type="button" value="Create membership invoice">'
+        elif m is None:
+            pass  # html = '<input type="button" value="send reminder" onclick="alert(\'not implemented\')">'
+
+        return format_html('<span class="membership-{}">{}</span> {}', answer_class, answer_text, mark_safe(html))
+    is_paid.short_description = _('is membership paid')
 
 
 class EventDocumentInline(admin.StackedInline):
