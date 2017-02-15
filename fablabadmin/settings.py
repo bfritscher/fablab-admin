@@ -68,6 +68,7 @@ INSTALLED_APPS = (
     'debug_toolbar',
     'material',
     'snowpenguin.django.recaptcha2',
+    'logentry_admin'
 )
 
 
