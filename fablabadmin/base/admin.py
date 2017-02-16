@@ -535,8 +535,10 @@ class LedgerEntryChildAdmin(GuardedModelAdminMixin, PolymorphicChildModelAdmin):
     #)
 
 
+@admin.register(MembershipInvoice)
 class MembershipInvoiceAdmin(LedgerEntryChildAdmin):
     base_model = MembershipInvoice
+    show_in_index = True
     form = autocomplete_light.modelform_factory(MembershipInvoice, fields='__all__',
                                                 autocomplete_names={'user': 'Member'})
 
@@ -550,9 +552,32 @@ class MembershipInvoiceAdmin(LedgerEntryChildAdmin):
 
         return super(MembershipInvoiceAdmin, self).get_form(request, obj, **kwargs)
 
+    list_display = ('year', 'user', 'is_paid', 'unit_price')
+    search_fields = ('user__first_name', 'user__last_name', 'user__email', 'user__user__username', 'user__functions__name')
+    list_filter = (('invoice__paid', NotNullFieldListFilter), 'year')
+    ordering = ('-year',)
 
+    def is_paid(selfs, obj):
+        answer_class = 'no'
+        answer_text = _('no')
+        html = ''
+        m = obj.is_membership_paid()
+        if m:
+            answer_class = 'yes'
+            answer_text = _('yes')
+        elif m == False:
+            pass  # html = '<input type="button" value="Create membership invoice">'
+        elif m is None:
+            pass  # html = '<input type="button" value="send reminder" onclick="alert(\'not implemented\')">'
+
+        return format_html('<span class="membership-{}">{}</span> {}', answer_class, answer_text, mark_safe(html))
+    is_paid.short_description = _('is membership paid')
+
+
+@admin.register(ResourceUsage)
 class ResourceUsageAdmin(LedgerEntryChildAdmin):
     base_model = ResourceUsage
+    show_in_index = False
     form = autocomplete_light.modelform_factory(Expense, fields='__all__',
                                                 autocomplete_names={'user': 'Contact'})
 
@@ -569,8 +594,10 @@ class ResourceUsageAdmin(LedgerEntryChildAdmin):
         return form
 
 
+@admin.register(EventRegistration)
 class EventRegistrationAdmin(LedgerEntryChildAdmin):
     base_model = EventRegistration
+    show_in_index = False
     form = autocomplete_light.modelform_factory(EventRegistration, fields='__all__',
                                                 autocomplete_names={'user': 'Contact'})
 
@@ -585,8 +612,10 @@ class EventRegistrationAdmin(LedgerEntryChildAdmin):
         return super(EventRegistrationAdmin, self).get_form(request, obj, **kwargs)
 
 
+@admin.register(Expense)
 class ExpenseAdmin(LedgerEntryChildAdmin):
     base_model = Expense
+    show_in_index = False
     form = autocomplete_light.modelform_factory(Expense, fields='__all__',
                                                 autocomplete_names={'provider': 'Contact', 'user': 'Contact'})
 
@@ -624,11 +653,10 @@ class LedgerEntryAdmin(ExportMixin, GuardedModelAdminMixin, PolymorphicParentMod
     """ The parent model admin """
     base_model = LedgerEntry
     child_models = (
-        (MembershipInvoice, MembershipInvoiceAdmin),
-        (ResourceUsage, ResourceUsageAdmin),
-        (EventRegistration, EventRegistrationAdmin),
-        (Expense, ExpenseAdmin),
-        (LedgerEntry, LedgerEntryChildAdmin)
+        MembershipInvoice,
+        ResourceUsage,
+        EventRegistration,
+        Expense
     )
     date_hierarchy = "date"
     ordering = ('-date',)
@@ -657,29 +685,6 @@ class LedgerEntryAdmin(ExportMixin, GuardedModelAdminMixin, PolymorphicParentMod
         return format_html('<span class="membership-{}">{}</span> {}', answer_class, answer_text, mark_safe(html))
     is_paid.short_description = _('is paid')
 
-
-@admin.register(MembershipInvoice)
-class MembershipInvoiceAdminStandalone(ImportExportMixin, GuardedModelAdmin):
-    list_display = ('year', 'user', 'is_paid', 'unit_price')
-    search_fields = ('user__first_name', 'user__last_name', 'user__email', 'user__user__username', 'user__functions__name')
-    list_filter = (('invoice__paid', NotNullFieldListFilter), 'year')
-    ordering = ('-year',)
-
-    def is_paid(selfs, obj):
-        answer_class = 'no'
-        answer_text = _('no')
-        html = ''
-        m = obj.is_membership_paid()
-        if m:
-            answer_class = 'yes'
-            answer_text = _('yes')
-        elif m == False:
-            pass  # html = '<input type="button" value="Create membership invoice">'
-        elif m is None:
-            pass  # html = '<input type="button" value="send reminder" onclick="alert(\'not implemented\')">'
-
-        return format_html('<span class="membership-{}">{}</span> {}', answer_class, answer_text, mark_safe(html))
-    is_paid.short_description = _('is membership paid')
 
 
 class EventDocumentInline(admin.StackedInline):

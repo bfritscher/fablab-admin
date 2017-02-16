@@ -14,7 +14,7 @@ xhtml2pdf==0.0.6
 git+https://github.com/charlesthk/python-mailchimp.git
 django-tabbed-admin==0.0.5
 django-mptt==0.8.0
-django_polymorphic==0.8.1
+django_polymorphic==1.0.2
 easy-thumbnails==2.3
 django-filer==1.1.0
 django-mail-templated==2.4.7
