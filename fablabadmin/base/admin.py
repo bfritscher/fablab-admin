@@ -656,7 +656,8 @@ class LedgerEntryAdmin(ExportMixin, GuardedModelAdminMixin, PolymorphicParentMod
         MembershipInvoice,
         ResourceUsage,
         EventRegistration,
-        Expense
+        Expense,
+        LedgerEntry
     )
     date_hierarchy = "date"
     ordering = ('-date',)
