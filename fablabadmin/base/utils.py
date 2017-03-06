@@ -7,6 +7,7 @@ from fablabadmin import settings
 import os
 import environ
 from mail_templated import EmailMessage
+from raven.contrib.django.raven_compat.models import client
 
 env = environ.Env()
 
@@ -59,21 +60,21 @@ def mailchimp_add(contact):
         }
     }
     try:
-        mailchimp_client.member.create(env('MAILCHIMP_MEMBER_LIST_ID'), member)
+        mailchimp_client.lists.members.create(env('MAILCHIMP_MEMBER_LIST_ID'), member)
     except:
-        pass
+        client.captureException()
     try:
-        mailchimp_client.member.create(env('MAILCHIMP_NEWSLETTER_LIST_ID'), member)
+        mailchimp_client.lists.members.create(env('MAILCHIMP_NEWSLETTER_LIST_ID'), member)
     except:
-        pass
+        client.captureException()
 
 
 def mailchimp_remove(contact):
     hash = hashlib.md5(contact.email.lower()).hexdigest()
     try:
-        mailchimp_client.member.delete(env('MAILCHIMP_MEMBER_LIST_ID'), hash)
+        mailchimp_client.lists.members.delete(env('MAILCHIMP_MEMBER_LIST_ID'), hash)
     except:
-        pass
+        client.captureException()
 
 
 def send_invoice(invoice):
