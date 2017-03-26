@@ -443,7 +443,7 @@ class ResourceAdmin(ImportExportMixin, GuardedModelAdmin):
     readonly_fields = ('slug',)
     fields = (('name', 'slug'),
               'type',
-              ('price', 'price_unit'),
+              ('price', 'price_unit', 'unit_rounding'),
               'image',
               'description',
               )
