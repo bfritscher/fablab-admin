@@ -48,6 +48,10 @@ table.header{
     background-color: #E8F3DB;
 }
 
+.content .desc.th {
+    text-align: left;
+}
+
 .qty, .unit, .total {
     width: 15%;
 }
@@ -211,7 +215,7 @@ table.header{
                 <tr>
                     <td class="desc">
                         {% ifchanged %}<h3>{{ l.title }}</h3>{% endifchanged %}
-                        <p>{{ l.description | linebreaksbr }}</p></td>
+                        <p>{{ l.date|date:'d.m' }} - {{ l.description | linebreaksbr }}</p></td>
                     <td class="qty">{{ l.quantity }}</td>
                     <td class="unit">{{ l.unit_price |floatformat:2|intcomma }}</td>
                     <td class="total">{{ l.total |floatformat:2|intcomma }}</td>
