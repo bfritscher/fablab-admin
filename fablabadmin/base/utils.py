@@ -1,3 +1,5 @@
+from django.contrib.admin.models import LogEntry, ADDITION
+from django.contrib.contenttypes.models import ContentType
 from mailchimp3 import MailChimp
 from django.template.loader import get_template
 import hashlib
@@ -77,14 +79,21 @@ def mailchimp_remove(contact):
         client.captureException()
 
 
-def send_invoice(invoice):
+def send_invoice(invoice, message=None, request=None):
     # Initialize message on creation.
-    message = EmailMessage('base/mail/invoice.html', {'invoice': invoice}, invoice.seller.email,
+    message = EmailMessage('base/mail/invoice.html', {'invoice': invoice, 'message': message}, invoice.seller.email,
                            to=[invoice.buyer.email])
 
     message.attach_file(invoice.document.path)
     # Send message when ready. It will be rendered automatically if needed.
     message.send()
+    LogEntry.objects.log_action(
+        user_id=request.user.id,
+        content_type_id=ContentType.objects.get_for_model(invoice).pk,
+        object_id=invoice.id,
+        object_repr=u"%s" % (invoice,),
+        action_flag=ADDITION,
+        change_message="send_invoice")
 
 
 def invoice_open_ledegerentries(contact):

@@ -6,7 +6,8 @@
 
 {% block body %}
 Bonjour {{ invoice.buyer.first_name }},
-Vous avez une nouvelle facture.
+
+{{ message|default_if_none:"Vous avez une nouvelle facture." }}
 
 Veuillez régler la facture par virement en mentionnant dans le champ communication le numéro de facture.
 
@@ -29,7 +30,7 @@ NOUS VOUS REMERCIONS DE VOTRE CONFIANCE
 
 
 <p>Bonjour {{ invoice.buyer.first_name }},</p>
-<p>Vous avez une nouvelle facture.</p>
+<p>{{ message|default_if_none:"Vous avez une nouvelle facture." }}</p>
 <p>Veuillez régler la facture par virement en mentionnant dans le champ communication le numéro de facture.</p>
 <p>Coordonnées bancaires:<br/>
     {{ invoice.seller.payment_info|linebreaks }}

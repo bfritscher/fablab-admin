@@ -288,7 +288,7 @@ class ContactAdmin(BaseDjangoObjectActions, ImportExportMixin, GuardedModelAdmin
                             m = MembershipInvoice.objects.create(user=c,
                                                                   year=datetime.date.today().year,
                                                                   unit_price=unit_price)
-                            m.save()
+                            m.save(request=request)
                             created.append(unicode(str(c), 'utf-8'))
 
                 self.message_user(request, _(u"created memberships for: %s") % ', '.join(created))
@@ -528,15 +528,6 @@ class InvoiceAdmin(ExportMixin, GuardedModelAdminMixin, BaseDjangoObjectActions,
     publish.label = _('publish')
     publish.short_description = _('publish invoice create pdf')
 
-    def send(self, request, obj):
-        send_invoice(obj)
-        self.message_user(request, _(u'invoice sent to %s') % obj.buyer.email)
-        return
-
-    send.label = _('send by email')
-    send.short_description = _('send by email to buyer')
-
-
     def get_object_actions(self, request, context, **kwargs):
         objectactions = []
 
@@ -551,7 +542,31 @@ class InvoiceAdmin(ExportMixin, GuardedModelAdminMixin, BaseDjangoObjectActions,
 
         return objectactions
 
+    @takes_instance_or_queryset
+    def send(self, request, queryset):
+        if request.POST.get('message'):
+            try:
+                message = request.POST.get('message')
+                created = []
+                for obj in queryset:
+                    send_invoice(obj, message, request=request)
+                    created.append(obj.buyer.email)
+
+                self.message_user(request, _(u"invoice sent to: %s") % ', '.join(created))
+            except Exception as e:
+                self.message_user(request, e)
+            return
+
+        return render(request, 'base/send_invoice.html', {
+            'action_checkbox_name': helpers.ACTION_CHECKBOX_NAME,
+            'queryset': queryset
+        })
+
+    send.label = _('send by email')
+    send.short_description = _('send by email to buyer')
+
     objectactions = ('preview', 'publish', 'send')
+    actions = ('send',)
 
 
 class LedgerEntryChildAdmin(GuardedModelAdminMixin, PolymorphicChildModelAdmin):

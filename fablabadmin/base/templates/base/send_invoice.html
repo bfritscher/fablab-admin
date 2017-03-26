@@ -1,0 +1,20 @@
+{% extends "admin/base_site.html" %}
+{% load i18n l10n admin_urls %}
+
+{% block content %}
+<form action="." method="POST">
+  {% csrf_token %}
+    <p>Bonjour [NOM],</p>
+    <textarea name="message" style="width:100%;min-height:120px">Vous avez une nouvelle facture.</textarea>
+    <p>Veuillez régler la facture par virement en mentionnant dans le champ communication le numéro de facture.</p>
+    <p><input type=submit value="Envoyer"></p>
+    <ul>
+    {% for obj in queryset %}
+    <li>{{ obj }}
+    <input type="hidden" name="{{ action_checkbox_name }}" value="{{ obj.pk|unlocalize }}" /></li>
+    {% endfor %}
+    </ul>
+    <input type="hidden" name="action" value="send" />
+
+</form>
+{% endblock %}

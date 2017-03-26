@@ -324,10 +324,12 @@ class MembershipInvoice(LedgerEntry):
 
         super(MembershipInvoice, self).save(*args, **kwargs)
 
+        if kwargs.has_key('request'):
+            request = kwargs.pop('request')
         #send membership to user
         if self.invoice.draft:
             self.invoice.publish()
-            send_invoice(self.invoice)
+            send_invoice(self.invoice, request=request)
 
     class Meta:
         verbose_name = _("membership invoice")
