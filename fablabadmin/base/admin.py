@@ -487,7 +487,7 @@ class InvoiceAdmin(ExportMixin, GuardedModelAdminMixin, BaseDjangoObjectActions,
     search_fields = ('id', 'seller__first_name', 'seller__last_name', 'buyer__first_name', 'buyer__last_name', 'manual_total', 'title', 'entries__title', 'entries__description')
     totalsum_list = ('total',)
     change_list_template = 'admin/change_list_merged.html'
-    list_display = ('id', '__str__', 'date', 'buyer', 'seller', 'payment_type', 'total', 'paid', 'draft', )
+    list_display = ('id', '__str__', 'date', 'buyer_url', 'seller_url', 'payment_type', 'total', 'paid', 'draft', )
     list_display_links = ('id', '__str__')
     list_filter = (InvoicePaidListFilter, 'type', 'payment_type', 'draft')
     date_hierarchy = "date"
@@ -506,6 +506,14 @@ class InvoiceAdmin(ExportMixin, GuardedModelAdminMixin, BaseDjangoObjectActions,
 
     def preview(self, request, obj):
         return HttpResponseRedirect('/admin/invoice/%s' % obj.id)
+
+    def buyer_url(self, obj):
+        return format_html(u'<a href="{}">{}</a>', reverse('admin:base_contact_change', args=(obj.buyer.id,)),  obj.buyer)
+        buyer_url.short_description = _('Buyer')
+
+    def seller_url(self, obj):
+        return format_html(u'<a href="{}">{}</a>', reverse('admin:base_contact_change', args=(obj.seller.id,)),  obj.seller)
+    seller_url.short_description = _('Seller')
 
     preview.label = _('preview')
     preview.short_description = _('preview of the invoice')
@@ -540,6 +548,11 @@ class LedgerEntryChildAdmin(GuardedModelAdminMixin, PolymorphicChildModelAdmin):
     base_model = LedgerEntry
     form = autocomplete_light.modelform_factory(LedgerEntry, fields='__all__',
                                                  autocomplete_names={'user': 'Contact', 'provider': 'Contact'})
+
+    def user_url(self, obj):
+        return format_html(u'<a href="{}">{}</a>', reverse('admin:base_contact_change', args=(obj.user.id,)),  obj.user)
+    user_url.short_description = _('Contact')
+
     # # By using these `base_...` attributes instead of the regular ModelAdmin `form` and `fieldsets`,
     # the additional fields of the child models are automatically added to the admin form.
     #base_form = ...
@@ -565,12 +578,12 @@ class MembershipInvoiceAdmin(LedgerEntryChildAdmin):
 
         return super(MembershipInvoiceAdmin, self).get_form(request, obj, **kwargs)
 
-    list_display = ('year', 'user', 'is_paid', 'unit_price')
+    list_display = ('year', 'user_url', 'is_paid', 'unit_price')
     search_fields = ('user__first_name', 'user__last_name', 'user__email', 'user__user__username', 'user__functions__name')
     list_filter = (('invoice__paid', NotNullFieldListFilter), 'year')
     ordering = ('-year',)
 
-    def is_paid(selfs, obj):
+    def is_paid(self, obj):
         answer_class = 'no'
         answer_text = _('no')
         html = ''
@@ -674,7 +687,7 @@ class LedgerEntryAdmin(ExportMixin, GuardedModelAdminMixin, PolymorphicParentMod
     )
     date_hierarchy = "date"
     ordering = ('-date',)
-    list_display = ('polymorphic_ctype', 'date', 'total', 'title', 'description', 'user', 'invoice', 'is_paid')
+    list_display = ('polymorphic_ctype', 'date', 'total', 'title', 'description', 'user_url', 'invoice', 'is_paid')
     search_fields = ('title', 'description')
     list_filter = (
         PolymorphicChildModelFilter,
@@ -682,6 +695,10 @@ class LedgerEntryAdmin(ExportMixin, GuardedModelAdminMixin, PolymorphicParentMod
         ('invoice__paid', NotNullFieldListFilter),
         ('user', admin.RelatedOnlyFieldListFilter),
     )
+
+    def user_url(self, obj):
+        return format_html(u'<a href="{}">{}</a>', reverse('admin:base_contact_change', args=(obj.user.id,)),  obj.user)
+    user_url.short_description = _('Contact')
 
     def is_paid(selfs, obj):
         answer_class = 'no'
