@@ -578,10 +578,21 @@ class MembershipInvoiceAdmin(LedgerEntryChildAdmin):
 
         return super(MembershipInvoiceAdmin, self).get_form(request, obj, **kwargs)
 
-    list_display = ('year', 'user_url', 'is_paid', 'unit_price')
+    list_display = ('year', 'user_url', 'user_status', 'is_student', 'is_paid', 'unit_price')
     search_fields = ('user__first_name', 'user__last_name', 'user__email', 'user__user__username', 'user__functions__name')
-    list_filter = (('invoice__paid', NotNullFieldListFilter), 'year')
+    list_filter = (('invoice__paid', NotNullFieldListFilter), 'year', 'user__status')
     ordering = ('-year',)
+
+    def user_status(self, obj):
+        return obj.user.status
+
+    def is_student(self, obj):
+        is_student = obj.user.functions.filter(
+            Q(name="Etudiant"),
+            Q(year_from__lte=obj.year),
+            Q(year_to__gte=obj.year) | Q(year_to__isnull=True)).exists()
+        return _('yes') if is_student else ''
+    is_student.short_description = _('is student')
 
     def is_paid(self, obj):
         answer_class = 'no'
