@@ -18,7 +18,7 @@
                              {% part form.user prefix %}<i class="material-icons prefix mdi-action-account-box"></i>{% endpart %}
                              {% part form.description prefix %}<i class="material-icons prefix">mode_edit</i>{% endpart %}
                              {% part form.quantity prefix %}<i class="material-icons prefix mdi-editor-format-list-numbered"></i>{% endpart %}
-                             {% part form.quantity help_text %}<div style="margin-left:45px"><p class="light">{% trans "Rate" %}: {{ resource.price|unlocalize }} CHF {% trans "by" %} {{ resource.price_unit }}</p><p>{% trans "Amount billed" %}: <strong><span id="total"></span></strong> CHF</p></div>{% endpart %}
+                             {% part form.quantity help_text %}<div style="margin-left:45px"><p class="light">{% trans "Rate" %}: {{ resource.price|unlocalize }} CHF {% trans "by" %} {{ resource.price_unit }} {% trans "rounded to" %} {{ resource.unit_rounding }} {{ resource.price_unit }}</p><p>{% trans "Amount billed" %}: <strong><span id="total"></span></strong> CHF</p></div>{% endpart %}
                              {% part form.event control %}{{ form.event }}{% endpart %}
                              {% part form.event add_label_class %}{{ "block"}}{% endpart %}
                              {% part form.event prefix %}<i class="material-icons prefix mdi-av-movie"></i>{% endpart %}
@@ -78,7 +78,10 @@
 {% endblock %}
 {% block readyscript %}
     jQuery('#id_quantity').on('change', function(){
-       jQuery('#total').text($(this).val() * {{ resource.price|unlocalize }});
+       var total = $(this).val() * {{ resource.price|unlocalize }};
+       var unit_rounding = {{ resource.unit_rounding|unlocalize }};
+       total = Math.ceil(total / unit_rounding) * unit_rounding;
+       jQuery('#total').text(total);
     });
     jQuery('#total').text($('#id_quantity').val() * {{ resource.price|unlocalize }});
     jQuery('#id_date').pickadate({

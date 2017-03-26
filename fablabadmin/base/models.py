@@ -19,6 +19,7 @@ from django.forms.models import modelform_factory
 from fablabadmin.base.utils import send_invoice
 from autoslug import AutoSlugField
 from adminsortable.models import SortableMixin
+import math
 
 @python_2_unicode_compatible
 class ContactStatus(models.Model):
@@ -145,6 +146,7 @@ class Resource(models.Model):
     type = models.ForeignKey(ResourceType, related_name="resources", verbose_name=_("type"), on_delete=models.PROTECT)
     price = models.FloatField(verbose_name=_("usage price"), blank=True, null=True)
     price_unit = models.CharField(verbose_name=_("price unit"), max_length=10, blank=False, default="")
+    unit_rounding = models.FloatField(verbose_name=_("unit rounding"), blank=False, default=1.0)
     description = RedactorField(verbose_name=_("description"), blank=True, null=False)
     image = FilerImageField(verbose_name=_("image"), blank=True, null=True)
 
@@ -434,6 +436,11 @@ class ResourceUsage(LedgerEntry):
             self.title = self.resource.type.name
 
         super(ResourceUsage, self).save(*args, **kwargs)
+
+    @property
+    def total(self):
+        sign = 1 if self.type == 'D' else -1
+        return math.ceil((sign * self.quantity * self.unit_price) / self.resource.unit_rounding) * self.resource.unit_rounding
 
     class Meta:
         verbose_name = _("resource usage")
