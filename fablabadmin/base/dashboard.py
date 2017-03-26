@@ -173,7 +173,7 @@ class CustomIndexDashboard(Dashboard):
         ))
 
         # append a recent actions module
-        self.children.append(RecentActions(_('Recent Actions'), 20))
+        self.children.append(RecentActions(_('Recent Actions'), 40))
 
         # append another link list module for "support".
         # self.children.append(modules.LinkList(
@@ -220,7 +220,7 @@ class CustomAppIndexDashboard(AppIndexDashboard):
             RecentActions(
                 _('Recent Actions'),
                 include_list=self.get_app_content_types(),
-                limit=20
+                limit=40
             )
         ]
 
