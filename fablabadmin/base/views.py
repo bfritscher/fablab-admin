@@ -4,10 +4,10 @@ from django.contrib.auth import authenticate
 from django.contrib.auth.decorators import permission_required
 from django.core.mail import send_mail
 from django.core.urlresolvers import reverse
-from django.forms import forms, CharField, Form, ModelForm
+from django.forms import forms, CharField, Form, ModelForm, BooleanField
 from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
-from fablabadmin.base.models import Invoice, Resource, ResourceUsage, Contact, ContactStatus
+from fablabadmin.base.models import Invoice, Resource, ResourceUsage, Contact, ContactStatus, Function
 from fablabadmin.base.utils import make_pdf
 from material import LayoutMixin, Layout, Row, Fieldset, Field, Span6, Span8, Span4
 from django.views.generic.edit import CreateView
@@ -17,7 +17,9 @@ from django.views.decorators.csrf import csrf_exempt
 from snowpenguin.django.recaptcha2.fields import ReCaptchaField
 from snowpenguin.django.recaptcha2.widgets import ReCaptchaWidget
 from django.db.models import Q
+import datetime
 from django.shortcuts import get_object_or_404
+from raven.contrib.django.raven_compat.models import client
 
 
 def render_to_pdf(template_src, context_dict):
@@ -49,6 +51,7 @@ class ContactRegisterForm(ModelForm):
         self.fields['city'].required = True
         self.fields['phone'].required = True
         self.fields['birth_year'].required = True
+        self.fields['is_student'] = BooleanField(required=False, label=_('I am a student'))
 
     captcha = ReCaptchaField(widget=ReCaptchaWidget())
     layout = Layout(Fieldset(_('Contact'),
@@ -58,7 +61,9 @@ class ContactRegisterForm(ModelForm):
                              Row('postal_code', 'city'),
                              Row(Span8('phone'), Span4('birth_year')),
                     Fieldset(_('Informations'),
-                             'education', 'profession', 'employer', 'interests'), 'captcha'))
+                             'education',
+                             'is_student',
+                             'profession', 'employer', 'interests'), 'captcha'))
 
 
 def register(request):
@@ -69,15 +74,16 @@ def register(request):
         form = ContactRegisterForm(request.POST)
         if form.is_valid():
             contact = form.save(commit=True)
+            if form.cleaned_data['is_student']:
+                Function(member=contact, year_from=datetime.datetime.now().year, name="Etudiant", committee=False).save()
             to = Contact.objects.filter(status__name='fablab_invoice').first()
-            #TODO relative url configurable settings
             if to is not None:
                 send_mail('[FabLab] Inscription',
-                                       'Nouvelle inscription https://admin.fablab-lacote.ch/admin/base/contact/%d/change/' % (contact.id,),
+                                       'Nouvelle inscription %s' % (reverse('admin:base_contact_change', args=(contact.id,)),),
                                        contact.email, [to.email])
                 return HttpResponseRedirect(reverse('register_success'))
             else:
-                #TODO handle error
+                client.captureMessage('No email found to notify admin')
                 return HttpResponseRedirect(reverse('register_success'))
 
 
