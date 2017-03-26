@@ -4,6 +4,9 @@ import hmac
 import hashlib
 import datetime
 import requests
+from django.contrib.admin.models import LogEntry, ADDITION
+from django.contrib.auth.models import User
+from django.contrib.contenttypes.models import ContentType
 
 from fablabadmin.accounting.models import BankTransaction
 from fablabadmin.base.models import Contact, Invoice, LedgerEntry, EventRegistration, Event, ContactStatus
@@ -34,6 +37,12 @@ def parse_CAMT(f):
 
 def ccvshop_parse_order(order_id):
     order = ccvshop_call_api("/api/rest/v1/orders/%s" % order_id)
+
+    user, created = User.objects.get_or_create(
+        username='CCVSHOP',
+        defaults={'is_active': False},
+    )
+
 
     # check that order has not already been imported
     if Invoice.objects.filter(external_reference=order['id']).exists():
@@ -71,6 +80,12 @@ def ccvshop_parse_order(order_id):
         contact.phone = order['customer']['billingaddress']['telephone']
         contact.email = order['customer']['email']
         contact.save()
+        LogEntry.objects.log_action(
+            user_id=user.id,
+            content_type_id=ContentType.objects.get_for_model(contact).pk,
+            object_id=contact.id,
+            object_repr=u"%s" % (contact,),
+            action_flag=ADDITION)
 
     # create invoice
     # order.status   ?? --> set paid?
@@ -84,6 +99,12 @@ def ccvshop_parse_order(order_id):
     # set false before publish to not send e-mail
     invoice.draft = False
     invoice.save()
+    LogEntry.objects.log_action(
+        user_id=user.id,
+        content_type_id=ContentType.objects.get_for_model(invoice).pk,
+        object_id=invoice.id,
+        object_repr=u"%s" % (invoice,),
+        action_flag=ADDITION)
 
     # create invoice ledger_entries or event_registrations
     orderrows = ccvshop_call_api("/api/rest/v1/orders/%s/orderrows" % order_id)
