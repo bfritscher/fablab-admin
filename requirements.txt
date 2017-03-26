@@ -13,10 +13,10 @@ html5lib==1.0b8
 xhtml2pdf==0.0.6
 mailchimp3==2.0.7
 django-tabbed-admin==0.0.5
-django-mptt==0.8.0
-django_polymorphic==1.0.2
+django-mptt==0.8.7
+django_polymorphic==1.1
 easy-thumbnails==2.3
-django-filer==1.1.0
+django-filer==1.2.7
 django-mail-templated==2.4.7
 raven==6.0.0
 django-object-actions==0.7.0
