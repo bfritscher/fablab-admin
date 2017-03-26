@@ -8,7 +8,7 @@ from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
 from django.forms import forms, ModelForm
 from django.http import HttpResponseRedirect
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.utils.safestring import mark_safe
 from guardian.admin import GuardedModelAdmin, GuardedModelAdminMixin
 from django.utils.translation import ugettext_lazy as _
@@ -257,20 +257,18 @@ class ContactAdmin(BaseDjangoObjectActions, ImportExportMixin, GuardedModelAdmin
 
     change_form_template = 'base/change_form_tabbed.html'
 
-    def get_object_actions(self, request, context, **kwargs):
-        objectactions = []
+    def get_change_actions(self, request, object_id, form_url):
+        objectactions = list(super(ContactAdmin, self).get_change_actions(request, object_id, form_url))
 
-        # Actions cannot be applied to new objects (i.e. Using "add" new obj)
-        if 'original' in context:
-            objectactions.extend(['create_invoice', 'create_expense_invoice'])
-            # The obj to perform checks against to determine object actions you want to support
-            obj = context['original']
-            if obj and obj.status.is_member:
-                m = obj.is_membership_paid()
-                if m == False:
-                    objectactions.extend(['create_membership', ])
-            if obj and not obj.user:
-                objectactions.extend(['create_user', ])
+        obj = self.model.objects.get(pk=object_id)
+        if obj and not obj.status.is_member:
+            objectactions.remove('create_membership')
+
+        if obj and obj.is_membership_paid():
+            objectactions.remove('create_membership')
+
+        if obj and obj.user:
+            objectactions.remove('create_user')
 
         return objectactions
 
@@ -345,7 +343,7 @@ class ContactAdmin(BaseDjangoObjectActions, ImportExportMixin, GuardedModelAdmin
     create_user.label = _("create user")
     create_user.short_description = _("create user account for contact")
 
-    objectactions = ['create_membership', 'create_invoice', 'create_expense_invoice', 'create_user']
+    change_actions = ['create_membership', 'create_invoice', 'create_expense_invoice', 'create_user']
     actions = ['create_membership',]
 
     def is_membership_paid(self, obj):
@@ -528,17 +526,15 @@ class InvoiceAdmin(ExportMixin, GuardedModelAdminMixin, BaseDjangoObjectActions,
     publish.label = _('publish')
     publish.short_description = _('publish invoice create pdf')
 
-    def get_object_actions(self, request, context, **kwargs):
-        objectactions = []
+    def get_change_actions(self, request, object_id, form_url):
+        objectactions = list(super(InvoiceAdmin, self).get_change_actions(request, object_id, form_url))
 
-        # Actions cannot be applied to new objects (i.e. Using "add" new obj)
-        if 'original' in context:
-            # The obj to perform checks against to determine object actions you want to support
-            obj = context['original']
-            if obj and obj.draft:
-                objectactions.extend(['preview', 'publish'])
-            if obj and not obj.draft:
-                objectactions.extend(['send'])
+        obj = self.model.objects.get(pk=object_id)
+        if obj and obj.draft:
+            objectactions.remove('send')
+        if obj and not obj.draft:
+            objectactions.remove('preview')
+            objectactions.remove('publish')
 
         return objectactions
 
@@ -565,7 +561,7 @@ class InvoiceAdmin(ExportMixin, GuardedModelAdminMixin, BaseDjangoObjectActions,
     send.label = _('send by email')
     send.short_description = _('send by email to buyer')
 
-    objectactions = ('preview', 'publish', 'send')
+    change_actions = ('preview', 'publish', 'send')
     actions = ('send',)
 
 
@@ -711,7 +707,7 @@ class ExpenseAdmin(LedgerEntryChildAdmin):
 
 
 @admin.register(LedgerEntry)
-class LedgerEntryAdmin(ExportMixin, GuardedModelAdminMixin, PolymorphicParentModelAdmin):
+class LedgerEntryAdmin(BaseDjangoObjectActions, ExportMixin, GuardedModelAdminMixin, PolymorphicParentModelAdmin):
     """ The parent model admin """
     base_model = LedgerEntry
     child_models = (
@@ -731,6 +727,46 @@ class LedgerEntryAdmin(ExportMixin, GuardedModelAdminMixin, PolymorphicParentMod
         ('invoice__paid', NotNullFieldListFilter),
         ('user', admin.RelatedOnlyFieldListFilter),
     )
+
+    @takes_instance_or_queryset
+    def convert_to_event_registration(self, request, queryset):
+        if request.POST.get('event'):
+            try:
+                event_id = request.POST.get('event')
+                created = []
+                for obj in queryset:
+                    reg = EventRegistration(event_id=event_id)
+                    for field in obj._meta.fields:
+                        if field.name != 'polymorphic_ctype':
+                            setattr(reg, field.name, getattr(obj, field.name))
+                    reg.save()
+                created.append(str(reg.id))
+            except Exception as e:
+                self.message_user(request, e)
+
+            self.message_user(request, _(u"converted to: %s") % ', '.join(created))
+            return
+
+        return render(request, 'base/convert_to_event_registration.html', {
+            'action_checkbox_name': helpers.ACTION_CHECKBOX_NAME,
+            'queryset': queryset,
+            'form': autocomplete_light.modelform_factory(EventRegistration, fields=('event',),
+                                                autocomplete_names={'event': 'EventAutocomplete'})
+
+        })
+
+    convert_to_event_registration.label = 'Convert'
+
+    change_actions = ('convert_to_event_registration',)
+    change_form_template = 'base/change_form.html'
+
+    def get_change_actions(self, request, object_id, form_url):
+        objectactions = list(super(LedgerEntryAdmin, self).get_change_actions(request, object_id, form_url))
+
+        obj = self.model.objects.get(pk=object_id)
+
+        return objectactions
+
 
     def user_url(self, obj):
         return format_html(u'<a href="{}">{}</a>', reverse('admin:base_contact_change', args=(obj.user.id,)),  obj.user)
