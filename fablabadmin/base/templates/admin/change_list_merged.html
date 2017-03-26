@@ -1,0 +1,11 @@
+{% extends "import_export:admin/import_export/change_list.html" %}
+{% load totalsum admin_list %}
+{% block object-tools-items %}
+  {% include "import_export:admin/import_export/change_list_export_item.html" %}
+  {{ block.super }}
+{% endblock %}
+{% block result_list %}
+  {% if action_form and actions_on_top and cl.full_result_count %}{% admin_actions %}{% endif %}
+    {% totalsum_result_list cl totals unit_of_measure %}
+  {% if action_form and actions_on_bottom and cl.full_result_count %}{% admin_actions %}{% endif %}
+{% endblock %}

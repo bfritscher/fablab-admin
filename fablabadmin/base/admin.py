@@ -1,6 +1,7 @@
 import string
 import random
 
+from totalsum.admin import TotalsumAdmin
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.contrib.auth.models import User
@@ -469,11 +470,13 @@ class BankTransactionInline(admin.TabularInline):
 
 
 @admin.register(Invoice)
-class InvoiceAdmin(ExportMixin, GuardedModelAdminMixin, BaseDjangoObjectActions, admin.ModelAdmin):
+class InvoiceAdmin(ExportMixin, GuardedModelAdminMixin, BaseDjangoObjectActions, TotalsumAdmin):
     form = autocomplete_light.modelform_factory(Invoice, fields='__all__',
                                                 autocomplete_names={'seller': 'Contact',
                                                                     'buyer': 'Contact'})
     search_fields = ('id', 'seller__first_name', 'seller__last_name', 'buyer__first_name', 'buyer__last_name', 'manual_total', 'title', 'entries__title', 'entries__description')
+    totalsum_list = ('total',)
+    change_list_template = 'admin/change_list_merged.html'
     list_display = ('id', '__str__', 'date', 'buyer', 'seller', 'payment_type', 'total', 'paid', 'draft', )
     list_display_links = ('id', '__str__')
     list_filter = (InvoicePaidListFilter, 'type', 'payment_type', 'draft')

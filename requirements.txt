@@ -5,7 +5,7 @@ django-cors-headers==1.1.0
 django-environ==0.4.0
 django-admin-tools==0.7.2
 django-guardian==1.4.1
-django-import-export==0.4.2
+django-import-export==0.5.1
 django-autocomplete-light==2.3.1
 django-wysiwyg-redactor==0.4.9
 reportlab==3.2.0
@@ -25,6 +25,7 @@ django-recaptcha2==0.1.7
 django-autoslug==1.9.3
 django-admin-sortable==2.0.18
 django-logentry-admin==1.0.2
+twentytab-totalsum-admin==0.8
 
 # parsing xml files
 untangle==1.1.0
