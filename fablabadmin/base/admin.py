@@ -203,6 +203,15 @@ class ResourceUsageInline(admin.TabularInline):
                                                 autocomplete_names={'user': 'Contact'})
 
 
+class EventRegistrationInline(LedgerEntryMixin, admin.TabularInline):
+    model = EventRegistration
+    extra = 1
+    form = autocomplete_light.modelform_factory(EventRegistration, fields='__all__',
+                                                autocomplete_names={'user': 'Contact'})
+    readonly_fields = ('invoice_link', 'date', 'total', 'event')
+    fields = ('invoice_link', 'date', 'user', 'quantity', 'unit_price', 'total', 'event')
+
+
 class UserLedgerEntryInline(LedgerEntryMixin, admin.TabularInline):
     form = autocomplete_light.modelform_factory(LedgerEntry, fields='__all__')
     model = LedgerEntry
@@ -223,7 +232,7 @@ class UserLedgerEntryInline(LedgerEntryMixin, admin.TabularInline):
 
     def get_queryset(self, request):
         qs = super(UserLedgerEntryInline, self).get_queryset(request)
-        return qs.not_instance_of(MembershipInvoice, Expense)
+        return qs.not_instance_of(MembershipInvoice, EventRegistration, Expense)
 
 
 class UserExpenseInline(LedgerEntryMixin, admin.TabularInline):
@@ -416,6 +425,7 @@ class ContactAdmin(BaseDjangoObjectActions, ImportExportMixin, GuardedModelAdmin
         (_('Functions'), tab_functions),
         (_('Memberships'), (MembershipsInline,)),
         (_('Ledger entries'), (UserLedgerEntryInline,)),
+        (_('Event registrations'), (EventRegistrationInline,)),
         (_('Expenses'), (UserExpenseInline,))
     ]
 
@@ -694,15 +704,6 @@ class LedgerEntryAdmin(ExportMixin, GuardedModelAdminMixin, PolymorphicParentMod
 class EventDocumentInline(admin.StackedInline):
     model = EventDocument
     extra = 1
-
-
-class EventRegistrationInline(LedgerEntryMixin, admin.TabularInline):
-    model = EventRegistration
-    extra = 1
-    form = autocomplete_light.modelform_factory(EventRegistration, fields='__all__',
-                                                autocomplete_names={'user': 'Contact'})
-    readonly_fields = ('invoice_link', 'date', 'total')
-    fields = ('invoice_link', 'date', 'user', 'quantity', 'unit_price', 'total')
 
 
 @admin.register(Event)
