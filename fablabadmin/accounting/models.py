@@ -13,6 +13,9 @@ virement_du_compte = re.compile(ur"VIREMENT DU COMPTE ([\d-]*) (.*?)(?: EXPÉDIT
 # VIREMENT DE SIC ONLINE (SIC_IID) DONNEUR D'ORDRE: (nom) (iban) [COMMUNICATIONS: (text)]
 virement_de_sic = re.compile(ur"VIREMENT DE SIC ONLINE ([\d]*) DONNEUR D'ORDRE: (.*?)( [\dA-Z]+)(?: COMMUNICATIONS: (.*?))$")
 
+# VIREMENT BANCAIRE  (ref) EXPÉDITEUR: (nom)
+virement_bancaire = re.compile(ur"VIREMENT BANCAIRE ([\dA-Z ]*?) EXPÉDITEUR: (.*?)$")
+
 #VIREMENT ÉTRANGER NO DE RÉF. (ref) EXPÉDITEUR: (nom) EXPÉDITEUR BANQUE: (banque) MOTIF DE PAIEMENT: (text)
 
 virement_etranger = re.compile(ur"VIREMENT ÉTRANGER NO DE RÉF\. ([\dA-Z]*) EXPÉDITEUR: (.*?)(?:EXPÉDITEUR BANQUE: (.*?))(?: MOTIF DE PAIEMENT: (.*?))$")
@@ -82,6 +85,13 @@ class BankTransaction(models.Model):
                         o.contact = res[1]
                         o.banque = res[2]
                         o.message = res[3]
+                    else:
+                        m = virement_bancaire.match(smart_text(self.raw_text))
+                        if m is not None:
+                            res = m.groups()
+                            o.type = 'BANCAIRE'
+                            o.ref = res[0]
+                            o.contact = res[1]
 
         if self.type == BankTransaction.DEBIT:
             m = e_finance.match(smart_text(self.raw_text))
