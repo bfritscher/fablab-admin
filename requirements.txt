@@ -18,7 +18,7 @@ django_polymorphic==1.0.2
 easy-thumbnails==2.3
 django-filer==1.1.0
 django-mail-templated==2.4.7
-raven==5.10.2
+raven==6.0.0
 django-object-actions==0.7.0
 django-material==0.5.1
 django-recaptcha2==0.1.7
