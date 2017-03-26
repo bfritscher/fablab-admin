@@ -523,11 +523,19 @@ class InvoiceAdmin(ExportMixin, GuardedModelAdminMixin, BaseDjangoObjectActions,
 
     def publish(self, request, obj):
         obj.publish()
-        self.message_user(request, _(u'invoice sent to %s') % obj.buyer.email)
         return
 
     publish.label = _('publish')
-    publish.short_description = _('publish invoice and send it by email')
+    publish.short_description = _('publish invoice create pdf')
+
+    def send(self, request, obj):
+        send_invoice(obj)
+        self.message_user(request, _(u'invoice sent to %s') % obj.buyer.email)
+        return
+
+    send.label = _('send by email')
+    send.short_description = _('send by email to buyer')
+
 
     def get_object_actions(self, request, context, **kwargs):
         objectactions = []
@@ -538,10 +546,12 @@ class InvoiceAdmin(ExportMixin, GuardedModelAdminMixin, BaseDjangoObjectActions,
             obj = context['original']
             if obj and obj.draft:
                 objectactions.extend(['preview', 'publish'])
+            if obj and not obj.draft:
+                objectactions.extend(['send'])
 
         return objectactions
 
-    objectactions = ('preview', 'publish')
+    objectactions = ('preview', 'publish', 'send')
 
 
 class LedgerEntryChildAdmin(GuardedModelAdminMixin, PolymorphicChildModelAdmin):

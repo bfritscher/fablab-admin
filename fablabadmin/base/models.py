@@ -213,31 +213,24 @@ class Invoice(models.Model):
             self.buyer = Contact.objects.filter(status__name='fablab_invoice').first()
         super(Invoice, self).save(*args, **kwargs)
 
-    # if document empty creates doc
-    # draft set state to False and send email
-    # maybe split into to?
-    def publish(self):
-        if self.document is None:
-            pdf = make_pdf('base/invoice.html', {'invoice': self})
-            FileForm = modelform_factory(
-                        model=filer_models.File,
-                        fields=('original_filename', 'file')
-                    )
-            uploadform = FileForm({'original_filename': "%s.pdf" % self},
-                                  {'file':  InMemoryUploadedFile(pdf, None, "%s.pdf" % self, 'pdf', pdf.tell(), None)})
-            if uploadform.is_valid():
-                file_obj = uploadform.save(commit=False)
-                folder, created = filer_models.Folder.objects.get_or_create(name='invoices')
-                file_obj.folder = folder
-                file_obj.save()
-                self.document = file_obj
 
-        if self.draft:
-            self.draft = False
-            self.save()
-            send_invoice(self)
-        else:
-            self.save()
+    def publish(self):
+        pdf = make_pdf('base/invoice.html', {'invoice': self})
+        FileForm = modelform_factory(
+                    model=filer_models.File,
+                    fields=('original_filename', 'file')
+                )
+        uploadform = FileForm({'original_filename': "%s.pdf" % self},
+                              {'file':  InMemoryUploadedFile(pdf, None, "%s.pdf" % self, 'pdf', pdf.tell(), None)})
+        if uploadform.is_valid():
+            file_obj = uploadform.save(commit=False)
+            folder, created = filer_models.Folder.objects.get_or_create(name='invoices')
+            file_obj.folder = folder
+            file_obj.save()
+            self.document = file_obj
+
+        self.draft = False
+        self.save()
 
     class Meta:
         verbose_name = _("invoice")
@@ -332,6 +325,7 @@ class MembershipInvoice(LedgerEntry):
         #send membership to user
         if self.invoice.draft:
             self.invoice.publish()
+            send_invoice(self.invoice)
 
     class Meta:
         verbose_name = _("membership invoice")
