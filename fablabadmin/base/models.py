@@ -324,7 +324,8 @@ class MembershipInvoice(LedgerEntry):
 
         super(MembershipInvoice, self).save(*args, **kwargs)
 
-        if kwargs.has_key('request'):
+        request = None
+        if 'request' in kwargs:
             request = kwargs.pop('request')
         #send membership to user
         if self.invoice.draft:

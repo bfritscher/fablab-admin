@@ -87,8 +87,9 @@ def send_invoice(invoice, message=None, request=None):
     message.attach_file(invoice.document.path)
     # Send message when ready. It will be rendered automatically if needed.
     message.send()
+    user_id = request.user.id if request else 1
     LogEntry.objects.log_action(
-        user_id=request.user.id,
+        user_id=user_id,
         content_type_id=ContentType.objects.get_for_model(invoice).pk,
         object_id=invoice.id,
         object_repr=u"%s" % (invoice,),
