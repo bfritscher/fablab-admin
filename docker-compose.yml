@@ -19,4 +19,4 @@ nginx:
   ports:
     - "80:80"
   links:
-    - web:web
+    - web
