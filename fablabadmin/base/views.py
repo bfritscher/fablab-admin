@@ -200,4 +200,6 @@ def user_login(request):
                         "email": user.email
                     },
                 })
-    return HttpResponse(status=403)
+    return JsonResponse({
+        "error": "No User or Wrong Password"
+    }, status=403)
