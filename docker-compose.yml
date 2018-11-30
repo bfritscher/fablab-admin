@@ -1,9 +1,11 @@
 db:
   image: postgres:9.5
   env_file: .env
+  restart: always
 web:
   build: .
   env_file: .env
+  restart: always
   environment:
     - PYTHONUNBUFFERED=1
   command: bash -c "python manage.py collectstatic --noinput;python manage.py migrate;while true; do sleep 3; python manage.py runserver 0.0.0.0:8080; done"
@@ -14,6 +16,7 @@ web:
     - db
 nginx:
   build: docker/nginx
+  restart: always
   volumes_from:
      - web
   ports:
