@@ -1,3 +1,5 @@
+# This project is no longer maintained
+
 # FabLab Administration Tool
 
 A series of domain objects, methods and CRUD views to manage different aspect of a FabLab.
