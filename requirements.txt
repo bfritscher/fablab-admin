@@ -31,7 +31,7 @@ twentytab-totalsum-admin==0.8
 # parsing xml files
 untangle==1.1.0
 # api requests
-requests==2.10.0
+requests==2.20.0
 
 #dev
 django-debug-toolbar==1.4
