@@ -34,5 +34,5 @@ untangle==1.1.0
 requests==2.10.0
 
 #dev
-django-debug-toolbar==1.4
+django-debug-toolbar==1.11.1
 Werkzeug==0.11.3
