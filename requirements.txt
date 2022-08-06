@@ -29,7 +29,7 @@ django-logentry-admin==1.0.2
 twentytab-totalsum-admin==0.8
 
 # parsing xml files
-untangle==1.1.0
+untangle==1.2.1
 # api requests
 requests==2.10.0
 
