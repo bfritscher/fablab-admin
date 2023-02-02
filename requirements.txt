@@ -35,4 +35,4 @@ requests==2.10.0
 
 #dev
 django-debug-toolbar==1.4
-Werkzeug==0.11.3
+Werkzeug==0.15.5
